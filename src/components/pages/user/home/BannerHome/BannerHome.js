@@ -4,9 +4,9 @@ import styles from './BannerHome.module.scss'
 
 function BannerHome() {
   return (
-    <LayoutUser>
-        <div className={styles.container}>BannerHome</div>
-    </LayoutUser>
+      <div className={styles.container}>
+          <h1>Banner Page</h1>
+      </div>
   )
 }
 

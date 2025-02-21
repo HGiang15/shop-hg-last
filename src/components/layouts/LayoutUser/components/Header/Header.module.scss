@@ -1,3 +1,142 @@
-.container {
-    background: red;
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	background: #fff;
+	border-bottom: 1px solid #f7f9fc;
+	box-shadow: 0px 4px 4px rgba(210, 210, 210, 0.25);
+
+	max-width: 1440px; // Giới hạn chiều rộng tối đa
+	margin: 0 auto; // Căn giữa header
+
+	/* Logo */
+	&__logo {
+		img {
+			height: 50px;
+			cursor: pointer;
+		}
+	}
+
+	/* Menu */
+	&__nav {
+		display: flex;
+		flex: 1;
+		justify-content: flex-start;
+
+		.nav__list {
+			display: flex;
+			align-items: center;
+			list-style: none;
+			gap: 20px;
+			padding: 0;
+			margin: 0;
+
+			.nav__item {
+				.nav__link {
+					color: #333;
+					font-weight: 500;
+					transition: color 0.3s;
+
+					&:hover {
+						color: var(--primary-btn);
+					}
+				}
+			}
+		}
+	}
+
+	/* Actions */
+	&__auth {
+		display: flex;
+		gap: 10px;
+
+		.auth__login,
+		.auth__register {
+			padding: 8px 16px;
+			font-size: 14px;
+			border: none;
+			cursor: pointer;
+			transition: background 0.3s;
+			border-radius: 5px;
+		}
+
+		.auth__login {
+			background: transparent;
+			color: var(--primary-btn);
+			border: 1px solid var(--primary-btn);
+
+			&:hover {
+				opacity: 0.9;
+			}
+		}
+
+		.auth__register {
+			background: var(--primary-btn);
+			color: white;
+
+			&:hover {
+				opacity: 0.9;
+			}
+		}
+	}
+
+	/* TABLET: Chuyển menu thành dọc */
+	@media (max-width: 768px) {
+		flex-direction: column;
+		align-items: center;
+		padding: 15px;
+		max-width: 100%; // Đảm bảo không bị tràn màn hình nhỏ hơn
+
+		&__nav {
+			width: 100%;
+			justify-content: center;
+
+			.nav__list {
+				flex-direction: column; // Menu chuyển sang dạng dọc
+				align-items: center;
+				gap: 15px;
+			}
+		}
+
+		&__auth {
+			margin-top: 10px;
+		}
+	}
+
+	/* MOBILE */
+	@media (max-width: 480px) {
+		flex-direction: column;
+		align-items: center;
+		padding: 10px;
+		max-width: 100%; // Đảm bảo phù hợp với màn hình nhỏ
+
+		&__logo {
+			img {
+				height: 40px;
+			}
+		}
+
+		&__nav {
+			width: 100%;
+			justify-content: center;
+
+			.nav__list {
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+			}
+		}
+
+		&__auth {
+			flex-direction: column;
+			gap: 5px;
+			margin-top: 10px;
+
+			.auth__login,
+			.auth__register {
+				width: 100%;
+			}
+		}
+	}
 }
