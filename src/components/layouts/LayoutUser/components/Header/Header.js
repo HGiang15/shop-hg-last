@@ -1,39 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import styles from './Header.module.scss';
 import Image from 'next/image';
 import logo from '../../../../../../public/static/images/logo_small.svg';
-import LayoutGrid from '@/components/layouts/LayoutGrid/LayoutGrid';
+import { FaBars, FaTimes } from 'react-icons/fa';
 
 function Header() {
+	const [menuOpen, setMenuOpen] = useState(false);
+
+	const toggleMenu = () => {
+		setMenuOpen(!menuOpen);
+	};
+
 	return (
-		<div className={styles.header}>
+		<header className={styles.header}>
+			{/* Logo */}
+			<div className={styles.header__logo}>
+				<Link href='/'>
+					<Image className={styles.logo_home} src={logo} alt='Logo' />
+				</Link>
+			</div>
+
+			{/* Menu Responsive */}
+			<button className={styles.menuToggle} onClick={toggleMenu}>
+				{menuOpen ? <FaTimes /> : <FaBars />}
+			</button>
+
+			{/* Overla */}
+			<div className={`${styles.overlay} ${menuOpen ? styles.open : ''}`} onClick={toggleMenu}></div>
+
 			{/* Menu */}
-			<nav className={styles.header__nav}>
+			<nav className={`${styles.header__nav} ${menuOpen ? styles.open : ''}`}>
 				<ul className={styles.nav__list}>
 					<li className={styles.nav__item}>
-						{/* Logo */}
-						<div className={styles.header__logo}>
-							<Link href='/'>
-								<Image className={styles.logo_home} src={logo} alt='Logo' />
-							</Link>
-						</div>
-					</li>
-
-					<li className={styles.nav__item}>
-						<Link className={styles.nav__link} href='/'>
-							Trang chủ
-						</Link>
+						<Link className={styles.nav__link} href='/'>Trang chủ</Link>
 					</li>
 					<li className={styles.nav__item}>
-						<Link className={styles.nav__link} href='/products'>
-							Sản phẩm
-						</Link>
+						<Link className={styles.nav__link} href='/products'>Sản phẩm</Link>
+					</li>
+					<li className={styles.nav__item}>
+						<Link className={styles.nav__link} href='/me'>Về chúng tôi</Link>
 					</li>
 				</ul>
 			</nav>
 
-			{/* action */}
+			{/* Actions */}
 			<div className={styles.header__auth}>
 				<Link href='/login'>
 					<button className={styles.auth__login}>Đăng nhập</button>
@@ -42,7 +53,7 @@ function Header() {
 					<button className={styles.auth__register}>Đăng ký</button>
 				</Link>
 			</div>
-		</div>
+		</header>
 	);
 }
 

@@ -2,13 +2,11 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-
+	max-width: 1440px;
+	width: 100%;
+	margin: 0 auto;
 	background: #fff;
-	border-bottom: 1px solid #f7f9fc;
-	box-shadow: 0px 4px 4px rgba(210, 210, 210, 0.25);
-
-	max-width: 1440px; // Giới hạn chiều rộng tối đa
-	margin: 0 auto; // Căn giữa header
+	z-index: 1000;
 
 	/* Logo */
 	&__logo {
@@ -18,11 +16,41 @@
 		}
 	}
 
+	/* Icon Menu */
+	.menuToggle {
+		display: none;
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		z-index: 3000;
+		background: transparent;
+		border: none;
+		font-size: 24px;
+		color: #000;
+		cursor: pointer;
+	}
+
+	.overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 2000;
+		display: none;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.overlay.open {
+		display: block;
+	}
+
 	/* Menu */
 	&__nav {
 		display: flex;
-		flex: 1;
-		justify-content: flex-start;
+		z-index: 2500; 
 
 		.nav__list {
 			display: flex;
@@ -73,7 +101,7 @@
 
 		.auth__register {
 			background: var(--primary-btn);
-			color: white;
+			color: #fff;
 
 			&:hover {
 				opacity: 0.9;
@@ -81,35 +109,76 @@
 		}
 	}
 
-	/* TABLET: Chuyển menu thành dọc */
+	// Responsive
+	/* TABLET */
 	@media (max-width: 768px) {
 		flex-direction: column;
 		align-items: center;
-		padding: 15px;
-		max-width: 100%; // Đảm bảo không bị tràn màn hình nhỏ hơn
+
+		.overlay.open {
+			display: block;
+		}
+
+		.menuToggle {
+			display: block;
+		}
 
 		&__nav {
+			display: none;
 			width: 100%;
-			justify-content: center;
+			height: auto;
+			position: absolute;
+			top: 70px;
+			right: 0;
+			background: white;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			border-radius: 5px;
+			padding: 20px 0;
 
 			.nav__list {
-				flex-direction: column; // Menu chuyển sang dạng dọc
+				display: flex;
+				flex-direction: column;
 				align-items: center;
-				gap: 15px;
+				padding: 0;
+				margin: 0;
+				gap: 15px; 
+				.nav__item {
+					width: 100%;
+					text-align: center;
+					padding: 10px 0;
+
+					.nav__link {
+						display: block;
+						width: 100%;
+						padding: 10px 0;
+						font-size: 18px;
+						font-weight: 600;
+						color: #333;
+						text-transform: uppercase;
+						transition: all 0.3s ease;
+
+						&:hover {
+							color: var(--primary-btn);
+							background: rgba(0, 0, 0, 0.05);
+						}
+					}
+				}
 			}
 		}
 
+		&__nav.open {
+			display: block;
+		}
+
 		&__auth {
-			margin-top: 10px;
+			display: none;
 		}
 	}
 
 	/* MOBILE */
 	@media (max-width: 480px) {
-		flex-direction: column;
-		align-items: center;
 		padding: 10px;
-		max-width: 100%; // Đảm bảo phù hợp với màn hình nhỏ
+		max-width: 100%;
 
 		&__logo {
 			img {

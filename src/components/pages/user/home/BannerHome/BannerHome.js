@@ -1,13 +1,62 @@
-import LayoutUser from '@/components/layouts/LayoutUser/LayoutUser'
-import React from 'react'
-import styles from './BannerHome.module.scss'
+import React from 'react';
+import Image from 'next/image';
+import Slider from 'react-slick';
+import { ArrowLeft2, ArrowRight2 } from 'iconsax-react';
 
-function BannerHome() {
-  return (
-      <div className={styles.container}>
-          <h1>Banner Page</h1>
-      </div>
-  )
+import styles from './BannerHome.module.scss';
+import banner1 from '../../../../../../public/static/images/banner_1.jpg';
+import banner2 from '../../../../../../public/static/images/banner_2.jpg';
+import banner3 from '../../../../../../public/static/images/banner_3.jpg';
+import banner4 from '../../../../../../public/static/images/banner_about.jpg';
+import banner5 from '../../../../../../public/static/images/banner_full.jpg';
+import arrowRight from '../../../../../../public/static/images/arrow-right.svg';
+import arrowLeft from '../../../../../../public/static/images/arrow-left.svg';
+
+function SampleNextArrow(props) {
+	const { onClick } = props;
+	return (
+		<div className={`${styles.arrow} ${styles.next}`} onClick={onClick}>
+			<Image src={arrowRight} alt="Next" width={32} height={32} />
+		</div>
+	);
 }
 
-export default BannerHome
+function SamplePrevArrow(props) {
+	const { onClick } = props;
+	return (
+		<div className={`${styles.arrow} ${styles.prev}`} onClick={onClick}>
+			<Image src={arrowLeft} alt="Previous" width={32} height={32} />
+		</div>
+	);
+}
+
+
+function BannerHome() {
+	const banners = [banner1, banner2, banner3, banner4, banner5];
+
+	const settings = {
+		dots: true,
+		infinite: true,
+		speed: 500,
+		slidesToShow: 1,
+		slidesToScroll: 1,
+		autoplay: true,
+		autoplaySpeed: 3000,
+		nextArrow: <SampleNextArrow />,
+		prevArrow: <SamplePrevArrow />,
+	};
+
+	return (
+		<div className={styles.container}>
+			<Slider {...settings}>
+				{banners.map((banner, index) => (
+					<div key={index} className={styles.item}>
+						<Image src={banner} alt={`Banner ${index + 1}`} fill className={styles.image} />
+					</div>
+				))}
+			</Slider>
+		</div>
+	);
+}
+
+export default BannerHome;

@@ -5,8 +5,8 @@ import styles from './LayoutUser.module.scss';
 
 function LayoutUser({ children }) {
 	return (
-		<div className={styles.container}>
-			<header>
+		<Fragment>
+			<header className={styles.header}>
 				<Header />
 			</header>
 
@@ -15,7 +15,7 @@ function LayoutUser({ children }) {
 			<footer>
 				<Footer />
 			</footer>
-		</div>
+		</Fragment>
 	);
 }
 
