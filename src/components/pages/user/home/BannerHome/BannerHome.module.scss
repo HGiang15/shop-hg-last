@@ -2,36 +2,38 @@
 	width: 100%;
 	margin: 0 auto;
 	position: relative;
-  }
-  
-  .slick-dots {
+}
+
+.slick-dots {
 	bottom: 10px;
 	li {
-	  margin: 0 5px;
-	  button {
-		width: 10px;
-		height: 10px;
-		background: #ccc;
-		border-radius: 50%;
-		transition: background 0.3s ease;
-	  }
-	  &.slick-active button {
-		background: #ff6600;
-	  }
+		margin: 0 5px;
+		button {
+			width: 10px;
+			height: 10px;
+			background: #ccc;
+			border-radius: 50%;
+			transition: background 0.3s ease;
+		}
+		&.slick-active button {
+			background: #ff6600;
+		}
 	}
-  }
-  
-  .item {
+}
+
+.item {
 	position: relative;
 	width: 100%;
-	aspect-ratio: 16/9;
+	aspect-ratio: 4/3;
 	overflow: hidden;
+	
 	.image {
-	  object-fit: cover;
+		// height: 100%;
+		object-fit: cover;
 	}
-  }
-  
-  .arrow {
+}
+
+.arrow {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
@@ -41,64 +43,63 @@
 	border-radius: 50%;
 	cursor: pointer;
 	transition: all 0.3s ease;
-  
+
 	&.next {
-	  right: 10px;
+		right: 10px;
 	}
 	&.prev {
-	  left: 10px;
-	  transform: rotate(180deg);
+		left: 10px;
+		transform: rotate(180deg);
 	}
 	&:hover {
-	  filter: invert(1);
+		filter: invert(1);
 	}
-  }
-  
-  .section {
+}
+
+.section {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: 20px;
 	border-radius: 8px;
 	margin-top: 20px;
-	
+
 	.sectionItem {
-	  text-align: center;
-	  flex: 1;
-	  padding: 10px;
-	  
-	  h4 {
-		font-size: 18px;
-		font-weight: 600;
-		color: #333;
-		margin-bottom: 5px;
-	  }
-	  p {
-		font-size: 14px;
-		color: #666;
-	  }
-	  
-	  &:not(:last-child) {
-		position: relative;
-		&::after {
-		  content: "";
-		  position: absolute;
-		  right: 0;
-		  top: 50%;
-		  transform: translateY(-50%);
-		  width: 1px;
-		  height: 20%;
-		  background: #ccc;
+		text-align: center;
+		flex: 1;
+		padding: 10px;
+
+		h4 {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 5px;
 		}
-	  }
+		p {
+			font-size: 14px;
+			color: #666;
+		}
+
+		&:not(:last-child) {
+			position: relative;
+			&::after {
+				content: '';
+				position: absolute;
+				right: 0;
+				top: 50%;
+				transform: translateY(-50%);
+				width: 1px;
+				height: 50%;
+				background: #ccc;
+			}
+		}
 	}
-  
+
 	@media (max-width: 768px) {
-	  flex-direction: column;
-	  gap: 20px;
-	  .sectionItem:not(:last-child)::after {
-		display: none;
-	  }
+		flex-direction: column;
+		gap: 20px;
+		.sectionItem:not(:last-child)::after {
+			display: none;
+		}
 	}
-  }
-  
+}

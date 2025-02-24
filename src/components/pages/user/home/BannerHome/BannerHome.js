@@ -4,13 +4,13 @@ import Slider from 'react-slick';
 import {ArrowLeft2, ArrowRight2} from 'iconsax-react';
 
 import styles from './BannerHome.module.scss';
-import banner1 from '../../../../../../public/static/images/banner_1.jpg';
-import banner2 from '../../../../../../public/static/images/banner_2.jpg';
-import banner3 from '../../../../../../public/static/images/banner_3.jpg';
-import banner4 from '../../../../../../public/static/images/banner_about.jpg';
-import banner5 from '../../../../../../public/static/images/banner_full.jpg';
-import arrowRight from '../../../../../../public/static/images/arrow-right.svg';
-import arrowLeft from '../../../../../../public/static/images/arrow-left.svg';
+import banner1 from '../../../../../../public/static/images/banner/banner_1.jpg';
+import banner2 from '../../../../../../public/static/images/banner/banner_2.jpg';
+import banner3 from '../../../../../../public/static/images/banner/banner_3.jpg';
+import banner4 from '../../../../../../public/static/images/banner/banner_about.jpg';
+import banner5 from '../../../../../../public/static/images/banner/banner_full.jpg';
+import arrowRight from '../../../../../../public/static/icons/arrow-right.svg';
+import arrowLeft from '../../../../../../public/static/icons/arrow-left.svg';
 
 function SampleNextArrow(props) {
 	const {onClick} = props;
