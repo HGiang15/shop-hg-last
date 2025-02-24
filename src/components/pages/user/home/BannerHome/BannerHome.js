@@ -50,34 +50,32 @@ function BannerHome() {
 			<Slider {...settings}>
 				{banners.map((banner, index) => (
 					<div key={index} className={styles.item}>
-						<Image src={banner} alt={`Banner ${index + 1}`} fill className={styles.image} />
+						<Image src={banner} alt={`Banner ${index + 1}`} layout="fill" objectFit="cover" className={styles.image} />
 					</div>
 				))}
 			</Slider>
 
 			{/* Section */}
 			<section className={styles.section}>
-				<div className={styles.item}>
+				<div className={styles.sectionItem}>
 					<h4>MIỄN PHÍ giao hàng</h4>
 					<p>FREESHIP đơn hàng từ 500K</p>
 				</div>
 
 				<div className={styles.line}></div>
 
-				<div className={styles.item}>
+				<div className={styles.sectionItem}>
 					<h4>Thanh toán COD</h4>
 					<p>Thanh toán khi nhận hàng</p>
 				</div>
-				<div className={styles.line}></div>
 
 				<div className={styles.line}></div>
 
-				<div className={styles.item}>
+				<div className={styles.sectionItem}>
 					<h4>Đặt hàng nhanh chóng</h4>
 					<p>Linh hoạt, bảo mật</p>
 				</div>
 			</section>
-			
 		</div>
 	);
 }
