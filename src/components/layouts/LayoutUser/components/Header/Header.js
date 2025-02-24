@@ -26,7 +26,7 @@ function Header() {
 				{menuOpen ? <FaTimes /> : <FaBars />}
 			</button>
 
-			{/* Overla */}
+			{/* Overlay */}
 			<div className={`${styles.overlay} ${menuOpen ? styles.open : ''}`} onClick={toggleMenu}></div>
 
 			{/* Menu */}
