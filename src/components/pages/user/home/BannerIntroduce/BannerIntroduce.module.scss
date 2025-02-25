@@ -1,3 +1,81 @@
-.container {
-    background: #ccc;
+.banner {
+	position: relative;
+	width: 100%;
+	height: 400px;
+	background: url('../../../../../../public/static/images/banner/banner_1.jpg') center/cover no-repeat;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	text-align: center;
+
+	.overlay {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		padding: 20px;
+	}
+
+	.content {
+		max-width: 600px;
+
+		h1 {
+			font-size: 2.5rem;
+			font-weight: bold;
+			margin-bottom: 15px;
+			text-transform: uppercase;
+			letter-spacing: 1.5px;
+		}
+
+		p {
+			font-size: 1.2rem;
+			margin-bottom: 25px;
+			line-height: 1.5;
+		}
+
+		.buttons {
+			display: flex;
+			gap: 15px;
+			justify-content: center;
+
+			.primaryBtn {
+				padding: 12px 20px;
+				font-size: 1rem;
+				font-weight: bold;
+				color: #fff;
+				background: #ff6f61;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				transition: 0.3s;
+
+				&:hover {
+					background: #e64a45;
+				}
+			}
+
+			.secondaryBtn {
+				padding: 12px 20px;
+				font-size: 1rem;
+				font-weight: bold;
+				color: #ff6f61;
+				background: transparent;
+				border: 2px solid #ff6f61;
+				border-radius: 5px;
+				cursor: pointer;
+				transition: 0.3s;
+
+				&:hover {
+					background: #ff6f61;
+					color: #fff;
+				}
+			}
+		}
+	}
 }

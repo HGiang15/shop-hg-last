@@ -4,6 +4,7 @@ import LayoutUser from '../components/layouts/LayoutUser/LayoutUser';
 import BannerHome from '@/components/pages/user/home/BannerHome/BannerHome';
 import CategoryHome from '@/components/pages/user/home/CategoryHome/CategoryHome';
 import BannerIntroduce from '@/components/pages/user/home/BannerIntroduce/BannerIntroduce';
+import FeaturedProducts from '@/components/pages/user/home/FeaturedProducts/FeaturedProducts';
 
 export default function Home() {
 	return (
@@ -18,6 +19,7 @@ export default function Home() {
 			<Fragment>
 				<BannerHome />
 				<CategoryHome />
+				<FeaturedProducts />
 				<BannerIntroduce />
 			</Fragment>
 		</Fragment>
