@@ -2,7 +2,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	
+
 	max-width: 1440px;
 	width: 100%;
 	margin: 0 auto;
@@ -51,7 +51,7 @@
 	/* Menu */
 	&__nav {
 		display: flex;
-		z-index: 2500; 
+		z-index: 2500;
 
 		.nav__list {
 			display: flex;
@@ -68,7 +68,7 @@
 					transition: color 0.3s;
 
 					&:hover {
-						color: var(--primary-btn);
+						color: var(--primary-main);
 					}
 				}
 			}
@@ -92,8 +92,8 @@
 
 		.auth__login {
 			background: transparent;
-			color: var(--primary-btn);
-			border: 1px solid var(--primary-btn);
+			color: var(--primary-main);
+			border: 1px solid var(--primary-main);
 
 			&:hover {
 				opacity: 0.9;
@@ -101,7 +101,7 @@
 		}
 
 		.auth__register {
-			background: var(--primary-btn);
+			background: var(--primary-main);
 			color: #fff;
 
 			&:hover {
@@ -142,7 +142,7 @@
 				align-items: center;
 				padding: 0;
 				margin: 0;
-				gap: 15px; 
+				gap: 15px;
 				.nav__item {
 					width: 100%;
 					text-align: center;

@@ -5,6 +5,9 @@ import BannerHome from '@/components/pages/user/home/BannerHome/BannerHome';
 import CategoryHome from '@/components/pages/user/home/CategoryHome/CategoryHome';
 import BannerIntroduce from '@/components/pages/user/home/BannerIntroduce/BannerIntroduce';
 import FeaturedProducts from '@/components/pages/user/home/FeaturedProducts/FeaturedProducts';
+import AboutHome from '@/components/pages/user/home/AboutHome/AboutHome';
+import HeroSection from '@/components/pages/user/home/HeroSection/HeroSection';
+import HeroSlider from '@/components/pages/user/home/HeroSlider/HeroSlider';
 
 export default function Home() {
 	return (
@@ -17,8 +20,12 @@ export default function Home() {
 			</Head>
 
 			<Fragment>
-				<BannerHome />
+				{
+					//<HeroSlider />
+				}	
+				<HeroSection />
 				<CategoryHome />
+				<AboutHome />
 				<FeaturedProducts />
 				<BannerIntroduce />
 			</Fragment>

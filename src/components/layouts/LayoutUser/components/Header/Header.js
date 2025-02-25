@@ -39,7 +39,13 @@ function Header() {
 						<Link className={styles.nav__link} href='/products'>Sản phẩm</Link>
 					</li>
 					<li className={styles.nav__item}>
-						<Link className={styles.nav__link} href='/me'>Về chúng tôi</Link>
+						<Link className={styles.nav__link} href='/about'>Về chúng tôi</Link>
+					</li>
+					<li className={styles.nav__item}>
+						<Link className={styles.nav__link} href='/blog'>Blog</Link>
+					</li>
+					<li className={styles.nav__item}>
+						<Link className={styles.nav__link} href='/contact'>Liên hệ</Link>
 					</li>
 				</ul>
 			</nav>

@@ -1,5 +1,5 @@
 .container {
-	padding: 20px;
+	padding: 80px 0;
 	max-width: 1440px;
 	margin: auto;
 }
@@ -7,7 +7,7 @@
 .featuredTitle {
 	font-size: 24px;
 	font-weight: bold;
-	text-align: left;
+	text-align: center;
 	margin-bottom: 20px;
 }
 
@@ -66,6 +66,6 @@
 
 .productPrice {
 	font-size: 18px;
-	color: #e60000;
+	color: var(--primary-main);
 	font-weight: bold;
 }

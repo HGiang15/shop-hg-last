@@ -8,7 +8,6 @@ import banner1 from '../../../../../../public/static/images/banner/banner_1.jpg'
 import banner2 from '../../../../../../public/static/images/banner/banner_2.jpg';
 import banner3 from '../../../../../../public/static/images/banner/banner_3.jpg';
 import banner4 from '../../../../../../public/static/images/banner/banner_about.jpg';
-import banner5 from '../../../../../../public/static/images/banner/banner_full.jpg';
 import arrowRight from '../../../../../../public/static/icons/arrow-right.svg';
 import arrowLeft from '../../../../../../public/static/icons/arrow-left.svg';
 
@@ -31,7 +30,7 @@ function SamplePrevArrow(props) {
 }
 
 function BannerHome() {
-	const banners = [banner1, banner2, banner3, banner4, banner5];
+	const banners = [banner1, banner2, banner3, banner4];
 
 	const settings = {
 		dots: true,
