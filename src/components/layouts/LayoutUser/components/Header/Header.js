@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import styles from './Header.module.scss';
 import Image from 'next/image';
-import logo from '../../../../../../public/static/images/logo_small.svg';
 import { FaBars, FaTimes } from 'react-icons/fa';
+import { ROUTES } from '@/constants/config';
+import logo from '../../../../../../public/static/images/logo_small.svg';
+import styles from './Header.module.scss';
 
 function Header() {
 	const [menuOpen, setMenuOpen] = useState(false);
@@ -52,10 +53,10 @@ function Header() {
 
 			{/* Actions */}
 			<div className={styles.header__auth}>
-				<Link href='/login'>
+				<Link href={ROUTES.Login}>
 					<button className={styles.auth__login}>Đăng nhập</button>
 				</Link>
-				<Link href='/register'>
+				<Link href={ROUTES.Register}>
 					<button className={styles.auth__register}>Đăng ký</button>
 				</Link>
 			</div>

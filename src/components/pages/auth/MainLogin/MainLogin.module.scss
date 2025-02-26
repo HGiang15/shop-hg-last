@@ -1,0 +1,202 @@
+.container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	background: linear-gradient(135deg, #e3f2fd, var(--primary-main));
+	max-height: 100vh;
+
+	.loginWrapper {
+		display: flex;
+		background: #fff;
+		padding: 32px;
+		border-radius: 12px;
+		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+		max-width: 900px;
+		width: 100%;
+		overflow: hidden;
+		overflow: auto;
+		max-height: 100vh;
+
+		&::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		&::-webkit-scrollbar-track {
+			background: #f1f1f1;
+			border-radius: 10px;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background: #888;
+			border-radius: 10px;
+		}
+
+		&::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
+		.loginContent {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 50%;
+			padding: 32px;
+
+			.logo {
+				display: flex;
+				justify-content: center;
+				cursor: pointer;
+			}
+			
+
+			.loginTitle {
+				font-size: 28.8px;
+				font-weight: 600;
+				color: #333;
+				margin-bottom: 8px;
+			}
+
+			.loginLabel {
+				color: #666;
+				margin-bottom: 24px;
+				text-align: center;
+			}
+
+			.loginAction {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 100%;
+				padding: 12.8px;
+				border: 1px solid #ddd;
+				border-radius: 6px;
+				background: #fff;
+				cursor: pointer;
+				transition: all 0.3s ease-in-out;
+
+				&:hover {
+					opacity: 0.9;
+				}
+
+				.loginDesc {
+					margin-left: 10px;
+					font-weight: 500;
+					color: #333;
+				}
+			}
+
+			.formInput {
+				width: 100%;
+				padding: 14.4px;
+				margin: 12.8px 0;
+				border: 1px solid #ddd;
+				border-radius: 6px;
+				font-size: 16px;
+				transition: border 0.3s;
+
+				&:focus {
+					border-color: var(--primary-main);
+					outline: none;
+					box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+				}
+			}
+
+			.contentWrapper {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				width: 100%;
+				margin: 16px 0;
+
+				.formCheckbox {
+					margin-right: 8px;
+				}
+
+				.formText {
+					font-size: 14.4px;
+					color: #555;
+				}
+
+				.formForgot {
+					color: var(--primary-main);
+					text-decoration: none;
+					font-size: 14.4px;
+				}
+			}
+
+			.actions {
+				width: 100%;
+				margin-top: 16px;
+
+				.btnLogin {
+					width: 100%;
+					padding: 14.4px;
+					background: var(--primary-main);
+					color: #fff;
+					border: none;
+					border-radius: 6px;
+					cursor: pointer;
+					font-size: 16px;
+					transition: background 0.3s;
+					font-weight: 600;
+
+					&:hover {
+						opacity: 0.9;
+					}
+				}
+			}
+
+			.loginAccount {
+				margin-top: 16px;
+				text-align: center;
+
+				.loginNot {
+					color: #666;
+					font-size: 14.4px;
+				}
+
+				.loginFree {
+					color: #000;
+					text-decoration: none;
+					font-weight: 600;
+					margin-left: 5px;
+
+					&:hover {
+						color: var(--primary-main);
+						transition: 0.3s;
+					}
+				}
+			}
+		}
+
+		.media {
+			width: 50%;
+			position: relative;
+
+			.loginMedia {
+				border-radius: 0 12px 12px 0;
+				object-fit: cover;
+				width: 100%;
+				height: 100%;
+			}
+		}
+	}
+
+	@media (max-width: 768px) {
+		.loginWrapper {
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+
+			.loginContent {
+				width: 100%;
+				padding: 32px 24px;
+			}
+
+			.media {
+				display: none;
+			}
+		}
+	}
+}
