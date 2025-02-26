@@ -14,26 +14,25 @@
 		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 		max-width: 900px;
 		width: 100%;
-		overflow: hidden;
 		overflow: auto;
 		max-height: 100vh;
 
 		&::-webkit-scrollbar {
 			width: 6px;
-		}
 
-		&::-webkit-scrollbar-track {
-			background: #f1f1f1;
-			border-radius: 10px;
-		}
+			&-track {
+				background: #f1f1f1;
+				border-radius: 10px;
+			}
 
-		&::-webkit-scrollbar-thumb {
-			background: #888;
-			border-radius: 10px;
-		}
+			&-thumb {
+				background: #888;
+				border-radius: 10px;
 
-		&::-webkit-scrollbar-thumb:hover {
-			background: #555;
+				&:hover {
+					background: #555;
+				}
+			}
 		}
 
 		.loginContent {
@@ -48,7 +47,6 @@
 				justify-content: center;
 				cursor: pointer;
 			}
-			
 
 			.loginTitle {
 				font-size: 28.8px;
@@ -86,20 +84,49 @@
 				}
 			}
 
-			.formInput {
+			.formGroup {
 				width: 100%;
-				padding: 14.4px;
-				margin: 12.8px 0;
-				border: 1px solid #ddd;
-				border-radius: 6px;
-				font-size: 16px;
-				transition: border 0.3s;
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+				margin-top: 16px;
+			}
 
-				&:focus {
-					border-color: var(--primary-main);
-					outline: none;
-					box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+			.inputWrapper {
+				display: flex;
+				position: relative;
+				width: 100%;
+
+				.formInput {
+					width: 100%;
+					padding: 16px;
+					border: 1px solid #ddd;
+					border-radius: 6px;
+					font-size: 17px;
+					transition: border 0.3s;
+
+					&:focus {
+						border-color: var(--primary-main);
+						outline: none;
+						box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+					}
 				}
+
+				.eyeIcon {
+					position: absolute;
+					right: 10px;
+					top: 50%;
+					transform: translateY(-50%);
+					cursor: pointer;
+					width: 20px;
+				}
+			}
+
+			.errorMsg {
+				display: block;
+				color: red;
+				font-size: 13px;
+				margin-left: 3px;
 			}
 
 			.contentWrapper {
@@ -122,6 +149,10 @@
 					color: var(--primary-main);
 					text-decoration: none;
 					font-size: 14.4px;
+
+					&:hover {
+						text-decoration: underline;
+					}
 				}
 			}
 

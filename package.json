@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "classnames": "^2.5.1",
+    "clsx": "^2.1.1",
     "eslint": "9.20.1",
     "eslint-config-next": "15.1.7",
     "iconsax-react": "^0.0.8",
