@@ -36,7 +36,7 @@ const MainLogin = () => {
 		}
 	};
 
-	// Xử lý validate khi blur ra ngoài
+	// validate blur
 	const handleBlur = (e) => {
 		const {name, value} = e.target;
 		if (!value.trim()) {
@@ -112,7 +112,7 @@ const MainLogin = () => {
 					</div>
 
 					<div className={styles.actions}>
-						<button className={styles.btnLogin}>Log in</button>
+						<button className={styles.btnLogin}>Đăng nhập</button>
 					</div>
 
 					<div className={styles.loginAccount}>

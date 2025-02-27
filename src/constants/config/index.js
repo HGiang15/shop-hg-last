@@ -8,4 +8,5 @@ export const ROUTES = {
     Login: '/auth/login',
 	Register: '/auth/register',
 	forgot_password: '/auth/forgot-password',
+	verify_password: '/auth/verify-password',
 };

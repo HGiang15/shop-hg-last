@@ -4,7 +4,6 @@ import Link from 'next/link';
 import {ROUTES} from '@/constants/config';
 
 import styles from './MainRegister.module.scss';
-import bgImage from '../../../../../public/static/images/auth/login-bg.jpg';
 import eyeOpen from '../../../../../public/static/icons/eye_open.svg';
 import eyeClose from '../../../../../public/static/icons/eye_close.svg';
 import logo from '../../../../../public/static/images/logo_small.svg';
@@ -42,7 +41,7 @@ const MainRegister = () => {
 		}
 	};
 
-	// Xử lý validate khi blur ra ngoài
+	// validate blur
 	const handleBlur = (e) => {
 		const {name, value} = e.target;
 		let errorMsg = '';

@@ -84,8 +84,6 @@
                 right: 10px;
                 top: 20px;
                 width: 20px;
-                // transform: translateY(-50%); 
-                // height: 20px;
                 cursor: pointer;
             }
 
@@ -122,18 +120,11 @@
 						cursor: not-allowed;
 					}
 				}
-
-				
 			}
 
 			.registerAccount {
 				margin-top: 18px;
 				text-align: center;
-
-				.registerNot {
-					color: #666;
-					font-size: 15px;
-				}
 
 				.registerFree {
 					color: #000;
