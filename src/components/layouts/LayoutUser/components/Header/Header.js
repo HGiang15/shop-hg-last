@@ -40,7 +40,7 @@ function Header() {
 						<Link className={styles.nav__link} href='/products'>Sản phẩm</Link>
 					</li>
 					<li className={styles.nav__item}>
-						<Link className={styles.nav__link} href='/about'>Về chúng tôi</Link>
+						<Link className={styles.nav__link} href={ROUTES.About}>Về chúng tôi</Link>
 					</li>
 					<li className={styles.nav__item}>
 						<Link className={styles.nav__link} href='/blog'>Blog</Link>

@@ -1,6 +1,8 @@
 export const ROUTES = {
     // User
 	Home: '/',
+    About: '/about',
+    
     
     // Admin
 
