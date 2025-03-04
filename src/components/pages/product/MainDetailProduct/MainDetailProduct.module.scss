@@ -1,0 +1,39 @@
+.container {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	padding: 20px;
+}
+
+.image {
+	width: 300px;
+	height: auto;
+	border-radius: 8px;
+}
+
+.info {
+	display: flex;
+	flex-direction: column;
+}
+
+.name {
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.price {
+	font-size: 20px;
+	color: #d32f2f;
+	margin: 10px 0;
+}
+
+.description {
+	font-size: 16px;
+	color: #555;
+}
+
+.notFound {
+	text-align: center;
+	font-size: 18px;
+	color: red;
+}
