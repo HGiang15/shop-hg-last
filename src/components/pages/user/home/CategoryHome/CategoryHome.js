@@ -1,16 +1,16 @@
 import React, {useState} from 'react';
 import Image from 'next/image';
 import styles from './CategoryHome.module.scss';
-import product1 from '../../../../../../public/static/images/products/product_1.webp';
-import product2 from '../../../../../../public/static/images/products/product_2.webp';
-import product3 from '../../../../../../public/static/images/products/product_3.webp';
-import product4 from '../../../../../../public/static/images/products/product_4.webp';
+import product1 from '../../../../../../public/static/images/products/ao_clb/mu_01.webp';
+import product2 from '../../../../../../public/static/images/products/ao_doituyen/eng_01.webp';
+import product3 from '../../../../../../public/static/images/products/ao_kologo/kologo_01.webp';
+import product4 from '../../../../../../public/static/images/products/giay_db/nike_01.webp';
 
 const categories = [
-	{id: 1, name: 'Quần nam', image: product1},
-	{id: 2, name: 'Áo khoác', image: product2},
-	{id: 3, name: 'Áo thun', image: product3},
-	{id: 4, name: 'Chân váy', image: product4},
+	{id: 1, name: 'Áo CLB', image: product1},
+	{id: 2, name: 'Áo đội tuyển', image: product2},
+	{id: 3, name: 'Áo không logo', image: product3},
+	{id: 4, name: 'Giày đá bóng', image: product4},
 ];
 
 const CategoryHome = () => {

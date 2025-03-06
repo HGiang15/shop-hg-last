@@ -5,7 +5,7 @@ const FilterProduct = () => {
 	const [selectedCategories, setSelectedCategories] = useState([]);
 	const [selectedColors, setSelectedColors] = useState([]);
 
-	const categories = ['Quần nam', 'Áo khoác', 'Áo thun', 'Chân váy'];
+	const categories = ['Áo đấu CLB', 'Áo đấu đội tuyển', 'Áo không logo', 'Quần bóng đá', 'Giày đá bóng'];
 	const colors = ['Màu đỏ', 'Màu xanh', 'Màu tím', 'Màu vàng'];
 
 	const handleCategoryChange = (category) => {

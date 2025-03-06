@@ -1,56 +1,56 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 import styles from './MainPageProduct.module.scss';
 import Breadcrumb from '@/components/Breadcrumb/Breadcrumb';
 import FilterProduct from '../FilterProduct/FilterProduct';
 import ProductCard from '../ProductCard/ProductCard';
 
 const MainPageProduct = () => {
-  const router = useRouter();
-  
-  const defaultBreadcrumbs = [
-    { label: 'Trang chủ', link: '/' },
-    { label: 'Sản phẩm', link: '/products' },
-    { label: 'Quần nam', link: '/products/quan-nam' },
-  ];
+	const router = useRouter();
 
-  const [breadcrumbItems, setBreadcrumbItems] = useState(defaultBreadcrumbs);
-  const [isLoading, setIsLoading] = useState(false); 
+	const defaultBreadcrumbs = [
+		{label: 'Trang chủ', link: '/'},
+		{label: 'Sản phẩm', link: '/products'},
+		{label: 'Áo đấu CLB', link: '/products/ao-dau-clb'},
+	];
 
-  useEffect(() => {
-    if (!router.isReady) return;
+	const [breadcrumbItems, setBreadcrumbItems] = useState(defaultBreadcrumbs);
+	const [isLoading, setIsLoading] = useState(false);
 
-    const fetchBreadcrumb = async () => {
-      setIsLoading(true);
-      try {
-        const category = router.query.category || 'quan-nam';
-        // const response = await axios.get(`/api/breadcrumb?category=${category}`);
+	useEffect(() => {
+		if (!router.isReady) return;
 
-        // // API data, update state
-        // if (response.data.length > 0) {
-        //   setBreadcrumbItems(response.data);
-        // }
-      } catch (error) {
-        console.error('Lỗi khi lấy dữ liệu:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+		const fetchBreadcrumb = async () => {
+			setIsLoading(true);
+			try {
+				const category = router.query.category || 'ao-dau-clb';
+				// const response = await axios.get(`/api/breadcrumb?category=${category}`);
 
-    fetchBreadcrumb();
-  }, [router.isReady, router.query.category]);
+				// // API data, update state
+				// if (response.data.length > 0) {
+				//   setBreadcrumbItems(response.data);
+				// }
+			} catch (error) {
+				console.error('Lỗi khi lấy dữ liệu:', error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
 
-  return (
-    <div className={styles.container}>
-      {isLoading ? <p>Đang tải...</p> : <Breadcrumb items={breadcrumbItems} />}
-      
-      <div className={styles.main}>
-        <FilterProduct />
-        <ProductCard />
-      </div>
-    </div>
-  );
+		fetchBreadcrumb();
+	}, [router.isReady, router.query.category]);
+
+	return (
+		<div className={styles.container}>
+			{isLoading ? <p>Đang tải...</p> : <Breadcrumb items={breadcrumbItems} />}
+
+			<div className={styles.main}>
+				<FilterProduct />
+				<ProductCard />
+			</div>
+		</div>
+	);
 };
 
 export default MainPageProduct;

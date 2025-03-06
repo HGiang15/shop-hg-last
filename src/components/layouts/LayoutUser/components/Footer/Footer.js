@@ -21,8 +21,9 @@ function Footer() {
 				<div className={styles.right}>
 					<div className={styles.column}>
 						<h3>Sản phẩm</h3>
-						<a href='#'>Quần áo nam</a>
-						<a href='#'>Quần áo nữ</a>
+						<a href='#'>Áo CLB</a>
+						<a href='#'>Áo đội tuyển</a>
+						<a href='#'>Áo không logo</a>
 						<a href='#'>Giày thể thao</a>
 					</div>
 
