@@ -38,9 +38,9 @@ function Header() {
 	};
 
 	const handleLogout = () => {
-		localStorage.removeItem('token'); // Xóa token
-		setUser(null); // Xóa thông tin user khỏi state
-		window.location.reload(); // Reload trang để cập nhật giao diện
+		localStorage.removeItem('token');
+		setUser(null);
+		window.location.reload();
 	};
 
 	return (

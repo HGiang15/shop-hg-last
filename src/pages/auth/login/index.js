@@ -19,20 +19,20 @@ export default function LoginPage() {
 }
 
 // Sử dụng getServerSideProps để kiểm tra token trước khi render trang
-export async function getServerSideProps(context) {
-	const cookies = parseCookies(context);
+// export async function getServerSideProps(context) {
+// 	const cookies = parseCookies(context);
 
-	// Nếu đã có token, chuyển hướng về trang Home
-	if (cookies.token) {
-		return {
-			redirect: {
-				destination: ROUTES.Home,
-				permanent: false,
-			},
-		};
-	}
+// 	// Nếu đã có token, chuyển hướng về trang Home
+// 	if (cookies.token) {
+// 		return {
+// 			redirect: {
+// 				destination: ROUTES.Home,
+// 				permanent: false,
+// 			},
+// 		};
+// 	}
 
-	return {
-		props: {},
-	};
-}
+// 	return {
+// 		props: {},
+// 	};
+// }

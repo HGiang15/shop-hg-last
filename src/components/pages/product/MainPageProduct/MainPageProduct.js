@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {useRouter} from 'next/router';
 import styles from './MainPageProduct.module.scss';
-import Breadcrumb from '@/components/Breadcrumb/Breadcrumb';
+import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 import FilterProduct from '../FilterProduct/FilterProduct';
 import ProductCard from '../ProductCard/ProductCard';
 

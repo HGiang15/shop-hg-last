@@ -11,7 +11,7 @@ import bgImage from '../../../../../public/static/images/auth/login-bg.jpg';
 import eyeOpen from '../../../../../public/static/icons/eye_open.svg';
 import eyeClose from '../../../../../public/static/icons/eye_close.svg';
 import logo from '../../../../../public/static/images/logo_small.svg';
-import spinner from '../../../../../public/static/images/spinner.svg';
+import Loading from '@/components/common/Loading/Loading';
 
 const MainLogin = () => {
 	const router = useRouter();
@@ -58,7 +58,7 @@ const MainLogin = () => {
 		try {
 			const response = await loginUser(formData.email, formData.password);
 
-			const {id, name, email, role} = response.data; // Get data user từ API
+			const {id, name, email, role} = response.data; // Get data user API
 			const token = response.token;
 			localStorage.setItem('token', token);
 			localStorage.setItem('name', name);
@@ -76,7 +76,7 @@ const MainLogin = () => {
 		} finally {
 			setTimeout(() => {
 				setLoading(false);
-			}, 4000);
+			}, 2000);
 		}
 	};
 
@@ -109,11 +109,7 @@ const MainLogin = () => {
 
 	return (
 		<div className={styles.container}>
-			{loading && (
-				<div className={styles.loadingOverlay}>
-					<Image src={spinner} alt='Loading...' width={50} height={50} />
-				</div>
-			)}
+			{loading && <Loading fullScreen />}
 
 			<div className={styles.loginWrapper}>
 				<div className={styles.loginContent}>

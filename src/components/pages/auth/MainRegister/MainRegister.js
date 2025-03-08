@@ -1,19 +1,24 @@
 import React, {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import {useRouter} from 'next/router';
+import axios from 'axios';
 import {ROUTES} from '@/constants/config';
-
+import {registerUser} from '@/services/registerService';
 import styles from './MainRegister.module.scss';
 import eyeOpen from '../../../../../public/static/icons/eye_open.svg';
 import eyeClose from '../../../../../public/static/icons/eye_close.svg';
 import logo from '../../../../../public/static/images/logo_small.svg';
+import Loading from '@/components/common/Loading/Loading';
 
 const MainRegister = () => {
+	const router = useRouter();
+
 	const [formData, setFormData] = useState({
-		fullName: '',
-		phone: '',
+		name: '',
 		email: '',
-		birthDate: '',
+		phone: '',
+		dateOfBirth: '',
 		gender: '',
 		password: '',
 		confirmPassword: '',
@@ -23,6 +28,8 @@ const MainRegister = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [isFormValid, setIsFormValid] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [serverError, setServerError] = useState('');
 
 	// Xử lý sự kiện khi người dùng nhập dữ liệu
 	const handleChange = (e) => {
@@ -76,6 +83,26 @@ const MainRegister = () => {
 		});
 	};
 
+	const handleRegister = async (e) => {
+		e.preventDefault();
+		setErrors({});
+		setServerError('');
+
+		try {
+			setLoading(true);
+			const response = await registerUser(formData);
+			if (response.status === 'Thành công') {
+				router.push(ROUTES.Login);
+			}
+		} catch (error) {
+			setServerError(error);
+		} finally {
+			setTimeout(() => {
+				setLoading(false);
+			}, 2000);
+		}
+	};
+
 	useEffect(() => {
 		const isValid = Object.values(formData).every((val) => val.trim() !== '') && Object.values(errors).every((err) => err === '');
 		setIsFormValid(isValid);
@@ -83,6 +110,8 @@ const MainRegister = () => {
 
 	return (
 		<div className={styles.container}>
+			{loading && <Loading fullScreen />}
+
 			<div className={styles.registerWrapper}>
 				<div className={styles.registerContent}>
 					<Link href={ROUTES.Home} className={styles.logo}>
@@ -92,19 +121,19 @@ const MainRegister = () => {
 					<h2 className={styles.registerTitle}>Tạo tài khoản mới</h2>
 					<p className={styles.registerLabel}>Đăng ký ngay để tham gia hệ thống đặt mua quần áo trực tuyến của chúng tôi!</p>
 
-					<form className={styles.formGroup}>
+					<form className={styles.formGroup} onSubmit={handleRegister}>
 						{/* Họ và Tên */}
 						<div className={styles.inputWrapper}>
 							<input
 								type='text'
-								name='fullName'
+								name='name'
 								className={`${styles.formInput} ${styles.fullWidth}`}
 								placeholder='Họ và Tên'
-								value={formData.fullName}
+								value={formData.name}
 								onChange={handleChange}
 								onBlur={handleBlur}
 							/>
-							{errors.fullName && <span className={styles.errorMsg}>{errors.fullName}</span>}
+							{errors.name && <span className={styles.errorMsg}>{errors.name}</span>}
 						</div>
 
 						{/* Email & Số điện thoại  */}
@@ -124,7 +153,7 @@ const MainRegister = () => {
 
 							<div className={styles.inputWrapper}>
 								<input
-									type='text'
+									type='number'
 									name='phone'
 									className={styles.formInput}
 									placeholder='Số điện thoại'
@@ -141,13 +170,13 @@ const MainRegister = () => {
 							<div className={styles.inputWrapper}>
 								<input
 									type='date'
-									name='birthDate'
+									name='dateOfBirth'
 									className={styles.formInput}
-									value={formData.birthDate}
+									value={formData.dateOfBirth}
 									onChange={handleChange}
 									onBlur={handleBlur}
 								/>
-								{errors.birthDate && <span className={styles.errorMsg}>{errors.birthDate}</span>}
+								{errors.dateOfBirth && <span className={styles.errorMsg}>{errors.dateOfBirth}</span>}
 							</div>
 
 							<div className={styles.inputWrapper}>
@@ -159,9 +188,9 @@ const MainRegister = () => {
 									onBlur={handleBlur}
 								>
 									<option value=''>Giới tính</option>
-									<option value='male'>Nam</option>
-									<option value='female'>Nữ</option>
-									<option value='other'>Khác</option>
+									<option value='Male'>Nam</option>
+									<option value='Female'>Nữ</option>
+									<option value='Other'>Khác</option>
 								</select>
 								{errors.gender && <span className={styles.errorMsg}>{errors.gender}</span>}
 							</div>
@@ -215,13 +244,14 @@ const MainRegister = () => {
 								{errors.confirmPassword && <span className={styles.errorMsg}>{errors.confirmPassword}</span>}
 							</div>
 						</div>
-					</form>
 
-					<div className={styles.actions}>
-						<button className={styles.btnRegister} disabled={!isFormValid}>
-							Đăng ký
-						</button>
-					</div>
+						<div className={styles.actions}>
+							<button className={styles.btnRegister} disabled={!isFormValid || loading}>
+								Đăng ký
+							</button>
+						</div>
+					</form>
+					{serverError && <p className={styles.errorMsg}>{serverError}</p>}
 
 					<div className={styles.registerAccount}>
 						<span className={styles.registerNot}>Bạn đã có tài khoản?</span>
