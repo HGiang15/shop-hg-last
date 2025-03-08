@@ -1,25 +1,30 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import {useRouter} from 'next/router';
+import {jwtDecode} from 'jwt-decode';
 import {ROUTES} from '@/constants/config';
+import {loginUser} from '@/services/authService';
 import styles from './MainLogin.module.scss';
 import googleIcon from '../../../../../public/static/icons/google.svg';
 import bgImage from '../../../../../public/static/images/auth/login-bg.jpg';
 import eyeOpen from '../../../../../public/static/icons/eye_open.svg';
 import eyeClose from '../../../../../public/static/icons/eye_close.svg';
 import logo from '../../../../../public/static/images/logo_small.svg';
+import spinner from '../../../../../public/static/images/spinner.svg';
 
 const MainLogin = () => {
+	const router = useRouter();
 	const [formData, setFormData] = useState({
 		email: '',
 		password: '',
 	});
 
 	const [errors, setErrors] = useState({});
+	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
-	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const [rememberMe, setRememberMe] = useState(false);
 
-	// Xử lý sự kiện khi người dùng nhập dữ liệu
 	const handleChange = (e) => {
 		const {name, value} = e.target;
 		setFormData({
@@ -27,7 +32,6 @@ const MainLogin = () => {
 			[name]: value,
 		});
 
-		// Nếu người dùng nhập thì xóa lỗi
 		if (errors[name]) {
 			setErrors({
 				...errors,
@@ -36,7 +40,6 @@ const MainLogin = () => {
 		}
 	};
 
-	// validate blur
 	const handleBlur = (e) => {
 		const {name, value} = e.target;
 		if (!value.trim()) {
@@ -47,8 +50,71 @@ const MainLogin = () => {
 		}
 	};
 
+	const handleLogin = async (e) => {
+		e.preventDefault();
+		setLoading(true);
+		setErrors({});
+
+		try {
+			const response = await loginUser(formData.email, formData.password);
+
+			const {id, name, email, role} = response.data; // Get data user từ API
+			const token = response.token;
+			localStorage.setItem('token', token);
+			localStorage.setItem('name', name);
+
+			if (rememberMe) {
+				const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
+				localStorage.setItem('email', email);
+				// localStorage.setItem('password', formData.password);
+				localStorage.setItem('remember_expiration', expirationTime);
+			}
+
+			router.push(ROUTES.Home);
+		} catch (error) {
+			setErrors({general: error.message || 'Đăng nhập thất bại'});
+		} finally {
+			setTimeout(() => {
+				setLoading(false);
+			}, 4000);
+		}
+	};
+
+	const handleRememberMeChange = () => {
+		setRememberMe((prev) => !prev);
+	};
+
+	useEffect(() => {
+		const savedEmail = localStorage.getItem('email');
+		// const savedPassword = localStorage.getItem('password');
+		const expirationTime = localStorage.getItem('remember_expiration');
+
+		if (savedEmail && expirationTime) {
+			const currentTime = new Date().getTime();
+
+			if (currentTime < expirationTime) {
+				setFormData({
+					email: savedEmail,
+					// password: savedPassword,
+				});
+				setRememberMe(true);
+			} else {
+				// Thời gian hết hạn, xoá dữ liệu cũ
+				localStorage.removeItem('email');
+				// localStorage.removeItem('password');
+				localStorage.removeItem('remember_expiration');
+			}
+		}
+	}, []);
+
 	return (
 		<div className={styles.container}>
+			{loading && (
+				<div className={styles.loadingOverlay}>
+					<Image src={spinner} alt='Loading...' width={50} height={50} />
+				</div>
+			)}
+
 			<div className={styles.loginWrapper}>
 				<div className={styles.loginContent}>
 					<Link href={ROUTES.Home} className={styles.logo}>
@@ -65,7 +131,7 @@ const MainLogin = () => {
 						<span className={styles.loginDesc}>Đăng nhập với Google</span>
 					</button>
 
-					<form className={styles.formGroup}>
+					<form className={styles.formGroup} onSubmit={handleLogin}>
 						{/* Email */}
 						<div className={styles.inputWrapper}>
 							<input
@@ -99,20 +165,30 @@ const MainLogin = () => {
 							/>
 						</div>
 						{errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
+
+						{/* Nút Đăng nhập */}
+						<div className={styles.actions}>
+							<button type='submit' className={styles.btnLogin} disabled={loading}>
+								Đăng nhập
+							</button>
+						</div>
 					</form>
+					{errors.general && <p className={styles.errorMsg}>{errors.general}</p>}
 
 					<div className={styles.contentWrapper}>
-						<input type='checkbox' className={styles.formCheckbox} id='remember' />
+						<input
+							type='checkbox'
+							className={styles.formCheckbox}
+							id='remember'
+							checked={rememberMe}
+							onChange={handleRememberMeChange}
+						/>
 						<label htmlFor='remember' className={styles.formText}>
 							Ghi nhớ trong 30 ngày
 						</label>
 						<a href={ROUTES.forgot_password} className={styles.formForgot}>
 							Quên mật khẩu
 						</a>
-					</div>
-
-					<div className={styles.actions}>
-						<button className={styles.btnLogin}>Đăng nhập</button>
 					</div>
 
 					<div className={styles.loginAccount}>

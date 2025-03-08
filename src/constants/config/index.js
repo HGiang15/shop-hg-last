@@ -1,14 +1,15 @@
 export const ROUTES = {
-    // User
+	// User
 	Home: '/',
-    About: '/about',
-    
-    
-    // Admin
+	About: '/about',
 
-    // Auth
-    Login: '/auth/login',
+	// Admin
+
+	// Auth
+	Login: '/auth/login',
 	Register: '/auth/register',
 	forgot_password: '/auth/forgot-password',
 	verify_password: '/auth/verify-password',
+
+	Profile: '/profile',
 };
