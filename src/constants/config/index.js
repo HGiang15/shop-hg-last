@@ -4,6 +4,8 @@ export const ROUTES = {
 	About: '/about',
 
 	// Admin
+	AdminDashboard: '/admin/dashboard',
+	AdminUser: '/admin/user',
 
 	// Auth
 	Login: '/auth/login',

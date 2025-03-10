@@ -1,0 +1,61 @@
+.menuTab {
+	width: 250px;
+	height: 100vh;
+	background: #fff;
+	box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+
+	.logo {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: 20px;
+	}
+
+	.menuList {
+		li {
+			margin-bottom: 10px;
+			border-radius: 8px;
+
+			.menuItem {
+				display: flex;
+				align-items: center;
+				text-decoration: none;
+				color: #23262f;
+				font-weight: 500;
+				padding: 10px 15px;
+				border-radius: 8px;
+				transition: 0.1s ease-in-out;
+
+				svg {
+					margin-right: 10px;
+					color: #888;
+				}
+
+				&:hover {
+					background: linear-gradient(90deg, #005994 -8.49%, #eb2c2c 155.32%);
+					color: #fff;
+
+					svg {
+						color: #fff;
+					}
+				}
+			}
+
+			&.active {
+				background: linear-gradient(90deg, #005994 -8.49%, #eb2c2c 155.32%);
+				color: #fff;
+
+				.menuItem {
+					color: #fff;
+
+					svg {
+						color: #fff;
+					}
+				}
+			}
+		}
+	}
+}

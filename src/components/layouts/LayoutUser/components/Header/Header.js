@@ -44,7 +44,7 @@ function Header() {
 	};
 
 	return (
-		<header className={styles.header}>
+		<div className={styles.header}>
 			{/* Logo */}
 			<div className={styles.header__logo}>
 				<Link href='/'>
@@ -127,7 +127,7 @@ function Header() {
 					</>
 				)}
 			</div>
-		</header>
+		</div>
 	);
 }
 

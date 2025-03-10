@@ -9,6 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.7",
+    "@mui/material": "^6.4.7",
+    "@tippyjs/react": "^4.2.6",
     "axios": "^1.8.1",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
