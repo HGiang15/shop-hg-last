@@ -20,7 +20,7 @@
 .divider {
 	width: 100%;
 	height: 2px;
-	background-color: #9c27b0;
+	background: #9c27b0;
 	margin: 5px 0 10px;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .filterLabel input:checked ~ .customCheckbox {
-	background-color: #9c27b0;
+	background: #9c27b0;
 	border-color: #9c27b0;
 }
 
@@ -58,7 +58,7 @@
 	height: 20px;
 	border: 2px solid #ccc;
 	border-radius: 4px;
-	background-color: #fff;
+	background: #fff;
 	transition: all 0.3s;
 }
 

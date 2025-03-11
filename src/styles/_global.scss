@@ -89,7 +89,7 @@ input[type='number'] {
 }
 
 input:-internal-autofill-selected {
-	background-color: transparent !important;
+	background: transparent !important;
 }
 
 #nprogress {
@@ -173,7 +173,7 @@ input:-internal-autofill-selected {
 	text-align: center;
 	padding: 6px;
 	line-height: 24px;
-	background-color: var(--light);
+	background: var(--light);
 	border-radius: 60px;
 	margin: 10px;
 
@@ -200,7 +200,7 @@ input:-internal-autofill-selected {
 	text-align: center;
 	padding: 6px;
 	line-height: 24px;
-	background-color: var(--light);
+	background: var(--light);
 	border-radius: 60px;
 	margin: 10px;
 
@@ -227,7 +227,7 @@ input:-internal-autofill-selected {
 	text-align: center;
 	padding: 6px;
 	line-height: 24px;
-	background-color: var(--light);
+	background: var(--light);
 	border-radius: 60px;
 	margin: 10px;
 
@@ -254,7 +254,7 @@ input:-internal-autofill-selected {
 	text-align: center;
 	padding: 6px;
 	line-height: 24px;
-	background-color: var(--light);
+	background: var(--light);
 	border-radius: 60px;
 	margin: 10px;
 
@@ -281,7 +281,7 @@ input:-internal-autofill-selected {
 	text-align: center;
 	padding: 6px;
 	line-height: 24px;
-	background-color: var(--light);
+	background: var(--light);
 	border-radius: 60px;
 	margin: 10px;
 
@@ -306,7 +306,7 @@ input:-internal-autofill-selected {
 .ft-slick__dots--custom {
 	height: 6px;
 	width: 18px;
-	background-color: #8895a1;
+	background: #8895a1;
 	border-radius: 4px;
 	position: relative;
 	margin-top: 14px;

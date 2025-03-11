@@ -115,7 +115,7 @@
 					}
 
 					&:disabled {
-						background-color: var(--primary-main);
+						background: var(--primary-main);
 						opacity: 0.7;
 						cursor: not-allowed;
 					}

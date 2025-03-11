@@ -2,7 +2,7 @@
 	position: fixed;
 	left: 0;
 	top: 0;
-	width: 100vw;  
+	width: 100vw;
 	z-index: 999;
 
 	padding: 0 20px;
@@ -11,8 +11,8 @@
 	align-items: center;
 	justify-content: space-between;
 
-	background-color: #fff; 
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 	
+	background: #fff;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
 	/* TABLET */
 	@media (max-width: 768px) {
