@@ -1,0 +1,102 @@
+.container {
+	padding: 20px;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.addButton {
+	background-color: #3498db;
+	color: #fff;
+	border: none;
+	padding: 8px 12px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.addButton:hover {
+	background-color: #2980b9;
+}
+
+.userTable {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.userTable th,
+.userTable td {
+	border: 1px solid #ddd;
+	padding: 10px;
+	text-align: center;
+	font-size: 14px;
+}
+
+.userTable th {
+	background-color: #405189;
+	color: #fff;
+	font-weight: 600;
+}
+
+// Role
+.adminRole {
+	background-color: #ff6b6b;
+	color: #fff;
+	padding: 5px 10px;
+	border-radius: 5px;
+}
+
+.userRole {
+	background-color: #2ecc71;
+	color: #fff;
+	padding: 5px 10px;
+	border-radius: 5px;
+}
+
+.activeStatus {
+	background-color: #1abc9c;
+	color: #fff;
+	padding: 5px 10px;
+	border-radius: 5px;
+}
+
+.editBtn,
+.lockBtn,
+.resetBtn {
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 18px;
+	margin: 0 5px;
+}
+
+.editBtn img {
+	filter: brightness(0) saturate(100%) invert(44%) sepia(91%) saturate(2122%) hue-rotate(183deg) brightness(96%) contrast(92%);
+}
+
+.lockBtn img {
+	filter: brightness(0) saturate(100%) invert(21%) sepia(85%) saturate(7487%) hue-rotate(357deg) brightness(93%) contrast(110%);
+}
+
+.resetBtn img {
+	filter: brightness(0) saturate(100%) invert(68%) sepia(99%) saturate(848%) hue-rotate(5deg) brightness(103%) contrast(97%);
+}
+
+.editBtn:hover img {
+	filter: brightness(0) saturate(100%) invert(30%) sepia(99%) saturate(2000%) hue-rotate(200deg) brightness(100%) contrast(90%);
+}
+
+.lockBtn:hover img {
+	filter: brightness(0) saturate(100%) invert(40%) sepia(100%) saturate(3000%) hue-rotate(350deg) brightness(100%) contrast(90%);
+}
+
+.resetBtn:hover img {
+	filter: brightness(0) saturate(100%) invert(55%) sepia(100%) saturate(500%) hue-rotate(10deg) brightness(110%) contrast(100%);
+}
+
+.trashBtn:hover img {
+	filter: brightness(0) saturate(100%) invert(35%) sepia(100%) saturate(2500%) hue-rotate(5deg) brightness(100%) contrast(90%);
+}

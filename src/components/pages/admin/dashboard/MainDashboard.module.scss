@@ -1,2 +1,38 @@
 .container {
+	padding: 10px;
+
+	.title {
+		margin: 20px 0;
+		color: #333;
+		font-weight: 600;
+	}
+
+	.statsGrid {
+		display: flex;
+		gap: 15px;
+
+		.card {
+			background: #f8f9fa;
+			padding: 15px;
+			border-radius: 8px;
+			width: 300px;
+			text-align: center;
+			box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+
+			.icon {
+				font-size: 30px;
+				margin-bottom: 5px;
+			}
+
+			.text {
+				color: #666;
+				margin: 5px 0;
+			}
+
+			.value {
+				font-size: 22px;
+				color: #000;
+			}
+		}
+	}
 }
