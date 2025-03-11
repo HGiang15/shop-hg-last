@@ -30,7 +30,6 @@ const MainVerify = () => {
 		}
 	};
 
-	// validate blur
 	const handleBlur = (e) => {
 		const {name, value} = e.target;
 		let errorMsg = '';
@@ -54,11 +53,8 @@ const MainVerify = () => {
 					</Link>
 
 					<h2 className={styles.verifyTitle}>Xác minh email</h2>
-					<p className={styles.verifyLabel}>
-                    Bạn đã gửi mã đến Email gianghoang150503@gmail.com
-					</p>
+					<p className={styles.verifyLabel}>Bạn đã gửi mã đến Email gianghoang150503@gmail.com</p>
 
-                    {/* Form */}
 					<form className={styles.formGroup}>
 						{/* OTP */}
 						<div className={styles.inputWrapper}>

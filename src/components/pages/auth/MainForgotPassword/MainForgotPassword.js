@@ -30,7 +30,6 @@ const MainForgotPassword = () => {
 		}
 	};
 
-	// validate blur
 	const handleBlur = (e) => {
 		const {name, value} = e.target;
 		let errorMsg = '';
@@ -65,7 +64,6 @@ const MainForgotPassword = () => {
 						Nhập email của bạn bên dưới và chúng tôi sẽ gửi cho bạn hướng dẫn về cách đặt lại mật khẩu.
 					</p>
 
-                    {/* Form */}
 					<form className={styles.formGroup}>
 						{/* Email */}
 						<div className={styles.inputWrapper}>
@@ -83,7 +81,9 @@ const MainForgotPassword = () => {
 					</form>
 
 					<div className={styles.actions}>
-						<button className={styles.btnForgot} href={''}>Đặt lại mật khẩu</button>
+						<button className={styles.btnForgot} href={''}>
+							Đặt lại mật khẩu
+						</button>
 					</div>
 
 					<div className={styles.forgotAccount}>

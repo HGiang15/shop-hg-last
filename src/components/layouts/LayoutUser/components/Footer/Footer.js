@@ -7,7 +7,6 @@ function Footer() {
 	return (
 		<footer className={styles.footer}>
 			<div className={styles.container}>
-				{/* Column left */}
 				<div className={styles.left}>
 					<Image className={styles.logo_home} src={logo} alt='Logo' />
 					<p>
@@ -17,7 +16,6 @@ function Footer() {
 					<p>© 2025 2151160496 K63 HTTT1</p>
 				</div>
 
-				{/* Column right */}
 				<div className={styles.right}>
 					<div className={styles.column}>
 						<h3>Sản phẩm</h3>

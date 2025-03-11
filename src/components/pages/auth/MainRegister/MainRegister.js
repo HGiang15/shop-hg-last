@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import axios from 'axios';
 import {ROUTES} from '@/constants/config';
 import {registerUser} from '@/services/registerService';
 import styles from './MainRegister.module.scss';
@@ -49,7 +48,6 @@ const MainRegister = () => {
 		}
 	};
 
-	// validate blur
 	const handleBlur = (e) => {
 		const {name, value} = e.target;
 		let errorMsg = '';

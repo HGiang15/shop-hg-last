@@ -49,12 +49,11 @@ function BannerHome() {
 			<Slider {...settings}>
 				{banners.map((banner, index) => (
 					<div key={index} className={styles.item}>
-						<Image src={banner} alt={`Banner ${index + 1}`} layout="fill" objectFit="cover" className={styles.image} />
+						<Image src={banner} alt={`Banner ${index + 1}`} layout='fill' objectFit='cover' className={styles.image} />
 					</div>
 				))}
 			</Slider>
 
-			{/* Section */}
 			<section className={styles.section}>
 				<div className={styles.sectionItem}>
 					<h4>MIỄN PHÍ giao hàng</h4>

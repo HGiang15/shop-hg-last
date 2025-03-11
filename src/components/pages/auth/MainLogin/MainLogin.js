@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {jwtDecode} from 'jwt-decode';
 import {ROUTES} from '@/constants/config';
 import {loginUser} from '@/services/authService';
 import styles from './MainLogin.module.scss';
@@ -168,7 +167,6 @@ const MainLogin = () => {
 						</div>
 						{errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
 
-						{/* Nút Đăng nhập */}
 						<div className={styles.actions}>
 							<button type='submit' className={styles.btnLogin} disabled={loading}>
 								Đăng nhập
