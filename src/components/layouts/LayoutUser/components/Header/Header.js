@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
+import {useRouter} from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 import {FaBars, FaTimes} from 'react-icons/fa';
 import {jwtDecode} from 'jwt-decode';
 import {ROUTES} from '@/constants/config';
+import Loading from '@/components/common/Loading/Loading';
 import logo from '../../../../../../public/static/images/logo_small.svg';
 import defaultAvatar from '../../../../../../public/static/images/auth/user.svg';
 import styles from './Header.module.scss';
@@ -11,9 +13,10 @@ import styles from './Header.module.scss';
 function Header() {
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [user, setUser] = useState(null);
+	const [loading, setLoading] = useState(false);
 	const [showDropdown, setShowDropdown] = useState(false);
+	const router = useRouter();
 
-	// Lấy thông tin user từ localStorage khi component mount
 	useEffect(() => {
 		const token = localStorage.getItem('token');
 		const name = localStorage.getItem('name');
@@ -38,14 +41,18 @@ function Header() {
 	};
 
 	const handleLogout = () => {
+		setLoading(true);
 		localStorage.removeItem('token');
 		setUser(null);
-		window.location.reload();
+
+		setTimeout(() => {
+			setLoading(false);
+			router.push('/');
+		}, 1500);
 	};
 
 	return (
 		<div className={styles.header}>
-			{/* Logo */}
 			<div className={styles.header__logo}>
 				<Link href='/'>
 					<Image className={styles.logo_home} src={logo} alt='Logo' />
@@ -60,7 +67,6 @@ function Header() {
 			{/* Overlay */}
 			<div className={`${styles.overlay} ${menuOpen ? styles.open : ''}`} onClick={toggleMenu}></div>
 
-			{/* Menu */}
 			<nav className={`${styles.header__nav} ${menuOpen ? styles.open : ''}`}>
 				<ul className={styles.nav__list}>
 					<li className={styles.nav__item}>
@@ -91,7 +97,6 @@ function Header() {
 				</ul>
 			</nav>
 
-			{/* Actions */}
 			<div className={styles.header__auth}>
 				{user ? (
 					// if login
@@ -107,7 +112,6 @@ function Header() {
 							<span className={styles.userName}>{user.name || 'Người dùng'}</span>
 						</div>
 
-						{/* Dropdown Menu */}
 						<ul className={styles.dropdownMenu}>
 							<li>
 								<Link href='/profile'>Thông tin tài khoản</Link>
@@ -127,6 +131,8 @@ function Header() {
 					</>
 				)}
 			</div>
+
+			{loading && <Loading fullScreen />}
 		</div>
 	);
 }

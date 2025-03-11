@@ -29,6 +29,7 @@ const MainRegister = () => {
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [isFormValid, setIsFormValid] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [showSuccessModal, setShowSuccessModal] = useState(false);
 	const [serverError, setServerError] = useState('');
 
 	// Xử lý sự kiện khi người dùng nhập dữ liệu
@@ -92,14 +93,18 @@ const MainRegister = () => {
 			setLoading(true);
 			const response = await registerUser(formData);
 			if (response.status === 'Thành công') {
-				router.push(ROUTES.Login);
+				setShowSuccessModal(true);
+
+				setTimeout(() => {
+					router.push(ROUTES.Login);
+				}, 3000);
 			}
 		} catch (error) {
 			setServerError(error);
 		} finally {
 			setTimeout(() => {
 				setLoading(false);
-			}, 2000);
+			}, 4000);
 		}
 	};
 
@@ -111,6 +116,14 @@ const MainRegister = () => {
 	return (
 		<div className={styles.container}>
 			{loading && <Loading fullScreen />}
+
+			{showSuccessModal && (
+				<div className={styles.modalOverlay}>
+					<div className={styles.modalContent}>
+						<h3>Chúc mừng bạn đã đăng ký thành công ✅</h3>
+					</div>
+				</div>
+			)}
 
 			<div className={styles.registerWrapper}>
 				<div className={styles.registerContent}>

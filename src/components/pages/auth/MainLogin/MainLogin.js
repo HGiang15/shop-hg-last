@@ -70,13 +70,19 @@ const MainLogin = () => {
 				localStorage.setItem('remember_expiration', expirationTime);
 			}
 
-			router.push(ROUTES.Home);
+			if (role === 1) {
+				router.push(ROUTES.Home);
+			} else if (role === 0) {
+				router.push(ROUTES.AdminDashboard);
+			} else {
+				setErrors({general: 'Vai trò không hợp lệ'});
+			}
 		} catch (error) {
 			setErrors({general: error.message || 'Đăng nhập thất bại'});
 		} finally {
 			setTimeout(() => {
 				setLoading(false);
-			}, 2000);
+			}, 4000);
 		}
 	};
 

@@ -20,5 +20,5 @@ export default function Page() {
 }
 
 Page.getLayout = function (page) {
-	return <LayoutAdmin>{page}</LayoutAdmin>;
+	return <LayoutAdmin title='Báo cáo thống kê'>{page}</LayoutAdmin>;
 };
