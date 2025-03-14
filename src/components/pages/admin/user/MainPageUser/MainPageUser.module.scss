@@ -19,49 +19,30 @@
 }
 
 .addButton:hover {
-	background: #2980b9;
-}
-
-.userTable {
-	width: 100%;
-	border-collapse: collapse;
-}
-
-.userTable th,
-.userTable td {
-	border: 1px solid #ddd;
-	padding: 10px;
-	text-align: center;
-	font-size: 14px;
-}
-
-.userTable th {
-	background: #405189;
-	color: #fff;
-	font-weight: 600;
+	opacity: 0.9;
 }
 
 // Role
-.adminRole {
-	background: #ff6b6b;
-	color: #fff;
-	padding: 5px 10px;
-	border-radius: 5px;
-}
+// .adminRole {
+// 	background: #ff6b6b;
+// 	color: #fff;
+// 	padding: 5px 10px;
+// 	border-radius: 5px;
+// }
 
-.userRole {
-	background: #2ecc71;
-	color: #fff;
-	padding: 5px 10px;
-	border-radius: 5px;
-}
+// .userRole {
+// 	background: #2ecc71;
+// 	color: #fff;
+// 	padding: 5px 10px;
+// 	border-radius: 5px;
+// }
 
-.activeStatus {
-	background: #1abc9c;
-	color: #fff;
-	padding: 5px 10px;
-	border-radius: 5px;
-}
+// .activeStatus {
+// 	background: #1abc9c;
+// 	color: #fff;
+// 	padding: 5px 10px;
+// 	border-radius: 5px;
+// }
 
 .editBtn,
 .lockBtn,

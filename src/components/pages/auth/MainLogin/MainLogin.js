@@ -186,9 +186,9 @@ const MainLogin = () => {
 						<label htmlFor='remember' className={styles.formText}>
 							Ghi nhớ trong 30 ngày
 						</label>
-						<a href={ROUTES.forgot_password} className={styles.formForgot}>
+						<Link href={ROUTES.forgot_password} className={styles.formForgot}>
 							Quên mật khẩu
-						</a>
+						</Link>
 					</div>
 
 					<div className={styles.loginAccount}>

@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import product1 from '../../../../../../public/static/images/background.jpg';
 import styles from './AboutHome.module.scss';
 
@@ -20,9 +21,9 @@ const AboutHome = () => {
 						Đến với HG Shop, bạn không chỉ mua áo đá bóng mà còn khẳng định phong cách và niềm đam mê sân cỏ. Hãy cùng HG Shop
 						cháy hết mình với đam mê bóng đá! ⚡⚽
 					</p>
-					<a href='/about' className={styles.learnMore}>
+					<Link href='/about' className={styles.learnMore}>
 						Về chúng tôi
-					</a>
+					</Link>
 				</div>
 				<div className={styles.aboutImage} data-aos='fade-left'>
 					<Image src={product1} alt='Về chúng tôi' width={500} height={350} className={styles.image} />

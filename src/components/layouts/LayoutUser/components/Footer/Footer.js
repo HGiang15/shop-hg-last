@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import styles from './Footer.module.scss';
 import Image from 'next/image';
 import logo from '../../../../../../public/static/icons/logo.png';
@@ -19,31 +20,31 @@ function Footer() {
 				<div className={styles.right}>
 					<div className={styles.column}>
 						<h3>Sản phẩm</h3>
-						<a href='#'>Áo CLB</a>
-						<a href='#'>Áo đội tuyển</a>
-						<a href='#'>Áo không logo</a>
-						<a href='#'>Giày thể thao</a>
+						<Link href='#'>Áo CLB</Link>
+						<Link href='#'>Áo đội tuyển</Link>
+						<Link href='#'>Áo không logo</Link>
+						<Link href='#'>Giày thể thao</Link>
 					</div>
 
 					<div className={styles.column}>
 						<h3>Về chúng tôi</h3>
-						<a href='#'>Giới thiệu</a>
-						<a href='#'>Chính sách bảo mật</a>
-						<a href='#'>Điều khoản sử dụng</a>
+						<Link href='#'>Giới thiệu</Link>
+						<Link href='#'>Chính sách bảo mật</Link>
+						<Link href='#'>Điều khoản sử dụng</Link>
 					</div>
 
 					<div className={styles.column}>
 						<h3>Hỗ trợ khách hàng</h3>
-						<a href='#'>Hướng dẫn mua hàng</a>
-						<a href='#'>Phương thức thanh toán</a>
-						<a href='#'>Chính sách đổi trả</a>
+						<Link href='#'>Hướng dẫn mua hàng</Link>
+						<Link href='#'>Phương thức thanh toán</Link>
+						<Link href='#'>Chính sách đổi trả</Link>
 					</div>
 
 					<div className={styles.column}>
 						<h3>Liên hệ</h3>
-						<a href='#'>Email: gianghoang150503@gmail.com</a>
-						<a href='#'>Hotline: 1900 9999</a>
-						<a href='#'>Fanpage Facebook</a>
+						<Link href='#'>Email: gianghoang150503@gmail.com</Link>
+						<Link href='#'>Hotline: 1900 9999</Link>
+						<Link href='#'>Fanpage Facebook</Link>
 					</div>
 				</div>
 			</div>

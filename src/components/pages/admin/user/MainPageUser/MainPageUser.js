@@ -1,10 +1,11 @@
 import React from 'react';
 import styles from './MainPageUser.module.scss';
-import Image from 'next/image';
 import lock from '../../../../../../public/static/icons/lock.svg';
 import unlock from '../../../../../../public/static/icons/unlock.svg';
 import edit from '../../../../../../public/static/icons/edit.svg';
 import changeRole from '../../../../../../public/static/icons/change_role.svg';
+import Table from '@/components/common/Table/Table';
+import Image from 'next/image';
 
 const users = [
 	{id: 1, name: 'Tesst', phone: '0398162589', email: 'giang@gmail.com', role: 'Quản trị', status: 'Đang hoạt động'},
@@ -20,6 +21,21 @@ const users = [
 	{id: 5, name: 'ADMIN', phone: '0339940200', email: 'admin@gmail.com', role: 'Quản trị', status: 'Đang hoạt động'},
 ];
 
+const columns = [
+	{key: 'id', label: 'STT'},
+	{key: 'name', label: 'Họ tên'},
+	{key: 'phone', label: 'Số điện thoại'},
+	{key: 'email', label: 'Email'},
+	{key: 'role', label: 'Quyền'},
+	{key: 'status', label: 'Trạng thái'},
+];
+
+const actions = (user) => [
+	{label: 'Edit', icon: edit},
+	{label: 'Lock/Unlock', icon: user.status === 'Đang hoạt động' ? lock : unlock},
+	{label: 'Change Role', icon: changeRole},
+];
+
 const MainPageUser = () => {
 	return (
 		<div className={styles.container}>
@@ -28,51 +44,7 @@ const MainPageUser = () => {
 				<button className={styles.addButton}>Thêm mới người dùng</button>
 			</div>
 
-			<table className={styles.userTable}>
-				<thead>
-					<tr>
-						<th>STT</th>
-						<th>Họ tên</th>
-						<th>Số điện thoại</th>
-						<th>Email</th>
-						<th>Quyền</th>
-						<th>Trạng thái</th>
-						<th>Hành động</th>
-					</tr>
-				</thead>
-				<tbody>
-					{users.map((user, index) => (
-						<tr key={user.id}>
-							<td>{index + 1}</td>
-							<td>{user.name}</td>
-							<td>{user.phone}</td>
-							<td>{user.email}</td>
-							<td>
-								<span className={user.role === 'Quản trị' ? styles.adminRole : styles.userRole}>{user.role}</span>
-							</td>
-							<td>
-								<span className={styles.activeStatus}>{user.status}</span>
-							</td>
-							<td>
-								<button className={styles.editBtn}>
-									<Image src={edit} alt='Edit' width={20} height={20} />
-								</button>
-								<button className={styles.lockBtn}>
-									<Image
-										src={user.status === 'Đang hoạt động' ? lock : unlock}
-										alt='Lock/Unlock'
-										width={20}
-										height={20}
-									/>
-								</button>
-								<button className={styles.resetBtn}>
-									<Image src={changeRole} alt='Reset' width={20} height={20} />
-								</button>
-							</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
+			<Table columns={columns} data={users} actions={actions} />
 		</div>
 	);
 };
