@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './HeroSection.module.scss';
-import heroImage from '../../../../../../public/static/images/background.jpg';
+import heroImage from '../../../../../../public/static/images/10.jpg';
 
 const HeroSection = () => {
 	return (

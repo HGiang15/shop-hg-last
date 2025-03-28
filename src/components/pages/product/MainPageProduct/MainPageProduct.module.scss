@@ -1,7 +1,21 @@
 .main {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 40px;
-    max-width: 1440px;  
+	display: grid;
+	grid-template-columns: 240px 1fr;
+	gap: 40px;
+	max-width: 1440px;
 	margin: 0 auto;
+}
+
+.imageGallery {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	img {
+		width: 100%;
+		height: auto;
+		object-fit: cover;
+		border-radius: 10px;
+	}
 }

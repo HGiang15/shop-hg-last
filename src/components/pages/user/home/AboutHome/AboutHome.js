@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import product1 from '../../../../../../public/static/images/background.jpg';
+import product1 from '../../../../../../public/static/images/14.jpg';
 import styles from './AboutHome.module.scss';
 
 const AboutHome = () => {
