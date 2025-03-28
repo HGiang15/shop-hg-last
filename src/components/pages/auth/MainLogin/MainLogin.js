@@ -5,11 +5,8 @@ import {useRouter} from 'next/router';
 import {ROUTES} from '@/constants/config';
 import {loginUser} from '@/services/authService';
 import styles from './MainLogin.module.scss';
-import googleIcon from '../../../../../public/static/icons/google.svg';
-import bgImage from '../../../../../public/static/images/auth/login-bg.jpg';
-import eyeOpen from '../../../../../public/static/icons/eye_open.svg';
-import eyeClose from '../../../../../public/static/icons/eye_close.svg';
-import logo from '../../../../../public/static/images/logo_small.svg';
+import icons from '@/constants/static/icons';
+import images from '@/constants/static/images';
 import Loading from '@/components/common/Loading/Loading';
 
 const MainLogin = () => {
@@ -119,7 +116,7 @@ const MainLogin = () => {
 			<div className={styles.loginWrapper}>
 				<div className={styles.loginContent}>
 					<Link href={ROUTES.Home} className={styles.logo}>
-						<Image src={logo} alt='Logo' width={50} height={50} />
+						<Image src={icons.logoSmall} alt='Logo' width={50} height={50} />
 					</Link>
 
 					<h2 className={styles.loginTitle}>Đăng nhập tài khoản</h2>
@@ -128,7 +125,7 @@ const MainLogin = () => {
 					</p>
 
 					<button className={styles.loginAction}>
-						<Image src={googleIcon} alt='Google' width={24} height={24} className={styles.loginImg} />
+						<Image src={icons.googleIcon} alt='Google' width={24} height={24} className={styles.loginImg} />
 						<span className={styles.loginDesc}>Đăng nhập với Google</span>
 					</button>
 
@@ -159,7 +156,7 @@ const MainLogin = () => {
 								placeholder='Password'
 							/>
 							<Image
-								src={showPassword ? eyeOpen : eyeClose}
+								src={showPassword ? icons.eyeOpen : icons.eyeClose}
 								alt='Toggle password visibility'
 								onClick={() => setShowPassword((prev) => !prev)}
 								className={styles.eyeIcon}
@@ -199,7 +196,7 @@ const MainLogin = () => {
 					</div>
 				</div>
 				<div className={styles.media}>
-					<Image src={bgImage} alt='Login Background' layout='fill' objectFit='cover' className={styles.loginMedia} />
+					<Image src={images.bgLogin} alt='Login Background' layout='fill' objectFit='cover' className={styles.loginMedia} />
 				</div>
 			</div>
 		</div>

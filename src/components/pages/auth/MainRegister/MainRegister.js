@@ -5,9 +5,7 @@ import {useRouter} from 'next/router';
 import {ROUTES} from '@/constants/config';
 import {registerUser} from '@/services/registerService';
 import styles from './MainRegister.module.scss';
-import eyeOpen from '../../../../../public/static/icons/eye_open.svg';
-import eyeClose from '../../../../../public/static/icons/eye_close.svg';
-import logo from '../../../../../public/static/images/logo_small.svg';
+import icons from '@/constants/static/icons';
 import Loading from '@/components/common/Loading/Loading';
 
 const MainRegister = () => {
@@ -126,7 +124,7 @@ const MainRegister = () => {
 			<div className={styles.registerWrapper}>
 				<div className={styles.registerContent}>
 					<Link href={ROUTES.Home} className={styles.logo}>
-						<Image src={logo} alt='Logo' width={50} height={50} />
+						<Image src={icons.logoSmall} alt='Logo' width={50} height={50} />
 					</Link>
 
 					<h2 className={styles.registerTitle}>Tạo tài khoản mới</h2>
@@ -221,7 +219,7 @@ const MainRegister = () => {
 								/>
 								<span className={styles.inputToggle}>
 									<Image
-										src={showPassword ? eyeOpen : eyeClose}
+										src={showPassword ? icons.eyeOpen : icons.eyeClose}
 										alt='Toggle Password'
 										className={styles.eyeIcon}
 										onClick={() => setShowPassword(!showPassword)}
@@ -244,7 +242,7 @@ const MainRegister = () => {
 								/>
 								<span className={styles.inputToggle}>
 									<Image
-										src={showConfirmPassword ? eyeOpen : eyeClose}
+										src={showConfirmPassword ? icons.eyeOpen : icons.eyeClose}
 										alt='Toggle Confirm Password'
 										className={styles.eyeIcon}
 										onClick={() => setShowConfirmPassword(!showConfirmPassword)}

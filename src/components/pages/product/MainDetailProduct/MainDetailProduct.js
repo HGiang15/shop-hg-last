@@ -1,22 +1,15 @@
 import React, {useState} from 'react';
 import Image from 'next/image';
+import images from '@/constants/static/images';
+import icons from '@/constants/static/icons';
 import styles from './MainDetailProduct.module.scss';
 import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
-import product1 from '../../../../../public/static/images/products/ao_clb/mu_01.webp';
-import product2 from '../../../../../public/static/images/products/ao_clb/arsenal_01.webp';
-import product3 from '../../../../../public/static/images/products/ao_clb/bayern_01.webp';
-import product4 from '../../../../../public/static/images/products/ao_clb/chel_01.webp';
-import product5 from '../../../../../public/static/images/products/ao_clb/liver_01.webp';
-import shipper from '../../../../../public/static/icons/shipper.svg';
-import change from '../../../../../public/static/icons/change.svg';
-import medalStar from '../../../../../public/static/icons/medal-star.svg';
-import rotate from '../../../../../public/static/icons/rotate.svg';
-import global from '../../../../../public/static/icons/global.svg';
 
 const MainDetailProduct = () => {
 	const defaultBreadcrumbs = [
 		{label: 'Trang chủ', link: '/'},
 		{label: 'Sản phẩm', link: '/products'},
+
 		{label: 'Áo đấu CLB', link: '/products/ao-dau-clb'},
 		{label: 'MU Home 2024-2025', link: '/products/ao-dau-clb/mu-home'},
 	];
@@ -37,8 +30,10 @@ const MainDetailProduct = () => {
 	const [reviews, setReviews] = useState(initialReviews);
 	const [newReview, setNewReview] = useState({name: '', rating: 5, comment: ''});
 
-	const images = [product1, product2, product3, product4, product5];
-	const [mainImage, setMainImage] = useState(images[0]);
+	console.log(images);
+
+	const productImages = [images.product1, images.product2, images.product3, images.product4, images.product5];
+	const [mainImage, setMainImage] = useState(productImages[0]);
 
 	const handleSizeChange = (size) => setSelectedSize(size);
 
@@ -73,7 +68,7 @@ const MainDetailProduct = () => {
 					/>
 
 					<div className={styles.thumbnailContainer}>
-						{images.map((img, index) => (
+						{productImages.map((img, index) => (
 							<Image
 								key={index}
 								src={img}
@@ -137,23 +132,23 @@ const MainDetailProduct = () => {
 						<h3>Chính sách & Ưu đãi</h3>
 						<ul>
 							<li>
-								<Image src={rotate} alt='Đổi trả' width={22} height={22} className={styles.iconDesc} />
+								<Image src={icons.rotate} alt='Đổi trả' width={22} height={22} className={styles.iconDesc} />
 								Hỗ trợ đổi size hoặc trả hàng trong vòng 7 ngày nếu sản phẩm lỗi hoặc không vừa.
 							</li>
 							<li>
-								<Image src={medalStar} alt='Bảo hành' width={22} height={22} className={styles.iconDesc} />
+								<Image src={icons.medalStar} alt='Bảo hành' width={22} height={22} className={styles.iconDesc} />
 								Cam kết bảo hành sản phẩm 6 tháng đối với lỗi do nhà sản xuất.
 							</li>
 							<li>
-								<Image src={change} alt='Quà tặng' width={22} height={22} className={styles.iconDesc} />
+								<Image src={icons.change} alt='Quà tặng' width={22} height={22} className={styles.iconDesc} />
 								Mua ngay hôm nay để nhận tặng kèm 1 đôi tất thể thao miễn phí!
 							</li>
 							<li>
-								<Image src={shipper} alt='Giao hàng' width={22} height={22} className={styles.iconDesc} />
+								<Image src={icons.shipper} alt='Giao hàng' width={22} height={22} className={styles.iconDesc} />
 								Nhận hàng trong vòng 2-3 ngày đối với khu vực nội thành.
 							</li>
 							<li>
-								<Image src={global} alt='Miễn phí vận chuyển' width={22} height={22} className={styles.iconDesc} />
+								<Image src={icons.global} alt='Miễn phí vận chuyển' width={22} height={22} className={styles.iconDesc} />
 								Đơn hàng từ 500.000 VNĐ trở lên được miễn phí ship toàn quốc.
 							</li>
 						</ul>

@@ -3,8 +3,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {ROUTES} from '@/constants/config';
 import styles from './MainVerify.module.scss';
-import bgImage from '../../../../../public/static/images/auth/login-bg.jpg';
-import logo from '../../../../../public/static/images/logo_small.svg';
+import images from '@/constants/static/images';
+import icons from '@/constants/static/icons';
 
 const MainVerify = () => {
 	const [formData, setFormData] = useState({
@@ -49,7 +49,7 @@ const MainVerify = () => {
 			<div className={styles.verifyWrapper}>
 				<div className={styles.verifyContent}>
 					<Link href={ROUTES.Home} className={styles.logo}>
-						<Image src={logo} alt='Logo' width={50} height={50} />
+						<Image src={icons.logoSmall} alt='Logo' width={50} height={50} />
 					</Link>
 
 					<h2 className={styles.verifyTitle}>Xác minh email</h2>
@@ -82,7 +82,7 @@ const MainVerify = () => {
 					</div>
 				</div>
 				<div className={styles.media}>
-					<Image src={bgImage} alt='Login Background' layout='fill' objectFit='cover' className={styles.verifyMedia} />
+					<Image src={images.bgLogin} alt='Login Background' layout='fill' objectFit='cover' className={styles.verifyMedia} />
 				</div>
 			</div>
 		</div>

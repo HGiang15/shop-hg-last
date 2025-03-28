@@ -1,35 +1,32 @@
 import React from 'react';
 import Image from 'next/image';
 import styles from './FeaturedProducts.module.scss';
-import product1 from '../../../../../../public/static/images/products/ao_clb/mu_01.webp';
-import product2 from '../../../../../../public/static/images/products/ao_doituyen/eng_01.webp';
-import product3 from '../../../../../../public/static/images/products/ao_clb/chel_01.webp';
-import product4 from '../../../../../../public/static/images/products/ao_clb/mc_01.jpg';
+import images from '@/constants/static/images';
 
 const products = [
 	{
 		id: 'SP_0001',
 		name: 'MU home 24-25 bản player full bộ',
 		price: '399.999 VNĐ',
-		image: product1,
+		image: images.product1,
 	},
 	{
 		id: 'SP_0002',
 		name: 'Tuyển Anh home Euro 2024 bản player full bộ',
 		price: '499.999 VNĐ',
-		image: product2,
+		image: images.product8,
 	},
 	{
 		id: 'SP_0003',
 		name: 'Chelsea home 24-25 bản player full bộ',
 		price: '599.999 VNĐ',
-		image: product3,
+		image: images.product4,
 	},
 	{
 		id: 'SP_0004',
 		name: 'Mancity home 24-25 bản player full bộ',
 		price: '449.999 VNĐ',
-		image: product4,
+		image: images.product6,
 	},
 ];
 

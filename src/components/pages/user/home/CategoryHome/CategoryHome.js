@@ -1,16 +1,13 @@
 import React, {useState} from 'react';
 import Image from 'next/image';
+import images from '@/constants/static/images';
 import styles from './CategoryHome.module.scss';
-import product1 from '../../../../../../public/static/images/products/ao_clb/mu_01.webp';
-import product2 from '../../../../../../public/static/images/products/ao_doituyen/eng_01.webp';
-import product3 from '../../../../../../public/static/images/products/ao_kologo/kologo_01.webp';
-import product4 from '../../../../../../public/static/images/products/giay_db/nike_01.webp';
 
 const categories = [
-	{id: 1, name: 'Áo CLB', image: product1},
-	{id: 2, name: 'Áo đội tuyển', image: product2},
-	{id: 3, name: 'Áo không logo', image: product3},
-	{id: 4, name: 'Giày đá bóng', image: product4},
+	{id: 1, name: 'Áo CLB', image: images.product1},
+	{id: 2, name: 'Áo đội tuyển', image: images.product8},
+	{id: 3, name: 'Áo không logo', image: images.product10},
+	{id: 4, name: 'Giày đá bóng', image: images.product11},
 ];
 
 const CategoryHome = () => {

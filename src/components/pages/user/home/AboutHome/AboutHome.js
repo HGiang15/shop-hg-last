@@ -1,8 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import product1 from '../../../../../../public/static/images/14.jpg';
 import styles from './AboutHome.module.scss';
+import images from '@/constants/static/images';
 
 const AboutHome = () => {
 	return (
@@ -26,7 +26,7 @@ const AboutHome = () => {
 					</Link>
 				</div>
 				<div className={styles.aboutImage} data-aos='fade-left'>
-					<Image src={product1} alt='Về chúng tôi' width={500} height={350} className={styles.image} />
+					<Image src={images.about_home} alt='Về chúng tôi' width={500} height={350} className={styles.image} />
 				</div>
 			</div>
 		</section>
