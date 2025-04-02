@@ -1,49 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import axios from 'axios';
-import {useRouter} from 'next/router';
+import React from 'react';
 import styles from './MainPageProduct.module.scss';
 import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 import FilterProduct from '../FilterProduct/FilterProduct';
 import ProductCard from '../ProductCard/ProductCard';
 
-const MainPageProduct = () => {
-	const router = useRouter();
-
-	const defaultBreadcrumbs = [
-		{label: 'Trang chủ', link: '/'},
-		{label: 'Sản phẩm', link: '/products'},
-		{label: 'Áo đấu CLB', link: '/products/ao-dau-clb'},
-	];
-
-	const [breadcrumbItems, setBreadcrumbItems] = useState(defaultBreadcrumbs);
-	const [isLoading, setIsLoading] = useState(false);
-
-	useEffect(() => {
-		if (!router.isReady) return;
-
-		const fetchBreadcrumb = async () => {
-			setIsLoading(true);
-			try {
-				const category = router.query.category || 'ao-dau-clb';
-				// const response = await axios.get(`/api/breadcrumb?category=${category}`);
-
-				// // API data, update state
-				// if (response.data.length > 0) {
-				//   setBreadcrumbItems(response.data);
-				// }
-			} catch (error) {
-				console.error('Lỗi khi lấy dữ liệu:', error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
-		fetchBreadcrumb();
-	}, [router.isReady, router.query.category]);
-
+const MainPageProduct = ({breadcrumbItems}) => {
 	return (
 		<div className={styles.container}>
-			{isLoading ? <p>Đang tải...</p> : <Breadcrumb items={breadcrumbItems} />}
+			{/* Nhận breadcrumbItems từ props và truyền vào Breadcrumb */}
+			<Breadcrumb titles={breadcrumbItems.titles} listHref={breadcrumbItems.listHref} />
 
 			<div className={styles.main}>
 				<FilterProduct />

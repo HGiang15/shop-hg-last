@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react';
+import React, {Fragment} from 'react';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import styles from './LayoutUser.module.scss';
 
-function LayoutUser({ children }) {
+function LayoutUser({children}) {
 	return (
 		<Fragment>
 			<header className={styles.header}>

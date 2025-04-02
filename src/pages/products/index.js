@@ -2,7 +2,7 @@ import MainPageProduct from '@/components/pages/product/MainPageProduct/MainPage
 import Head from 'next/head';
 import LayoutUser from '@/components/layouts/LayoutUser/LayoutUser';
 import {Fragment} from 'react';
-
+import {ROUTES} from '@/constants/config';
 
 export default function Page() {
 	return (
@@ -13,10 +13,13 @@ export default function Page() {
 				<meta name='viewport' content='width=device-width, initial-scale=1' />
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
-			<Fragment>
-				<MainPageProduct />
-			</Fragment>
 
+			<MainPageProduct
+				breadcrumbItems={{
+					titles: ['Trang chủ', 'Sản phẩm'],
+					listHref: [ROUTES.Home, ROUTES.Product],
+				}}
+			/>
 		</Fragment>
 	);
 }

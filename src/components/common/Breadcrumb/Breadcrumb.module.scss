@@ -1,20 +1,15 @@
 .container {
-	font-size: 14px;
 	display: flex;
 	align-items: center;
+	font-size: 16px;
 	max-width: 1440px;
 	margin: 0 auto;
 	padding: 20px 0;
 }
 
-.breadcrumb {
-	font-size: 18px;
+.item {
 	color: #000;
-}
-
-.link {
-	color: #000;
-	font-weight: 600;
+	font-weight: 700;
 	text-decoration: none;
 
 	&:hover {
@@ -22,11 +17,16 @@
 	}
 }
 
-.active {
-	color: #000;
-}
-
-.separator {
+.icon {
 	margin: 0 8px;
 	color: #000;
+	display: flex;
+	align-items: center;
+}
+
+.last {
+	color: #828282;
+	font-weight: 600;
+	cursor: default;
+	text-decoration: none;
 }
