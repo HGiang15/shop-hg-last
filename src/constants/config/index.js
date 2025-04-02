@@ -3,6 +3,10 @@ export const ROUTES = {
 	Home: '/',
 	About: '/about',
 	Product: '/products',
+	Profile: '/profile',
+	ChangePassword: '/profile/change-password',
+	Address: '/profile/address',
+	HistoryOrder: '/profile/history-order',
 
 	// Admin
 	AdminDashboard: '/admin/dashboard',
@@ -13,6 +17,4 @@ export const ROUTES = {
 	Register: '/auth/register',
 	forgot_password: '/auth/forgot-password',
 	verify_password: '/auth/verify-password',
-
-	Profile: '/profile',
 };

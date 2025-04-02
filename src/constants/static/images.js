@@ -12,6 +12,7 @@ import product11 from '../../../public/static/images/products/giay_db/nike_01.we
 import hero_bg from '../../../public/static/images/hero_bg.jpg';
 import about_home from '../../../public/static/images/about_home.jpg';
 import bgLogin from '../../../public/static/images/auth/login-bg.jpg';
+import user from '../../../public/static/images/auth/user.svg';
 
 const images = {
 	product1,
@@ -28,6 +29,7 @@ const images = {
 	hero_bg,
 	about_home,
 	bgLogin,
+	user,
 };
 
 export default images;
