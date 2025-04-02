@@ -9,7 +9,6 @@ const LayoutProfileUser = ({children, breadcrumbItems = {titles: [], listHref: [
 	}
 	return (
 		<div className={styles.container}>
-			{/* Nhận breadcrumbItems từ props và truyền vào Breadcrumb */}
 			<Breadcrumb titles={breadcrumbItems.titles} listHref={breadcrumbItems.listHref} />
 
 			<div className={styles.main}>

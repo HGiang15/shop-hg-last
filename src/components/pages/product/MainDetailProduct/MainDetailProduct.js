@@ -5,16 +5,7 @@ import icons from '@/constants/static/icons';
 import styles from './MainDetailProduct.module.scss';
 import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 
-const MainDetailProduct = () => {
-	const defaultBreadcrumbs = [
-		{label: 'Trang chủ', link: '/'},
-		{label: 'Sản phẩm', link: '/products'},
-
-		{label: 'Áo đấu CLB', link: '/products/ao-dau-clb'},
-		{label: 'MU Home 2024-2025', link: '/products/ao-dau-clb/mu-home'},
-	];
-
-	// Danh sách đánh giá mẫu
+const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const initialReviews = [
 		{id: 1, name: 'Nguyễn Văn A', rating: 5, comment: 'Sản phẩm rất đẹp, chất lượng tốt!'},
 		{id: 2, name: 'Trần Thị B', rating: 4, comment: 'Áo hơi rộng so với size M, nhưng chất lượng ok!'},
@@ -23,7 +14,6 @@ const MainDetailProduct = () => {
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
-	const [breadcrumbItems, setBreadcrumbItems] = useState(defaultBreadcrumbs);
 	const [selectedSize, setSelectedSize] = useState('M');
 	const [quantity, setQuantity] = useState(1);
 	const [isLoading, setIsLoading] = useState(false);
@@ -54,7 +44,7 @@ const MainDetailProduct = () => {
 
 	return (
 		<div className={styles.container}>
-			{isLoading ? <p>Đang tải...</p> : <Breadcrumb items={breadcrumbItems} />}
+			{isLoading ? <p>Đang tải...</p> : <Breadcrumb titles={breadcrumbItems.titles} listHref={breadcrumbItems.listHref} />}
 
 			<div className={styles.main}>
 				<div className={styles.imageGallery}>
