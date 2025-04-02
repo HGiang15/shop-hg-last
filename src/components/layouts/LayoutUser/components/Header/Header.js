@@ -75,7 +75,7 @@ function Header() {
 						</Link>
 					</li>
 					<li className={styles.nav__item}>
-						<Link className={styles.nav__link} href='/products'>
+						<Link className={styles.nav__link} href={ROUTES.Product}>
 							Sản phẩm
 						</Link>
 					</li>
@@ -114,7 +114,7 @@ function Header() {
 
 						<ul className={styles.dropdownMenu}>
 							<li>
-								<Link href='/profile'>Thông tin tài khoản</Link>
+								<Link href={ROUTES.Profile}>Thông tin tài khoản</Link>
 							</li>
 							<li onClick={handleLogout}>Đăng xuất</li>
 						</ul>

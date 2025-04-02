@@ -1,0 +1,10 @@
+.container {
+	margin: 24px 0;
+}
+
+.main {
+	margin-top: 24px;
+	display: grid;
+	grid-template-columns: 320px 1fr;
+	gap: 24px;
+}
