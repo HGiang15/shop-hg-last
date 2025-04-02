@@ -5,6 +5,11 @@ import styles from './Breadcrumb.module.scss';
 import Link from 'next/link';
 
 function Breadcrumb({titles, listHref}) {
+	// Kiểm tra nếu titles hoặc listHref là undefined hoặc không phải là mảng
+	if (!Array.isArray(titles) || !Array.isArray(listHref)) {
+		return <div>Invalid breadcrumb data</div>;
+	}
+
 	return (
 		<div className={styles.container}>
 			{titles.map((v, i) => (
@@ -18,7 +23,7 @@ function Breadcrumb({titles, listHref}) {
 						<span className={clsx(styles.item, styles.last)}>{v}</span>
 					) : (
 						<Link
-							href={listHref?.[i] || '/'}
+							href={listHref[i] || '/'}
 							className={clsx(styles.item, {
 								[styles.last]: i === titles.length - 1,
 							})}

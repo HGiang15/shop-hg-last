@@ -4,7 +4,7 @@ import styles from './LayoutProfileUser.module.scss';
 import SidebarProfile from './SidebarProfile/SidebarProfile';
 
 const LayoutProfileUser = ({children, breadcrumbItems = {titles: [], listHref: []}}) => {
-	if (!breadcrumbItems.titles || !breadcrumbItems.listHref) {
+	if (!Array.isArray(breadcrumbItems.titles) || !Array.isArray(breadcrumbItems.listHref)) {
 		return <div>Invalid breadcrumb data</div>;
 	}
 	return (
