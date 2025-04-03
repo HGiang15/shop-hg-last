@@ -12,6 +12,10 @@ import iconTick from '../../../public/static/icons/icon-tick.svg';
 import profileCircle from '../../../public/static/icons/profile-circle.svg';
 import iconAddress from '../../../public/static/icons/icon-address.svg';
 import lockCircle from '../../../public/static/icons/lock-circle.svg';
+import download from '../../../public/static/icons/download.svg';
+import check from '../../../public/static/icons/check.svg';
+import timesCircle from '../../../public/static/icons/times_circle.svg';
+import menu from '../../../public/static/icons/menu.svg';
 
 const icons = {
 	shipper,
@@ -28,6 +32,10 @@ const icons = {
 	profileCircle,
 	iconAddress,
 	lockCircle,
+	download,
+	check,
+	timesCircle,
+	menu,
 };
 
 export default icons;

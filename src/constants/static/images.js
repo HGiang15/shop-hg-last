@@ -13,7 +13,7 @@ import hero_bg from '../../../public/static/images/hero_bg.jpg';
 import about_home from '../../../public/static/images/about_home.jpg';
 import bgLogin from '../../../public/static/images/auth/login-bg.jpg';
 import user from '../../../public/static/images/auth/user.svg';
-
+import noImg from '../../../public/static/images/no_img.png';
 const images = {
 	product1,
 	product2,
@@ -30,6 +30,7 @@ const images = {
 	about_home,
 	bgLogin,
 	user,
+	noImg,
 };
 
 export default images;

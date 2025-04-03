@@ -1,0 +1,177 @@
+.container {
+	padding: 30px;
+	background: #ebebf0;
+	border-radius: 6px;
+
+	.title {
+		font-weight: 600;
+		margin-bottom: 8px;
+
+		@media (max-width: 768px) {
+			text-align: center;
+		}
+	}
+}
+
+.avatarSection {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 20px;
+
+	@media (min-width: 768px) {
+		flex-direction: row;
+	}
+}
+
+.avatarPreview {
+	width: 150px;
+	height: 150px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-right: 20px;
+
+	img {
+		object-fit: cover;
+		border: 1px solid #e1d9d4;
+		border-radius: 5px;
+		width: 150px;
+		height: 150px;
+	}
+
+	margin-right: 0;
+	margin-bottom: 10px;
+
+	@media (min-width: 768px) {
+		margin-right: 20px;
+		margin-bottom: 0;
+	}
+}
+
+.avatarPlaceholder {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.avatarUpload {
+	flex: 1;
+	text-align: center;
+	@media (min-width: 768px) {
+		text-align: left;
+	}
+}
+
+.uploadButton {
+	background: #f0f0f0;
+	color: black;
+	padding: 10px 15px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	max-width: 150px;
+	height: auto;
+
+	@media (max-width: 768px) {
+		margin-top: 10px;
+	}
+}
+
+.downloadIcon {
+	margin-right: 10px;
+}
+
+.formGrid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+
+	@media (min-width: 768px) {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.formGroup {
+	margin-bottom: 0;
+
+	label {
+		display: block;
+		margin-bottom: 5px;
+	}
+
+	input,
+	select {
+		width: 100%;
+		padding: 8px;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+	}
+}
+
+.validationIcon {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	position: absolute;
+	right: 14px;
+	top: 40px;
+}
+
+.validationIcon img {
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+}
+
+.radioGroup {
+	display: flex;
+	gap: 10px;
+
+	@media (min-width: 768px) {
+		justify-content: center;
+		align-items: center;
+	}
+
+	label {
+		display: flex;
+		column-gap: 10px;
+	}
+}
+
+.submitButtonContainer {
+	grid-column: 1 / -1;
+	display: flex;
+	justify-content: center;
+	margin-top: 20px;
+}
+
+.submitButton {
+	background: var(--gradient-blue-red);
+	color: #fff;
+	padding: 10px 15px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+
+	:hover {
+		opacity: 0.9;
+	}
+}
+
+.uploadContainer {
+	display: flex;
+	align-items: center;
+}
+
+.downloadIcon {
+	margin-left: 10px;
+}
+
+.error {
+	color: red;
+	font-size: 12px;
+	margin-top: 5px;
+}

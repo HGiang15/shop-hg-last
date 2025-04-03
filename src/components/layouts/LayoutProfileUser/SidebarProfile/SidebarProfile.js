@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import styles from './SidebarProfile.module.scss';
 import icons from '@/constants/static/icons';
 import images from '@/constants/static/images';
@@ -7,20 +7,46 @@ import Image from 'next/image';
 import {ROUTES} from '@/constants/config';
 import {useRouter} from 'next/router';
 
-const SidebarProfile = () => {
+const SidebarProfile = ({isOpen, onClose}) => {
 	const router = useRouter();
 	const [activeLink, setActiveLink] = useState(ROUTES.Profile);
+	const sidebarRef = useRef(null);
+	const [isClient, setIsClient] = useState(false);
 
 	useEffect(() => {
-		setActiveLink(router.asPath); // Cập nhật activeLink khi router.asPath thay đổi
+		setIsClient(true);
+		setActiveLink(router.asPath);
 	}, [router.asPath]);
 
 	const handleLinkClick = (route) => {
 		setActiveLink(route);
+		if (isClient && window.innerWidth < 768) {
+			onClose(); // Đóng sidebar khi chọn link
+		}
 	};
 
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (sidebarRef.current && !sidebarRef.current.contains(event.target) && isClient && window.innerWidth < 768 && isOpen) {
+				onClose(); // Đóng sidebar khi click ra ngoài
+			}
+		};
+
+		if (isClient) {
+			document.addEventListener('mousedown', handleClickOutside);
+			return () => {
+				document.removeEventListener('mousedown', handleClickOutside);
+			};
+		}
+	}, [isOpen, isClient]);
+
 	return (
-		<div className={styles.container}>
+		<div ref={sidebarRef} className={`${styles.container} ${isOpen ? styles.open : styles.closed}`}>
+			{isClient && window.innerWidth < 768 && isOpen && (
+				<div className={styles.closeButton} onClick={onClose}>
+					&times;
+				</div>
+			)}
 			<div className={styles.profileHeader}>
 				<Image src={images.user} alt='Avatar' width={60} height={60} className={styles.avatar} />
 				<div className={styles.profileInfo}>
