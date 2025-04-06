@@ -6,9 +6,8 @@ import {FaBars, FaTimes} from 'react-icons/fa';
 import {jwtDecode} from 'jwt-decode';
 import {ROUTES} from '@/constants/config';
 import Loading from '@/components/common/Loading/Loading';
-import logo from '../../../../../../public/static/images/logo_small.svg';
-import defaultAvatar from '../../../../../../public/static/images/auth/user.svg';
 import styles from './Header.module.scss';
+import images from '@/constants/static/images';
 
 function Header() {
 	const [menuOpen, setMenuOpen] = useState(false);
@@ -55,7 +54,7 @@ function Header() {
 		<div className={styles.header}>
 			<div className={styles.header__logo}>
 				<Link href='/'>
-					<Image className={styles.logo_home} src={logo} alt='Logo' />
+					<Image className={styles.logo_home} src={images.logoSmall} alt='Logo' />
 				</Link>
 			</div>
 
@@ -103,7 +102,7 @@ function Header() {
 					<div className={styles.userDropdown}>
 						<div className={styles.userInfo}>
 							<Image
-								src={user.avatar || defaultAvatar}
+								src={user.avatar || images.defaultAvatar}
 								alt='User Avatar'
 								width={40}
 								height={40}

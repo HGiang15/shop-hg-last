@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import styles from './SidebarProfile.module.scss';
+import {FaTimes} from 'react-icons/fa';
 import icons from '@/constants/static/icons';
 import images from '@/constants/static/images';
 import Link from 'next/link';
@@ -44,7 +45,7 @@ const SidebarProfile = ({isOpen, onClose}) => {
 		<div ref={sidebarRef} className={`${styles.container} ${isOpen ? styles.open : styles.closed}`}>
 			{isClient && window.innerWidth < 768 && isOpen && (
 				<div className={styles.closeButton} onClick={onClose}>
-					&times;
+					<FaTimes />
 				</div>
 			)}
 			<div className={styles.profileHeader}>

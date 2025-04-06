@@ -7,9 +7,8 @@
 	width: 100%;
 	margin: 0 auto;
 	background: #fff;
-	z-index: 1000;
+	// z-index: 1000;
 
-	/* Logo */
 	&__logo {
 		img {
 			height: 50px;
@@ -131,7 +130,7 @@
 			position: absolute;
 			top: 70px;
 			right: 0;
-			background: white;
+			background: #fff;
 			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 			border-radius: 5px;
 			padding: 20px 0;

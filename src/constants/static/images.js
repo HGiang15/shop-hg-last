@@ -14,6 +14,9 @@ import about_home from '../../../public/static/images/about_home.jpg';
 import bgLogin from '../../../public/static/images/auth/login-bg.jpg';
 import user from '../../../public/static/images/auth/user.svg';
 import noImg from '../../../public/static/images/no_img.png';
+import logoSmall from '../../../public/static/images/logo_small.svg';
+import defaultAvatar from '../../../public/static/images/auth/user.svg';
+
 const images = {
 	product1,
 	product2,
@@ -31,6 +34,8 @@ const images = {
 	bgLogin,
 	user,
 	noImg,
+	logoSmall,
+	defaultAvatar,
 };
 
 export default images;

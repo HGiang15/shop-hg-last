@@ -25,6 +25,7 @@
 		// transform: translateX(-100%);
 	}
 }
+
 .profileHeader {
 	display: flex;
 	align-items: center;
@@ -106,9 +107,10 @@
 
 .closeButton {
 	position: absolute;
-	top: -4px;
-	right: 10px;
+	top: 8px;
+	right: 14px;
 	z-index: 10000;
 	font-size: 40px;
 	cursor: pointer;
+	font-size: 26px;
 }

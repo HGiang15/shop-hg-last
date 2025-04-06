@@ -1,16 +1,23 @@
 import React, {useState, useEffect} from 'react';
+import {FaBarsProgress} from 'react-icons/fa6';
 import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 import styles from './LayoutProfileUser.module.scss';
 import SidebarProfile from './SidebarProfile/SidebarProfile';
-import icons from '@/constants/static/icons';
-import Image from 'next/image';
 
 const LayoutProfileUser = ({children, breadcrumbItems = {titles: [], listHref: []}}) => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-	const [isClient, setIsClient] = useState(false);
+	const [isMobile, setIsMobile] = useState(false);
 
 	useEffect(() => {
-		setIsClient(true);
+		const handleResize = () => {
+			setIsMobile(window.innerWidth < 768);
+		};
+		handleResize();
+		window.addEventListener('resize', handleResize);
+
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
 	}, []);
 
 	if (!Array.isArray(breadcrumbItems.titles) || !Array.isArray(breadcrumbItems.listHref)) {
@@ -27,16 +34,13 @@ const LayoutProfileUser = ({children, breadcrumbItems = {titles: [], listHref: [
 
 			<div className={styles.main}>
 				<SidebarProfile isOpen={isSidebarOpen} onClose={handleToggleSidebar} />
-				<div className={`${styles.children} ${isSidebarOpen && isClient && window.innerWidth < 768 ? styles.childrenBlurred : ''}`}>
-					{children}
-				</div>
-				{isClient && window.innerWidth < 768 && !isSidebarOpen && (
+				<div className={`${styles.children} ${isSidebarOpen && isMobile ? styles.childrenBlurred : ''}`}>{children}</div>
+				{isMobile && !isSidebarOpen && (
 					<div className={styles.toggleButton} onClick={handleToggleSidebar}>
-						{/* {console.log(icons.menu)} */}
-						<Image src={icons.menu} alt='Menu' width={24} height={24} style={{filter: 'brightness(0)'}} />
+						<FaBarsProgress className={styles.iconBars} />
 					</div>
 				)}
-				{isSidebarOpen && isClient && window.innerWidth < 768 && <div className={styles.overlay} onClick={handleToggleSidebar} />}
+				{isSidebarOpen && isMobile && <div className={styles.overlay} onClick={handleToggleSidebar} />}
 			</div>
 		</div>
 	);
