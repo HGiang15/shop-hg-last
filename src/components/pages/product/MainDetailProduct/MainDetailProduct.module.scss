@@ -207,42 +207,35 @@
 .buttonGroup {
 	display: flex;
 	gap: 10px;
+	margin-top: 14px;
 
 	@media (max-width: 768px) {
 		flex-direction: column;
 		width: 100%;
 	}
-}
 
-.addToCart,
-.buyNow {
-	padding: 10px;
-	border: none;
-	border-radius: 6px;
-	cursor: pointer;
-	font-size: 14px;
-	font-weight: 600;
-	transition: 0.3s;
-
-	@media (max-width: 768px) {
-		padding: 8px;
-		font-size: 14px;
+	:hover {
+		opacity: 0.9;
 	}
-}
 
-.addToCart {
-	background: #ff7b29;
-	color: #fff;
-}
+	.addToCart,
+	.buyNow {
+		padding: 10px 16px;
+		font-size: 16px;
+		font-weight: 600;
+		transition: 0.3s;
 
-.buyNow {
-	background: #ff7b29;
-	color: #fff;
-}
+		@media (max-width: 768px) {
+			padding: 8px;
+			font-size: 14px;
+		}
+	}
 
-.addToCart:hover,
-.buyNow:hover {
-	opacity: 0.9;
+	.addToCart {
+		background: transparent;
+		color: var(--primary-main);
+		border: 1px solid var(--primary-main);
+	}
 }
 
 .additionalDescription {

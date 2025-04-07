@@ -5,6 +5,7 @@ import {ROUTES} from '@/constants/config';
 import styles from './MainForgotPassword.module.scss';
 import images from '@/constants/static/images';
 import icons from '@/constants/static/icons';
+import Button from '@/components/common/Button/Button';
 
 const MainForgotPassword = () => {
 	const [formData, setFormData] = useState({
@@ -81,9 +82,9 @@ const MainForgotPassword = () => {
 					</form>
 
 					<div className={styles.actions}>
-						<button className={styles.btnForgot} href={''}>
+						<Button type='submit' className={styles.btnForgot}>
 							Đặt lại mật khẩu
-						</button>
+						</Button>
 					</div>
 
 					<div className={styles.forgotAccount}>

@@ -4,6 +4,7 @@ import images from '@/constants/static/images';
 import icons from '@/constants/static/icons';
 import styles from './MainDetailProduct.module.scss';
 import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
+import Button from '@/components/common/Button/Button';
 
 const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const initialReviews = [
@@ -114,8 +115,8 @@ const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 					</div>
 
 					<div className={styles.buttonGroup}>
-						<button className={styles.addToCart}>Thêm giỏ hàng</button>
-						<button className={styles.buyNow}>Thanh toán ngay</button>
+						<Button className={styles.addToCart}>Thêm giỏ hàng</Button>
+						<Button className={styles.buyNow}>Thanh toán ngay</Button>
 					</div>
 
 					<div className={styles.additionalDescription}>

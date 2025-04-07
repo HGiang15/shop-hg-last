@@ -8,6 +8,7 @@ import {ROUTES} from '@/constants/config';
 import Loading from '@/components/common/Loading/Loading';
 import styles from './Header.module.scss';
 import images from '@/constants/static/images';
+import Button from '@/components/common/Button/Button';
 
 function Header() {
 	const [menuOpen, setMenuOpen] = useState(false);
@@ -122,10 +123,10 @@ function Header() {
 					// if not login
 					<>
 						<Link href={ROUTES.Login}>
-							<button className={styles.auth__login}>Đăng nhập</button>
+							<Button className={styles.auth__login}>Đăng nhập</Button>
 						</Link>
 						<Link href={ROUTES.Register}>
-							<button className={styles.auth__register}>Đăng ký</button>
+							<Button className={styles.auth__register}>Đăng ký</Button>
 						</Link>
 					</>
 				)}

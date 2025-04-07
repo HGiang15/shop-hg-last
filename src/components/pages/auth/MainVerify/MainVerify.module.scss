@@ -104,14 +104,8 @@
 				.btnVerify {
 					width: 100%;
 					padding: 14.4px;
-					background: var(--primary-main);
-					color: #fff;
-					border: none;
-					border-radius: 6px;
-					cursor: pointer;
-					font-size: 16px;
-					transition: background 0.3s;
 					font-weight: 600;
+					transition: 0.3s;
 
 					&:hover {
 						opacity: 0.9;

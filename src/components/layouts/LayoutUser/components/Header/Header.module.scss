@@ -47,7 +47,6 @@
 		display: block;
 	}
 
-	/* Menu */
 	&__nav {
 		display: flex;
 		z-index: 2500;
@@ -83,16 +82,13 @@
 		.auth__register {
 			padding: 8px 16px;
 			font-size: 14px;
-			border: none;
-			cursor: pointer;
 			transition: background 0.3s;
-			border-radius: 5px;
+			border: 1px solid var(--primary-main);
 		}
 
 		.auth__login {
 			background: transparent;
 			color: var(--primary-main);
-			border: 1px solid var(--primary-main);
 
 			&:hover {
 				opacity: 0.9;
@@ -100,9 +96,6 @@
 		}
 
 		.auth__register {
-			background: var(--primary-main);
-			color: #fff;
-
 			&:hover {
 				opacity: 0.9;
 			}

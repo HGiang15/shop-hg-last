@@ -34,7 +34,7 @@ const useFormValidation = (initialState, validationRules) => {
 		setFormData({...formData, [name]: value});
 	};
 
-	return {formData, handleChange, isFormValid};
+	return {formData, handleChange, isFormValid, setFormData};
 };
 
 export default useFormValidation;

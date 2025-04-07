@@ -35,18 +35,14 @@
 	}
 
 	.ctaButton {
-		display: inline-block;
 		padding: 12px 24px;
 		background: #fff;
-		color: #ff7b29;
-		font-weight: bold;
-		border-radius: 8px;
-		text-decoration: none;
-		transition: all 0.3s ease;
+		color: var(--primary-main);
+		font-weight: 600;
+		transition: 0.3s;
 
 		&:hover {
-			opacity: 0.9;
-			transform: scale(1.05);
+			transform: scale(1.04);
 		}
 	}
 }

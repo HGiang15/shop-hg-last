@@ -8,6 +8,7 @@ import styles from './MainLogin.module.scss';
 import icons from '@/constants/static/icons';
 import images from '@/constants/static/images';
 import Loading from '@/components/common/Loading/Loading';
+import Button from '@/components/common/Button/Button';
 
 const MainLogin = () => {
 	const router = useRouter();
@@ -124,10 +125,13 @@ const MainLogin = () => {
 						Chào mừng bạn đến với hệ thống đặt mua quần áo trực tuyến. Đăng nhập để bắt đầu sử dụng!
 					</p>
 
-					<button className={styles.loginAction}>
-						<Image src={icons.googleIcon} alt='Google' width={24} height={24} className={styles.loginImg} />
+					<Button
+						leftIcon={<Image src={icons.googleIcon} alt='Google' width={24} height={24} className={styles.loginImg} />}
+						onClick={() => console.log('Checked')}
+						className={styles.loginAction}
+					>
 						<span className={styles.loginDesc}>Đăng nhập với Google</span>
-					</button>
+					</Button>
 
 					<form className={styles.formGroup} onSubmit={handleLogin}>
 						{/* Email */}
@@ -165,9 +169,9 @@ const MainLogin = () => {
 						{errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
 
 						<div className={styles.actions}>
-							<button type='submit' className={styles.btnLogin} disabled={loading}>
+							<Button type='submit' className={styles.btnLogin} disabled={loading}>
 								Đăng nhập
-							</button>
+							</Button>
 						</div>
 					</form>
 					{errors.general && <p className={styles.errorMsg}>{errors.general}</p>}

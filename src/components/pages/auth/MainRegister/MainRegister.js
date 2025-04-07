@@ -7,6 +7,7 @@ import {registerUser} from '@/services/registerService';
 import styles from './MainRegister.module.scss';
 import icons from '@/constants/static/icons';
 import Loading from '@/components/common/Loading/Loading';
+import Button from '@/components/common/Button/Button';
 
 const MainRegister = () => {
 	const router = useRouter();
@@ -255,9 +256,9 @@ const MainRegister = () => {
 						</div>
 
 						<div className={styles.actions}>
-							<button className={styles.btnRegister} disabled={!isFormValid || loading}>
+							<Button type='submit' className={styles.btnRegister} disabled={!isFormValid || loading}>
 								Đăng ký
-							</button>
+							</Button>
 						</div>
 					</form>
 					{serverError && <p className={styles.errorMsg}>{serverError}</p>}

@@ -31,7 +31,7 @@ const MainPageChangePassword = () => {
 	};
 
 	return (
-		<div className={styles.changePasswordContainer}>
+		<form className={styles.formGroup}>
 			<h2 className={styles.title}>Thay đổi mật khẩu</h2>
 
 			<div className={styles.inputGroup}>
@@ -118,7 +118,7 @@ const MainPageChangePassword = () => {
 					Thay đổi mật khẩu
 				</Button>
 			</div>
-		</div>
+		</form>
 	);
 };
 

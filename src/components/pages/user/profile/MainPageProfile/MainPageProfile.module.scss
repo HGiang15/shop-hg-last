@@ -117,7 +117,7 @@
 	gap: 14px;
 	position: absolute;
 	right: 14px;
-	top: 40px;
+	top: 42px;
 }
 
 .validationIcon img {
@@ -150,11 +150,7 @@
 
 .submitButton {
 	background: var(--gradient-blue-red);
-	color: #fff;
 	padding: 10px 15px;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
 
 	:hover {
 		opacity: 0.9;

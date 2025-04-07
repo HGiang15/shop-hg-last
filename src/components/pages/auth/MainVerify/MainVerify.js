@@ -5,6 +5,7 @@ import {ROUTES} from '@/constants/config';
 import styles from './MainVerify.module.scss';
 import images from '@/constants/static/images';
 import icons from '@/constants/static/icons';
+import Button from '@/components/common/Button/Button';
 
 const MainVerify = () => {
 	const [formData, setFormData] = useState({
@@ -72,7 +73,9 @@ const MainVerify = () => {
 					</form>
 
 					<div className={styles.actions}>
-						<button className={styles.btnVerify}>Xác nhận</button>
+						<Button type='submit' className={styles.btnVerify}>
+							Xác nhận
+						</Button>
 					</div>
 
 					<div className={styles.verifyAccount}>

@@ -62,23 +62,13 @@
 			}
 
 			.loginAction {
-				display: flex;
-				align-items: center;
-				justify-content: center;
 				width: 100%;
 				padding: 12.8px;
 				border: 1px solid #ddd;
-				border-radius: 6px;
 				background: #fff;
-				cursor: pointer;
-				transition: all 0.3s ease-in-out;
-
-				&:hover {
-					opacity: 0.9;
-				}
+				transition: 0.3s;
 
 				.loginDesc {
-					margin-left: 10px;
 					font-weight: 500;
 					color: #333;
 				}
@@ -163,14 +153,9 @@
 				.btnLogin {
 					width: 100%;
 					padding: 14.4px;
-					background: var(--primary-main);
-					color: #fff;
-					border: none;
-					border-radius: 6px;
-					cursor: pointer;
 					font-size: 16px;
-					transition: background 0.3s;
 					font-weight: 600;
+					transition: background 0.3s;
 
 					&:hover {
 						opacity: 0.9;

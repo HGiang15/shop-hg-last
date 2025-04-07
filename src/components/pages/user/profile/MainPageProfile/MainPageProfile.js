@@ -3,12 +3,22 @@ import styles from './MainPageProfile.module.scss';
 import Image from 'next/image';
 import icons from '@/constants/static/icons';
 import images from '@/constants/static/images';
+import useFormValidation from '@/hooks/useFormValidation';
+import Button from '@/components/common/Button/Button';
 
 const MainPageProfile = () => {
-	const [name, setName] = useState('');
-	const [email, setEmail] = useState('');
-	const [phone, setPhone] = useState('');
-	const [dob, setDob] = useState('');
+	const validationRules = {
+		name: {required: true},
+		email: {required: true},
+		phone: {required: true},
+		dob: {required: true},
+	};
+
+	const {formData, handleChange, isFormValid, setFormData} = useFormValidation(
+		{name: '', email: '', phone: '', dob: ''},
+		validationRules
+	);
+
 	const [gender, setGender] = useState('Nam');
 	const [avatar, setAvatar] = useState(null);
 
@@ -23,42 +33,8 @@ const MainPageProfile = () => {
 		}
 	};
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		setNameError('');
-		setEmailError('');
-		setPhoneError('');
-		setDobError('');
-
-		let isValid = true;
-
-		if (!name) {
-			setNameError('Vui lòng nhập họ và tên');
-			isValid = false;
-		}
-
-		if (!email) {
-			setEmailError('Vui lòng nhập email');
-			isValid = false;
-		}
-
-		if (!phone) {
-			setPhoneError('Vui lòng nhập số điện thoại');
-			isValid = false;
-		}
-
-		if (!dob) {
-			setDobError('Vui lòng nhập ngày sinh');
-			isValid = false;
-		}
-
-		if (isValid) {
-			console.log({name, email, phone, dob, gender, avatar});
-		}
-	};
-
-	const handleInputChange = (e, setInput, setInputError) => {
-		setInput(e.target.value);
+	const handleInputChange = (e, setInputError) => {
+		handleChange(e);
 		if (e.target.value) {
 			setInputError('');
 		}
@@ -70,8 +46,22 @@ const MainPageProfile = () => {
 		}
 	};
 
-	const handleClearInput = (setInput) => {
-		setInput('');
+	const handleClearInput = (inputName) => {
+		setFormData({...formData, [inputName]: ''});
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		if (isFormValid) {
+			console.log({...formData, gender, avatar});
+			// Gọi API cập nhật thông tin cá nhân ở đây
+		} else {
+			console.log('Form không hợp lệ');
+			if (!formData.name) setNameError('Vui lòng nhập họ và tên');
+			if (!formData.email) setEmailError('Vui lòng nhập email');
+			if (!formData.phone) setPhoneError('Vui lòng nhập số điện thoại');
+			if (!formData.dob) setDobError('Vui lòng nhập ngày sinh');
+		}
 	};
 
 	return (
@@ -107,20 +97,21 @@ const MainPageProfile = () => {
 					<input
 						type='text'
 						id='name'
-						value={name}
-						onChange={(e) => handleInputChange(e, setName, setNameError)}
+						value={formData.name}
+						onChange={(e) => handleInputChange(e, setNameError)}
+						name='name'
 						onBlur={(e) => handleBlur(e, setNameError)}
 					/>
 					{nameError && <p className={styles.error}>{nameError}</p>}
 					<span className={styles.validationIcon}>
-						{name && (
+						{formData.name && (
 							<>
 								<Image
 									src={icons.timesCircle}
 									alt='Times Circle'
 									width={20}
 									height={20}
-									onClick={() => handleClearInput(setName)}
+									onClick={() => handleClearInput('name')}
 								/>
 								<Image src={icons.check} alt='Check' width={20} height={20} />
 							</>
@@ -135,20 +126,21 @@ const MainPageProfile = () => {
 					<input
 						type='email'
 						id='email'
-						value={email}
-						onChange={(e) => handleInputChange(e, setEmail, setEmailError)}
+						value={formData.email}
+						onChange={(e) => handleInputChange(e, setEmailError)}
+						name='email'
 						onBlur={(e) => handleBlur(e, setEmailError)}
 					/>
 					{emailError && <p className={styles.error}>{emailError}</p>}
 					<span className={styles.validationIcon}>
-						{email && (
+						{formData.email && (
 							<>
 								<Image
 									src={icons.timesCircle}
 									alt='Times Circle'
 									width={20}
 									height={20}
-									onClick={() => handleClearInput(setEmail)}
+									onClick={() => handleClearInput('email')}
 								/>
 								<Image src={icons.check} alt='Check' width={20} height={20} />
 							</>
@@ -163,20 +155,21 @@ const MainPageProfile = () => {
 					<input
 						type='tel'
 						id='phone'
-						value={phone}
-						onChange={(e) => handleInputChange(e, setPhone, setPhoneError)}
+						value={formData.phone}
+						onChange={(e) => handleInputChange(e, setPhoneError)}
+						name='phone'
 						onBlur={(e) => handleBlur(e, setPhoneError)}
 					/>
 					{phoneError && <p className={styles.error}>{phoneError}</p>}
 					<span className={styles.validationIcon}>
-						{phone && (
+						{formData.phone && (
 							<>
 								<Image
 									src={icons.timesCircle}
 									alt='Times Circle'
 									width={20}
 									height={20}
-									onClick={() => handleClearInput(setPhone)}
+									onClick={() => handleClearInput('phone')}
 								/>
 								<Image src={icons.check} alt='Check' width={20} height={20} />
 							</>
@@ -188,7 +181,14 @@ const MainPageProfile = () => {
 					<label htmlFor='dob'>
 						Ngày sinh <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='date' id='dob' value={dob} onChange={(e) => handleInputChange(e, setDob, setDobError)} />
+					<input
+						type='date'
+						id='dob'
+						value={formData.dob}
+						onChange={handleChange}
+						name='dob'
+						onBlur={(e) => handleBlur(e, setDobError)}
+					/>
 					{dobError && <p className={styles.error}>{dobError}</p>}
 				</div>
 
@@ -213,9 +213,9 @@ const MainPageProfile = () => {
 				</div>
 
 				<div className={styles.submitButtonContainer}>
-					<button type='submit' className={styles.submitButton}>
+					<Button type='submit' className={styles.submitButton} onClick={handleSubmit} disabled={!isFormValid}>
 						Cập nhật thông tin cá nhân
-					</button>
+					</Button>
 				</div>
 			</form>
 		</div>

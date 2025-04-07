@@ -101,24 +101,8 @@
 				.btnRegister {
 					width: 100%;
 					padding: 16px;
-					background: var(--primary-main);
-					color: #fff;
-					border: none;
-					border-radius: 6px;
-					cursor: pointer;
-					font-size: 17px;
 					transition: background 0.3s;
 					font-weight: 600;
-
-					&:hover {
-						opacity: 0.9;
-					}
-
-					&:disabled {
-						background: var(--primary-main);
-						opacity: 0.7;
-						cursor: not-allowed;
-					}
 				}
 			}
 
