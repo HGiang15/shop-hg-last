@@ -2,11 +2,33 @@ import React, {useState} from 'react';
 import styles from './MainPageChangePassword.module.scss';
 import icons from '@/constants/static/icons';
 import Image from 'next/image';
+import Button from '@/components/common/Button/Button';
+import useFormValidation from '@/hooks/useFormValidation';
 
 const MainPageChangePassword = () => {
+	const validationRules = {
+		oldPassword: {required: true},
+		newPassword: {required: true, minLength: 1},
+		confirmNewPassword: {required: true, isEqual: 'newPassword'},
+	};
+
+	const {formData, handleChange, isFormValid} = useFormValidation(
+		{oldPassword: '', newPassword: '', confirmNewPassword: ''},
+		validationRules
+	);
+
 	const [showOldPassword, setShowOldPassword] = useState(false);
 	const [showNewPassword, setShowNewPassword] = useState(false);
 	const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
+	const handleSubmit = () => {
+		if (isFormValid) {
+			console.log('Submitting form:', formData);
+		} else {
+			console.log('Form is invalid');
+			// Xử lý trường hợp form không hợp lệ (ví dụ: hiển thị thông báo lỗi)
+		}
+	};
 
 	return (
 		<div className={styles.changePasswordContainer}>
@@ -17,7 +39,14 @@ const MainPageChangePassword = () => {
 					Mật khẩu cũ<span style={{color: 'red'}}>*</span>
 				</label>
 				<div className={styles.inputWrapper}>
-					<input type={showOldPassword ? 'text' : 'password'} id='oldPassword' className={styles.input} />
+					<input
+						name='oldPassword'
+						type={showOldPassword ? 'text' : 'password'}
+						id='oldPassword'
+						className={styles.input}
+						value={formData.oldPassword}
+						onChange={handleChange}
+					/>
 					<button type='button' className={styles.togglePassword} onClick={() => setShowOldPassword(!showOldPassword)}>
 						<Image
 							src={showOldPassword ? icons.eyeOpen : icons.eyeClose}
@@ -35,7 +64,14 @@ const MainPageChangePassword = () => {
 					Mật khẩu mới<span style={{color: 'red'}}>*</span>
 				</label>
 				<div className={styles.inputWrapper}>
-					<input type={showNewPassword ? 'text' : 'password'} id='newPassword' className={styles.input} />
+					<input
+						name='newPassword'
+						type={showNewPassword ? 'text' : 'password'}
+						id='newPassword'
+						className={styles.input}
+						value={formData.newPassword}
+						onChange={handleChange}
+					/>
 					<button type='button' className={styles.togglePassword} onClick={() => setShowNewPassword(!showNewPassword)}>
 						<Image
 							src={showNewPassword ? icons.eyeOpen : icons.eyeClose}
@@ -53,7 +89,14 @@ const MainPageChangePassword = () => {
 					Xác nhận mật khẩu mới<span style={{color: 'red'}}>*</span>
 				</label>
 				<div className={styles.inputWrapper}>
-					<input type={showConfirmNewPassword ? 'text' : 'password'} id='confirmNewPassword' className={styles.input} />
+					<input
+						name='confirmNewPassword'
+						type={showConfirmNewPassword ? 'text' : 'password'}
+						id='confirmNewPassword'
+						className={styles.input}
+						value={formData.confirmNewPassword}
+						onChange={handleChange}
+					/>
 					<button
 						type='button'
 						className={styles.togglePassword}
@@ -69,10 +112,11 @@ const MainPageChangePassword = () => {
 					</button>
 				</div>
 			</div>
+
 			<div className={styles.groupBtn}>
-				<button type='submit' className={styles.submitButton}>
+				<Button type='submit' className={styles.submitButton} onClick={handleSubmit} disabled={!isFormValid}>
 					Thay đổi mật khẩu
-				</button>
+				</Button>
 			</div>
 		</div>
 	);
