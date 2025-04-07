@@ -15,6 +15,7 @@ import lockCircle from '../../../public/static/icons/lock-circle.svg';
 import download from '../../../public/static/icons/download.svg';
 import check from '../../../public/static/icons/check.svg';
 import timesCircle from '../../../public/static/icons/times_circle.svg';
+import add from '../../../public/static/icons/add.svg';
 
 const icons = {
 	shipper,
@@ -34,6 +35,7 @@ const icons = {
 	download,
 	check,
 	timesCircle,
+	add,
 };
 
 export default icons;
