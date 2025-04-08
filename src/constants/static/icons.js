@@ -16,6 +16,7 @@ import download from '../../../public/static/icons/download.svg';
 import check from '../../../public/static/icons/check.svg';
 import timesCircle from '../../../public/static/icons/times_circle.svg';
 import add from '../../../public/static/icons/add.svg';
+import folderOpen from '../../../public/static/icons/folder-open.svg';
 
 const icons = {
 	shipper,
@@ -36,6 +37,7 @@ const icons = {
 	check,
 	timesCircle,
 	add,
+	folderOpen,
 };
 
 export default icons;

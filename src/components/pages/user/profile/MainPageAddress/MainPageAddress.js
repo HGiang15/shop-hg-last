@@ -1,19 +1,25 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styles from './MainPageAddress.module.scss';
 import Image from 'next/image';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
+import FormCreateAddress from '../FormCreateAddress/FormCreateAddress';
 
 const MainPageAddress = () => {
+	const [showForm, setShowForm] = useState(false);
+
 	return (
 		<div className={styles.container}>
 			<h2 className={styles.title}>Sổ địa chỉ</h2>
 			<Button
 				leftIcon={<Image src={icons.add} alt='Thêm' width={20} height={20} className={styles.iconAdd} />}
 				className={styles.addAddressButton}
+				onClick={() => setShowForm(true)}
 			>
 				Thêm địa chỉ mới
 			</Button>
+
+			{showForm && <FormCreateAddress onClose={() => setShowForm(false)} />}
 
 			<div className={styles.addressCard}>
 				<div className={styles.addressInfo}>
