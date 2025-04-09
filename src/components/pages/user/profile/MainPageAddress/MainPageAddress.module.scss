@@ -53,21 +53,35 @@
 	.addressActions {
 		display: flex;
 		gap: 10px;
-		font-size: 0.9rem;
+		font-size: 14px;
+		font-weight: 600;
 
 		.defaultButton {
+			padding: 8px;
 			background: #e4fae0;
 			color: #1dd936;
 		}
 
 		.updateButton {
-			background: #d6ddff;
+			padding: 8px;
+			background: transparent;
 			color: #0c33f3;
 		}
 
 		.deleteButton {
-			background: #ffebee;
+			padding: 8px;
+			background: transparent;
 			color: #f44336;
+		}
+
+		.defaultTag {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 16px;
+			font-weight: 600;
+			color: #2c7be5;
+			padding: 4px 8px;
 		}
 	}
 }
