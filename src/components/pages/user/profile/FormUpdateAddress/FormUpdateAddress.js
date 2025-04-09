@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import styles from './FormUpdateAddress.module.scss';
 import Button from '@/components/common/Button/Button';
 import icons from '@/constants/static/icons';
@@ -6,15 +6,18 @@ import useFormValidation from '@/hooks/useFormValidation';
 import Select from 'react-select';
 
 const FormUpdateAddress = ({onClose, existingData}) => {
-	const validationRules = {
-		name: {required: true},
-		phone: {
-			required: true,
-			custom: (value) => /^(0|\+84)[0-9]{9,10}$/.test(value),
-			message: 'Số điện thoại không hợp lệ.',
-		},
-		detail: {required: true},
-	};
+	const validationRules = useMemo(
+		() => ({
+			name: {required: true},
+			phone: {
+				required: true,
+				custom: (value) => /^(0|\+84)[0-9]{9,10}$/.test(value),
+				message: 'Số điện thoại không hợp lệ.',
+			},
+			detail: {required: true},
+		}),
+		[]
+	);
 	const {formData, handleChange, isFormValid} = useFormValidation({name: '', phone: '', detail: ''}, validationRules);
 
 	const [nameError, setNameError] = useState('');

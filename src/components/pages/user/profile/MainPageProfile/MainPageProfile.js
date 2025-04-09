@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import styles from './MainPageProfile.module.scss';
 import Image from 'next/image';
 import icons from '@/constants/static/icons';
@@ -6,13 +6,16 @@ import images from '@/constants/static/images';
 import useFormValidation from '@/hooks/useFormValidation';
 import Button from '@/components/common/Button/Button';
 
-const MainPageProfile = () => {
-	const validationRules = {
-		name: {required: true},
-		email: {required: true},
-		phone: {required: true},
-		dob: {required: true},
-	};
+function MainPageProfile() {
+	const validationRules = useMemo(
+		() => ({
+			name: {required: true},
+			email: {required: true},
+			phone: {required: true},
+			dob: {required: true},
+		}),
+		[]
+	);
 
 	const {formData, handleChange, isFormValid, setFormData} = useFormValidation(
 		{name: '', email: '', phone: '', dob: ''},
@@ -220,6 +223,6 @@ const MainPageProfile = () => {
 			</form>
 		</div>
 	);
-};
+}
 
 export default MainPageProfile;

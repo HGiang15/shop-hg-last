@@ -1,0 +1,103 @@
+.container {
+	padding: 24px;
+	background: #ebebf0;
+	border-radius: 4px;
+}
+
+.title {
+	font-size: 22px;
+	font-weight: 600;
+	margin-bottom: 20px;
+}
+
+.tabs {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 20px;
+}
+
+.tab {
+	padding: 10px 16px;
+	cursor: pointer;
+	background: #e0e0e0;
+	border-radius: 6px;
+}
+
+.active {
+	background: var(--primary-main);
+	color: #fff;
+	font-weight: 600;
+}
+
+.orderBox {
+	background: #fff;
+	border: 1px solid #ddd;
+	padding: 16px;
+	margin-bottom: 20px;
+	border-radius: 8px;
+}
+
+.itemBox {
+	display: flex;
+	gap: 24px;
+	margin-bottom: 12px;
+	border-bottom: 1px solid #eee;
+	padding-bottom: 12px;
+}
+
+.itemImage {
+	width: 120px;
+	height: 120px;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
+.itemDetails {
+	flex-grow: 1;
+}
+
+.itemName {
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.itemTotal {
+	min-width: 140px;
+	text-align: right;
+	font-weight: 500;
+}
+
+.orderFooter {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 12px;
+}
+
+.total {
+	font-weight: 600;
+	font-size: 16px;
+}
+
+.loading,
+.error,
+.empty {
+	text-align: center;
+	margin-top: 20px;
+	font-style: italic;
+}
+
+.canceledBtn {
+	background: transparent;
+	color: #ff0000;
+	border: 1px solid #ff0000;
+}
+
+.successBtn {
+	background: linear-gradient(90deg, #0f558d -8.49%, #19a4dc 155.32%);
+}
+
+.deleteBtn {
+	background: #ff0000;
+	color: #fff;
+}

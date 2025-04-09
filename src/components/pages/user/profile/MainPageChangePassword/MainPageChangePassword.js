@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import styles from './MainPageChangePassword.module.scss';
 import icons from '@/constants/static/icons';
 import Image from 'next/image';
@@ -6,11 +6,14 @@ import Button from '@/components/common/Button/Button';
 import useFormValidation from '@/hooks/useFormValidation';
 
 const MainPageChangePassword = () => {
-	const validationRules = {
-		oldPassword: {required: true},
-		newPassword: {required: true, minLength: 1},
-		confirmNewPassword: {required: true, isEqual: 'newPassword'},
-	};
+	const validationRules = useMemo(
+		() => ({
+			oldPassword: {required: true},
+			newPassword: {required: true, minLength: 1},
+			confirmNewPassword: {required: true, isEqual: 'newPassword'},
+		}),
+		[]
+	);
 
 	const {formData, handleChange, isFormValid} = useFormValidation(
 		{oldPassword: '', newPassword: '', confirmNewPassword: ''},
