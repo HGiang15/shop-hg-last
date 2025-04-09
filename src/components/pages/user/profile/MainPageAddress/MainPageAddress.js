@@ -4,9 +4,11 @@ import Image from 'next/image';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
 import FormCreateAddress from '../FormCreateAddress/FormCreateAddress';
+import FormUpdateAddress from '../FormUpdateAddress/FormUpdateAddress';
 
 const MainPageAddress = () => {
-	const [showForm, setShowForm] = useState(false);
+	const [showCreateForm, setShowCreateForm] = useState(false);
+	const [showUpdateForm, setShowUpdateForm] = useState(false);
 
 	return (
 		<div className={styles.container}>
@@ -14,12 +16,12 @@ const MainPageAddress = () => {
 			<Button
 				leftIcon={<Image src={icons.add} alt='Thêm' width={20} height={20} className={styles.iconAdd} />}
 				className={styles.addAddressButton}
-				onClick={() => setShowForm(true)}
+				onClick={() => setShowCreateForm(true)}
 			>
 				Thêm địa chỉ mới
 			</Button>
 
-			{showForm && <FormCreateAddress onClose={() => setShowForm(false)} />}
+			{showCreateForm && <FormCreateAddress onClose={() => setShowCreateForm(false)} />}
 
 			<div className={styles.addressCard}>
 				<div className={styles.addressInfo}>
@@ -28,7 +30,15 @@ const MainPageAddress = () => {
 					<div className={styles.address}>Địa chỉ: Tổ 30, phường Thượng Thanh, quận Long Biên, thành phố Hà Nội</div>
 				</div>
 				<div className={styles.addressActions}>
-					<Button className={styles.updateButton}>Cập nhật</Button>
+					<Button
+						className={styles.updateButton}
+						onClick={() => {
+							console.log('Clicked update');
+							setShowUpdateForm(true);
+						}}
+					>
+						Cập nhật
+					</Button>
 					<Button className={styles.deleteButton}>Xóa</Button>
 				</div>
 			</div>
@@ -41,10 +51,14 @@ const MainPageAddress = () => {
 				</div>
 				<div className={styles.addressActions}>
 					<Button className={styles.defaultButton}>Đặt mặc định</Button>
-					<Button className={styles.updateButton}>Cập nhật</Button>
+					<Button className={styles.updateButton} onClick={() => setShowUpdateForm(true)}>
+						Cập nhật
+					</Button>
 					<Button className={styles.deleteButton}>Xóa</Button>
 				</div>
 			</div>
+
+			{showUpdateForm && <FormUpdateAddress onClose={() => setShowUpdateForm(false)} />}
 		</div>
 	);
 };

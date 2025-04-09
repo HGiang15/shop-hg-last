@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import styles from './FormCreateAddress.module.scss';
+import styles from './FormUpdateAddress.module.scss';
 import Button from '@/components/common/Button/Button';
 import icons from '@/constants/static/icons';
-import Select from 'react-select';
 import useFormValidation from '@/hooks/useFormValidation';
+import Select from 'react-select';
 
-const FormCreateAddress = ({onClose}) => {
+const FormUpdateAddress = ({onClose, existingData}) => {
 	const validationRules = {
 		name: {required: true},
 		phone: {
@@ -116,12 +116,11 @@ const FormCreateAddress = ({onClose}) => {
 	};
 
 	const isSubmitDisabled = !isFormValid || !selectedProvince || !selectedDistrict || !selectedWard;
-
 	return (
 		<div className={styles.overlay}>
 			<form className={styles.form} onSubmit={handleSubmit}>
 				<div className={styles.header}>
-					<h2 className={styles.title}>Thêm mới địa chỉ</h2>
+					<h2 className={styles.title}>Cập nhật địa chỉ</h2>
 					<button type='button' className={styles.closeButton} onClick={onClose}>
 						&times;
 					</button>
@@ -237,4 +236,4 @@ const FormCreateAddress = ({onClose}) => {
 	);
 };
 
-export default FormCreateAddress;
+export default FormUpdateAddress;
