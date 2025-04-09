@@ -5,6 +5,7 @@ import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
 import FormCreateAddress from '../FormCreateAddress/FormCreateAddress';
 import FormUpdateAddress from '../FormUpdateAddress/FormUpdateAddress';
+import FormDeleteAddress from '../FormDeleteAddress/FormDeleteAddress';
 
 const mockAddresses = [
 	{
@@ -25,6 +26,8 @@ const MainPageAddress = () => {
 	const [showCreateForm, setShowCreateForm] = useState(false);
 	const [showUpdateForm, setShowUpdateForm] = useState(false);
 	const [selectedAddress, setSelectedAddress] = useState(null);
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [addressToDelete, setAddressToDelete] = useState(null);
 	const [defaultAddressId, setDefaultAddressId] = useState(mockAddresses[0].id);
 
 	const handleSetDefault = (id) => {
@@ -34,6 +37,17 @@ const MainPageAddress = () => {
 	const handleUpdate = (address) => {
 		setSelectedAddress(address);
 		setShowUpdateForm(true);
+	};
+
+	const handleDeleteClick = (address) => {
+		setAddressToDelete(address);
+		setShowDeleteModal(true);
+	};
+
+	const handleConfirmDelete = () => {
+		console.log('Xoá địa chỉ:', addressToDelete);
+		setShowDeleteModal(false);
+		setAddressToDelete(null);
 	};
 
 	return (
@@ -70,12 +84,15 @@ const MainPageAddress = () => {
 						<Button className={styles.updateButton} onClick={() => handleUpdate(item)}>
 							Cập nhật
 						</Button>
-						<Button className={styles.deleteButton}>Xóa</Button>
+						<Button className={styles.deleteButton} onClick={() => handleDeleteClick(item)}>
+							Xóa
+						</Button>
 					</div>
 				</div>
 			))}
 
 			{showUpdateForm && <FormUpdateAddress onClose={() => setShowUpdateForm(false)} defaultData={selectedAddress} />}
+			{showDeleteModal && <FormDeleteAddress onClose={() => setShowDeleteModal(false)} onConfirm={handleConfirmDelete} />}
 		</div>
 	);
 };
