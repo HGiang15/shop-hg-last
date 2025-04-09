@@ -62,8 +62,6 @@ const MainPageAddress = () => {
 				Thêm địa chỉ mới
 			</Button>
 
-			{showCreateForm && <FormCreateAddress onClose={() => setShowCreateForm(false)} />}
-
 			{mockAddresses.map((item) => (
 				<div key={item.id} className={styles.addressCard}>
 					<div className={styles.addressInfo}>
@@ -91,6 +89,7 @@ const MainPageAddress = () => {
 				</div>
 			))}
 
+			{showCreateForm && <FormCreateAddress onClose={() => setShowCreateForm(false)} />}
 			{showUpdateForm && <FormUpdateAddress onClose={() => setShowUpdateForm(false)} defaultData={selectedAddress} />}
 			{showDeleteModal && <FormDeleteAddress onClose={() => setShowDeleteModal(false)} onConfirm={handleConfirmDelete} />}
 		</div>
