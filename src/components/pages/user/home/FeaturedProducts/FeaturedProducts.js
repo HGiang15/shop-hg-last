@@ -2,6 +2,8 @@ import React from 'react';
 import Image from 'next/image';
 import styles from './FeaturedProducts.module.scss';
 import images from '@/constants/static/images';
+import Link from 'next/link';
+import {ROUTES} from '@/constants/config';
 
 const products = [
 	{
@@ -37,7 +39,7 @@ const FeaturedProducts = () => {
 
 			<div className={styles.productGrid}>
 				{products.map((product) => (
-					<div key={product.id} className={styles.productCard}>
+					<Link href={ROUTES.Product} key={product.id} className={styles.productCard}>
 						<div className={styles.imageWrapper}>
 							<Image src={product.image} alt={product.name} width={300} height={400} className={styles.productImage} />
 						</div>
@@ -48,7 +50,7 @@ const FeaturedProducts = () => {
 							<p className={styles.productName}>{product.name}</p>
 							<p className={styles.productPrice}>{product.price}</p>
 						</div>
-					</div>
+					</Link>
 				))}
 			</div>
 		</div>

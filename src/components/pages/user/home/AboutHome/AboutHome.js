@@ -4,6 +4,7 @@ import Link from 'next/link';
 import styles from './AboutHome.module.scss';
 import images from '@/constants/static/images';
 import Button from '@/components/common/Button/Button';
+import {ROUTES} from '@/constants/config';
 
 const AboutHome = () => {
 	return (
@@ -22,7 +23,7 @@ const AboutHome = () => {
 						Đến với HG Shop, bạn không chỉ mua áo đá bóng mà còn khẳng định phong cách và niềm đam mê sân cỏ. Hãy cùng HG Shop
 						cháy hết mình với đam mê bóng đá! ⚡⚽
 					</p>
-					<Link href='/about'>
+					<Link href={ROUTES.About}>
 						<Button type='submit' className={styles.learnMore}>
 							Về chúng tôi
 						</Button>

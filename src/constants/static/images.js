@@ -15,6 +15,7 @@ import bgLogin from '../../../public/static/images/auth/login-bg.jpg';
 import user from '../../../public/static/images/auth/user.svg';
 import noImg from '../../../public/static/images/no_img.png';
 import logoSmall from '../../../public/static/images/logo_small.svg';
+import logoFooter from '../../../public/static/images/logo.png';
 import defaultAvatar from '../../../public/static/images/auth/user.svg';
 
 const images = {
@@ -36,6 +37,7 @@ const images = {
 	noImg,
 	logoSmall,
 	defaultAvatar,
+	logoFooter,
 };
 
 export default images;

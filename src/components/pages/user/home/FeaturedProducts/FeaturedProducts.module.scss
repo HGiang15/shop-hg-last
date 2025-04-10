@@ -2,6 +2,16 @@
 	padding: 80px 0;
 	max-width: 1440px;
 	margin: auto;
+
+	@media (max-width: 992px) {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+
+	@media (max-width: 576px) {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
 }
 
 .featuredTitle {
@@ -24,7 +34,7 @@
 	overflow: hidden;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 	transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    cursor: pointer;
+	cursor: pointer;
 
 	&:hover {
 		transform: scale(1.05);

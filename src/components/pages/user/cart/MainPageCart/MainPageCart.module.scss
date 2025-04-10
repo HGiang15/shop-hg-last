@@ -1,0 +1,289 @@
+.container {
+	max-width: 1440px;
+	margin: 0 auto;
+	padding-left: 20px;
+	padding-right: 20px;
+
+	@media (max-width: 992px) {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+
+	@media (max-width: 576px) {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+}
+
+.main {
+	display: flex;
+	flex-direction: column;
+
+	background: #f9f9f9;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cartTable {
+	width: 100%;
+	margin-bottom: 20px;
+	border-collapse: collapse;
+
+	max-height: 500px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.cartHeader {
+	display: flex;
+	background: #eee;
+	padding: 10px;
+	border-bottom: 1px solid #ddd;
+
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+
+.headerItem {
+	flex: 1;
+	font-weight: 600;
+	text-align: left;
+
+	&:nth-child(1) {
+		flex: 2; /* Sản phẩm chiếm nhiều không gian hơn */
+	}
+	&:last-child {
+		text-align: right;
+	}
+}
+
+.cartItem {
+	display: flex;
+	padding: 15px 10px;
+	border-bottom: 1px solid #eee;
+	align-items: center;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
+
+.product {
+	flex: 2;
+	display: flex;
+	align-items: center;
+
+	input[type='checkbox'] {
+		margin-right: 10px;
+	}
+}
+
+.productImage {
+	margin-right: 10px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	overflow: hidden;
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+}
+
+.productInfo {
+	flex-grow: 1;
+}
+
+.price,
+.color,
+.size {
+	flex: 1;
+	text-align: left;
+}
+
+.colorDot {
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	margin-right: 5px;
+	vertical-align: middle;
+}
+
+.quantity {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	font-size: 16px;
+
+	.iconQuantity {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		height: 30px;
+		color: #000;
+		border: 1px solid #ccc;
+		background: #fff;
+
+		&:hover {
+			opacity: 0.9;
+		}
+	}
+
+	input[type='number'] {
+		width: 40px;
+		height: 30px;
+		text-align: center;
+		background: #f9f9f9;
+		border: 1px solid transparent;
+		margin: 0 5px;
+	}
+}
+
+.total {
+	flex: 1;
+	text-align: right;
+	font-weight: 600;
+	color: #e44d26;
+}
+
+.cartSummary {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 18px 10px;
+	border-top: 1px solid #ccc;
+}
+
+.selectAll {
+	display: flex;
+	align-items: center;
+
+	input[type='checkbox'] {
+		margin-right: 10px;
+	}
+}
+
+.deleteButton {
+	margin-left: 10px;
+	cursor: pointer;
+
+	&:hover {
+		opacity: 0.8;
+	}
+}
+
+.totalAmount {
+	font-weight: 600;
+
+	span {
+		color: #e44d26;
+	}
+}
+
+.checkoutButton {
+	background: #14a0d8;
+	color: #fff;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+/* Responsive cho bảng giỏ hàng */
+@media (max-width: 768px) {
+	.cartHeader {
+		display: none;
+	}
+
+	.cartItem {
+		flex-direction: column;
+		align-items: flex-start;
+		padding: 15px;
+		margin-bottom: 15px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+
+		.product,
+		.price,
+		.color,
+		.size,
+		.quantity,
+		.total {
+			display: flex;
+			width: 100%;
+			margin-bottom: 10px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+
+			&::before {
+				content: attr(data-label); /* Hiển thị label */
+				font-weight: 600;
+				width: 120px;
+				margin-right: 10px;
+			}
+		}
+
+		.quantity {
+			justify-content: flex-start;
+		}
+
+		.total {
+			justify-content: flex-end;
+		}
+
+		/* Thêm thuộc tính data-label cho các trường */
+		.product::before {
+			data-label: 'Sản phẩm:';
+		}
+		.price::before {
+			data-label: 'Đơn giá:';
+		}
+		.color::before {
+			data-label: 'Màu sắc:';
+		}
+		.size::before {
+			data-label: 'Kích cỡ:';
+		}
+		.quantity::before {
+			data-label: 'Số lượng:';
+		}
+		.total::before {
+			data-label: 'Thành tiền:';
+		}
+	}
+
+	.product {
+		flex-direction: row;
+		align-items: center;
+
+		input[type='checkbox'] {
+			margin-right: 15px;
+		}
+	}
+
+	.productImage {
+		width: 60px;
+		height: 60px;
+		margin-right: 15px;
+	}
+}
+
+@media (max-width: 576px) {
+	.productInfo {
+		font-size: 0.9em;
+	}
+
+	.price::before,
+	.color::before,
+	.size::before,
+	.quantity::before,
+	.total::before {
+		width: 100px;
+	}
+}

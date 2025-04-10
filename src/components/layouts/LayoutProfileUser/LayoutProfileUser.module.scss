@@ -2,6 +2,19 @@
 	max-width: 1440px;
 	width: 100%;
 	margin: 0 auto;
+
+	padding-left: 20px;
+	padding-right: 20px;
+
+	@media (max-width: 992px) {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+
+	@media (max-width: 576px) {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
 }
 
 .main {

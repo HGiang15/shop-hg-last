@@ -112,7 +112,7 @@ function Header() {
 			</nav>
 
 			<div className={styles.header__actions}>
-				<Link href='#' className={styles.header__cart}>
+				<Link href={ROUTES.Cart} className={styles.header__cart}>
 					<Image src={icons.cart} width={28} height={28} alt='Cart' className='' />
 					{cartItemCount > 0 && <span className={styles.cart__count}>{cartItemCount}</span>}
 				</Link>

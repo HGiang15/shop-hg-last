@@ -4,7 +4,20 @@
 	font-size: 18px;
 	max-width: 1440px;
 	margin: 0 auto;
-	padding: 24px 0;
+	padding-top: 24px;
+	padding-bottom: 24px;
+	padding-left: 20px;
+	padding-right: 20px;
+
+	@media (max-width: 992px) {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+
+	@media (max-width: 480px) {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
 }
 
 .item {

@@ -19,6 +19,7 @@ import add from '../../../public/static/icons/add.svg';
 import folderOpen from '../../../public/static/icons/folder-open.svg';
 import question from '../../../public/static/icons/question.svg';
 import cart from '../../../public/static/icons/cart.svg';
+import trash from '../../../public/static/icons/trash.svg';
 
 const icons = {
 	shipper,
@@ -42,6 +43,7 @@ const icons = {
 	folderOpen,
 	question,
 	cart,
+	trash,
 };
 
 export default icons;

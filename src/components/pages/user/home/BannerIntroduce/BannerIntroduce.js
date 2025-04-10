@@ -1,6 +1,8 @@
 import React from 'react';
 import styles from './BannerIntroduce.module.scss';
 import Button from '@/components/common/Button/Button';
+import Link from 'next/link';
+import {ROUTES} from '@/constants/config';
 
 const BannerIntroduce = () => {
 	return (
@@ -11,10 +13,10 @@ const BannerIntroduce = () => {
 					<p>Khám phá những bộ sưu tập thời trang mới nhất với phong cách hiện đại, sang trọng và đẳng cấp.</p>
 					<div className={styles.buttons}>
 						<Button type='submit' className={styles.primaryBtn}>
-							Khám phá ngay
+							<Link href={ROUTES.Product}>Khám phá ngay</Link>
 						</Button>
 						<Button type='submit' className={styles.secondaryBtn}>
-							Xem thêm
+							<Link href={ROUTES.Product}>Xem thêm</Link>
 						</Button>
 					</div>
 				</div>
