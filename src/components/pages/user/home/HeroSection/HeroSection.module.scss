@@ -33,16 +33,25 @@
 		font-size: 18px;
 		margin-bottom: 20px;
 	}
+	.groupBtn {
+		display: flex;
+		justify-content: flex-start;
 
-	.ctaButton {
-		padding: 12px 24px;
-		background: #fff;
-		color: var(--primary-main);
-		font-weight: 600;
-		transition: 0.3s;
+		@media (max-width: 768px) {
+			justify-content: center;
+			margin: 10px;
+		}
 
-		&:hover {
-			transform: scale(1.04);
+		.ctaButton {
+			padding: 12px 24px;
+			background: #fff;
+			color: var(--primary-main);
+			font-weight: 600;
+			transition: 0.3s;
+
+			&:hover {
+				transform: scale(1.04);
+			}
 		}
 	}
 }

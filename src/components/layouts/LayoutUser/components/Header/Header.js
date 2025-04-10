@@ -8,6 +8,7 @@ import {ROUTES} from '@/constants/config';
 import Loading from '@/components/common/Loading/Loading';
 import styles from './Header.module.scss';
 import images from '@/constants/static/images';
+import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
 
 function Header() {
@@ -16,10 +17,12 @@ function Header() {
 	const [loading, setLoading] = useState(false);
 	const [showDropdown, setShowDropdown] = useState(false);
 	const router = useRouter();
+	const [cartItemCount, setCartItemCount] = useState(1);
 
 	useEffect(() => {
 		const token = localStorage.getItem('token');
 		const name = localStorage.getItem('name');
+		const cart = localStorage.getItem('cart'); // Get cart from local storage
 
 		if (token) {
 			try {
@@ -28,6 +31,17 @@ function Header() {
 			} catch (error) {
 				console.error('Token không hợp lệ', error);
 				localStorage.removeItem('token');
+			}
+		}
+
+		// Update cart item count from local storage
+		if (cart) {
+			try {
+				const cartItems = JSON.parse(cart);
+				setCartItemCount(cartItems.length);
+			} catch (error) {
+				console.error('Lỗi khi phân tích giỏ hàng từ localStorage', error);
+				setCartItemCount(0);
 			}
 		}
 	}, []);
@@ -97,39 +111,47 @@ function Header() {
 				</ul>
 			</nav>
 
-			<div className={styles.header__auth}>
-				{user ? (
-					// if login
-					<div className={styles.userDropdown}>
-						<div className={styles.userInfo}>
-							<Image
-								src={user.avatar || images.defaultAvatar}
-								alt='User Avatar'
-								width={40}
-								height={40}
-								className={styles.userAvatar}
-							/>
-							<span className={styles.userName}>{user.name || 'Người dùng'}</span>
-						</div>
+			<div className={styles.header__actions}>
+				<Link href='#' className={styles.header__cart}>
+					<Image src={icons.cart} width={28} height={28} alt='Cart' className='' />
+					{cartItemCount > 0 && <span className={styles.cart__count}>{cartItemCount}</span>}
+				</Link>
+				<div className={styles.header__auth}>
+					{user ? (
+						// if login
+						<div className={styles.userDropdown}>
+							<div className={styles.userInfo} onClick={toggleDropdown}>
+								<Image
+									src={user.avatar || images.defaultAvatar}
+									alt='User Avatar'
+									width={40}
+									height={40}
+									className={styles.userAvatar}
+								/>
+								<span className={styles.userName}>{user.name || 'Người dùng'}</span>
+							</div>
 
-						<ul className={styles.dropdownMenu}>
-							<li>
-								<Link href={ROUTES.Profile}>Thông tin tài khoản</Link>
-							</li>
-							<li onClick={handleLogout}>Đăng xuất</li>
-						</ul>
-					</div>
-				) : (
-					// if not login
-					<>
-						<Link href={ROUTES.Login}>
-							<Button className={styles.auth__login}>Đăng nhập</Button>
-						</Link>
-						<Link href={ROUTES.Register}>
-							<Button className={styles.auth__register}>Đăng ký</Button>
-						</Link>
-					</>
-				)}
+							{showDropdown && (
+								<ul className={styles.dropdownMenu}>
+									<li>
+										<Link href={ROUTES.Profile}>Thông tin tài khoản</Link>
+									</li>
+									<li onClick={handleLogout}>Đăng xuất</li>
+								</ul>
+							)}
+						</div>
+					) : (
+						// if not login
+						<>
+							<Link href={ROUTES.Login}>
+								<Button className={styles.auth__login}>Đăng nhập</Button>
+							</Link>
+							<Link href={ROUTES.Register}>
+								<Button className={styles.auth__register}>Đăng ký</Button>
+							</Link>
+						</>
+					)}
+				</div>
 			</div>
 
 			{loading && <Loading fullScreen />}

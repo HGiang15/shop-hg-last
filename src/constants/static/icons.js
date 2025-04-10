@@ -18,6 +18,7 @@ import timesCircle from '../../../public/static/icons/times_circle.svg';
 import add from '../../../public/static/icons/add.svg';
 import folderOpen from '../../../public/static/icons/folder-open.svg';
 import question from '../../../public/static/icons/question.svg';
+import cart from '../../../public/static/icons/cart.svg';
 
 const icons = {
 	shipper,
@@ -40,6 +41,7 @@ const icons = {
 	add,
 	folderOpen,
 	question,
+	cart,
 };
 
 export default icons;
