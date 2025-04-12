@@ -5,6 +5,7 @@ import icons from '@/constants/static/icons';
 import styles from './MainDetailProduct.module.scss';
 import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 import Button from '@/components/common/Button/Button';
+import {ROUTES} from '@/constants/config';
 
 const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const initialReviews = [
@@ -116,7 +117,9 @@ const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 
 					<div className={styles.buttonGroup}>
 						<Button className={styles.addToCart}>Thêm giỏ hàng</Button>
-						<Button className={styles.buyNow}>Thanh toán ngay</Button>
+						<Button href={ROUTES.Order} className={styles.buyNow}>
+							Thanh toán ngay
+						</Button>
 					</div>
 
 					<div className={styles.additionalDescription}>

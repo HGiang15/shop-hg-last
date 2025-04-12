@@ -5,6 +5,7 @@ import Image from 'next/image';
 import icons from '@/constants/static/icons';
 import images from '@/constants/static/images';
 import Button from '@/components/common/Button/Button';
+import {ROUTES} from '@/constants/config';
 
 const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const initialCartItems = [
@@ -129,8 +130,8 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 
 				<div className={styles.cartSummary}>
 					<div className={styles.selectAll}>
-						<input type='checkbox' checked={selectAllChecked} onChange={handleSelectAllChange} />
-						Tất cả sản phẩm ({cartItems.length})
+						<input type='checkbox' id='selectAllCheckbox' checked={selectAllChecked} onChange={handleSelectAllChange} />
+						<label htmlFor='selectAllCheckbox'>Tất cả sản phẩm ({cartItems.length})</label>
 						<button className={styles.deleteButton} onClick={handleDeleteSelected} disabled={selectedItems.length === 0}>
 							<span role='img' aria-label='delete'>
 								<Image src={icons.trash} alt='Trash' width={24} height={24} />
@@ -140,7 +141,7 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 					<div className={styles.totalAmount}>
 						Tổng thanh toán: <span>{totalAmount.toLocaleString('vi-VN')} VNĐ</span>
 					</div>
-					<Button className={styles.checkoutButton} disabled={cartItems.length === 0}>
+					<Button href={ROUTES.Order} className={styles.checkoutButton} disabled={cartItems.length === 0}>
 						Thanh toán
 					</Button>
 				</div>
