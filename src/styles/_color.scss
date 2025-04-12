@@ -1,5 +1,5 @@
 .global-color {
-	--primary-main: #FF7B29;
+	--primary-main: #ff7b29;
 
 	--bg: #f8f8f8;
 	--bg-light: #fff;
@@ -39,4 +39,6 @@
 	--gradient-blue-blue-red: linear-gradient(90deg, #0b99d2 3.55%, #d42352 99.49%);
 	--gradient-blue-blue-blue: linear-gradient(90deg, #1da7df -8.49%, #0b99d2 45.98%, #13c0f2 106.91%);
 	--gradient-blue-white: linear-gradient(90deg, #0fafe4 -25.26%, #fff 115.9%);
+
+	--red-svg: brightness(0) saturate(100%) invert(14%) sepia(91%) saturate(7496%) hue-rotate(358deg) brightness(95%) contrast(123%);
 }

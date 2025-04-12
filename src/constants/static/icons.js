@@ -20,6 +20,7 @@ import folderOpen from '../../../public/static/icons/folder-open.svg';
 import question from '../../../public/static/icons/question.svg';
 import cart from '../../../public/static/icons/cart.svg';
 import trash from '../../../public/static/icons/trash.svg';
+import closeCircle from '../../../public/static/icons/close-circle.svg';
 
 const icons = {
 	shipper,
@@ -44,6 +45,7 @@ const icons = {
 	question,
 	cart,
 	trash,
+	closeCircle,
 };
 
 export default icons;

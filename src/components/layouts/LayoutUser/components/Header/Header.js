@@ -10,14 +10,17 @@ import styles from './Header.module.scss';
 import images from '@/constants/static/images';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
+import ShoppingCart from '@/components/pages/user/cart/ShoppingCart/ShoppingCart';
 
 function Header() {
+	const router = useRouter();
+
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [showDropdown, setShowDropdown] = useState(false);
-	const router = useRouter();
 	const [cartItemCount, setCartItemCount] = useState(1);
+	const [showCart, setShowCart] = useState(false);
 
 	useEffect(() => {
 		const token = localStorage.getItem('token');
@@ -112,10 +115,13 @@ function Header() {
 			</nav>
 
 			<div className={styles.header__actions}>
-				<Link href={ROUTES.Cart} className={styles.header__cart}>
+				<Button className={styles.cart} onClick={() => setShowCart(true)}>
 					<Image src={icons.cart} width={28} height={28} alt='Cart' className='' />
 					{cartItemCount > 0 && <span className={styles.cart__count}>{cartItemCount}</span>}
-				</Link>
+				</Button>
+
+				{showCart && <ShoppingCart onClose={() => setShowCart(false)} />}
+
 				<div className={styles.header__auth}>
 					{user ? (
 						// if login
@@ -143,12 +149,12 @@ function Header() {
 					) : (
 						// if not login
 						<>
-							<Link href={ROUTES.Login}>
-								<Button className={styles.auth__login}>Đăng nhập</Button>
-							</Link>
-							<Link href={ROUTES.Register}>
-								<Button className={styles.auth__register}>Đăng ký</Button>
-							</Link>
+							<Button href={ROUTES.Login} className={styles.auth__login}>
+								Đăng nhập
+							</Button>
+							<Button href={ROUTES.Register} className={styles.auth__register}>
+								Đăng ký
+							</Button>
 						</>
 					)}
 				</div>
