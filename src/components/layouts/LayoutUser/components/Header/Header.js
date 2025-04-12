@@ -107,6 +107,11 @@ function Header() {
 						</Link>
 					</li>
 					<li className={styles.nav__item}>
+						<Link className={styles.nav__link} href='/policy'>
+							Chính sách bảo mật
+						</Link>
+					</li>
+					<li className={styles.nav__item}>
 						<Link className={styles.nav__link} href='/contact'>
 							Liên hệ
 						</Link>

@@ -16,4 +16,108 @@
 }
 
 .main {
+	display: flex;
+	justify-content: space-between;
+	gap: 20px;
+	padding-bottom: 50px;
+
+	.orderSummary {
+		width: 60%;
+	}
+
+	.deliveryInfo {
+		width: 40%;
+	}
+
+	.orderWrap {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.orderSummary,
+	.deliveryInfo {
+		border: 1px solid #ddd;
+		padding: 20px;
+	}
+
+	.orderTitle,
+	.deliveryTitle {
+		font-size: 18px;
+		margin-bottom: 16px;
+	}
+
+	.orderList {
+		padding-bottom: 20px;
+		border-bottom: 1px solid #e9e5e5;
+
+		.orderItem {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 10px;
+		}
+	}
+
+	.total {
+		font-weight: 600;
+		margin: 20px 0;
+
+		.totalAmount {
+			color: red;
+		}
+	}
+
+	.policyCheckbox {
+		display: flex;
+		align-items: center;
+		margin-bottom: 20px;
+
+		label {
+			margin-left: 6px;
+			user-select: none;
+		}
+	}
+
+	.placeOrderButton {
+		background: linear-gradient(to right, #00b4ff, #ff005e);
+		color: #fff;
+		padding: 10px 20px;
+		width: 100%;
+	}
+
+	.deliveryHeader {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 15px;
+
+		.changeAddress {
+			color: #00b4ff;
+			cursor: pointer;
+		}
+	}
+
+	.deliveryDetails {
+		margin-bottom: 20px;
+
+		.wrapper {
+			display: flex;
+			justify-content: space-between;
+		}
+	}
+
+	.note {
+		margin-top: 20px;
+
+		label {
+			margin-bottom: 8px;
+			display: block;
+		}
+
+		.noteInput {
+			width: 100%;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+	}
 }
