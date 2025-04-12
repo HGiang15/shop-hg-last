@@ -6,7 +6,7 @@ import Button from '@/components/common/Button/Button';
 
 const FormDeleteAddress = ({onClose, onConfirm}) => {
 	return (
-		<div className={styles.overlay}>
+		<div className={styles.overlay} onClick={onClose}>
 			<div className={styles.modal}>
 				<Image src={icons.question} alt='icon' width={64} height={64} className={styles.icon} />
 				<h3 className={styles.title}>Xóa địa chỉ</h3>

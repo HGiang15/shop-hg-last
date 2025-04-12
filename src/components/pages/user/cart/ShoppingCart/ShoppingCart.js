@@ -30,21 +30,43 @@ const ShoppingCart = ({onClose}) => {
 			price: 100000,
 			image: images.product2,
 		},
+		{
+			id: 'ID20242025',
+			name: 'Áo MU Home 2024-2025',
+			color: 'Đỏ',
+			size: 'XXL',
+			quantity: 1,
+			price: 100000,
+			image: images.product2,
+		},
+		{
+			id: 'ID20242025',
+			name: 'Áo MU Home 2024-2025',
+			color: 'Đỏ',
+			size: 'XXL',
+			quantity: 1,
+			price: 100000,
+			image: images.product2,
+		},
 	];
 
 	const total = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
 	useEffect(() => {
-		setIsActive(true); // Kích hoạt class active sau khi component mount
+		setIsActive(true);
 	}, []);
 
 	const handleClose = () => {
-		setIsActive(false); // Vô hiệu hóa class active để trượt ra
-		setTimeout(onClose, 300); // Đợi hiệu ứng trượt kết thúc trước khi đóng
+		setIsActive(false);
+		setTimeout(onClose, 300);
+	};
+
+	const handleClick = (productCode) => {
+		router.push(`/products/${productCode}`);
 	};
 
 	return (
-		<div className={styles.overlay}>
+		<div className={styles.overlay} onClick={handleClose}>
 			<div className={`${styles.cartContainer} ${isActive ? styles.active : ''}`}>
 				<div className={styles.header}>
 					<h2>Giỏ hàng của bạn ({cartItems.reduce((a, b) => a + b.quantity, 0)})</h2>
@@ -73,7 +95,9 @@ const ShoppingCart = ({onClose}) => {
 										centerIcon={<Image src={icons.trash} width={24} height={24} className={styles.iconTrash} />}
 										className={styles.removeBtn}
 									></Button>
-									<Button className={styles.detailBtn}>Chi tiết sản phẩm</Button>
+									<Button onClick={() => handleClick(item.id)} className={styles.detailBtn}>
+										Chi tiết sản phẩm
+									</Button>
 								</div>
 							</div>
 						</div>
@@ -89,10 +113,10 @@ const ShoppingCart = ({onClose}) => {
 							className={styles.goToCartBtn}
 							onClick={() => {
 								onClose();
-								router.push(ROUTES.Cart); // điều hướng đến trang giỏ hàng nếu cần
+								router.push(ROUTES.Cart);
 							}}
 						>
-							Đến chi tiết giỏ hàng
+							Chi tiết giỏ hàng
 						</Button>
 					</div>
 				</div>

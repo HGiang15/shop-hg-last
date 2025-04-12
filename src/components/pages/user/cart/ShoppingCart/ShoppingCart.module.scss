@@ -6,6 +6,8 @@
 }
 
 .cartContainer {
+	display: flex;
+	flex-direction: column;
 	position: fixed;
 	top: 0;
 	right: 0;
@@ -46,9 +48,13 @@
 		flex-direction: column;
 		gap: 18px;
 		margin-top: 18px;
+		flex: 1;
+		height: 80vh;
+		overflow-y: scroll;
 
 		.cartItem {
 			display: flex;
+			align-items: center;
 			gap: 16px;
 			background: #f9f9f9;
 			padding: 12px;
@@ -112,7 +118,6 @@
 		margin-top: 24px;
 
 		span {
-			color: #0a66c2;
 			font-weight: 600;
 		}
 
@@ -121,10 +126,10 @@
 			align-items: center;
 
 			.goToCartBtn {
-				margin-top: 12px;
 				background: #00b4ff;
 				color: #fff;
 				padding: 12px 20px;
+				font-weight: 600;
 			}
 		}
 	}

@@ -120,7 +120,7 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 
 	const isSubmitDisabled = !isFormValid || !selectedProvince || !selectedDistrict || !selectedWard;
 	return (
-		<div className={styles.overlay}>
+		<div className={styles.overlay} onClick={onClose}>
 			<form className={styles.form} onSubmit={handleSubmit}>
 				<div className={styles.header}>
 					<h2 className={styles.title}>Cập nhật địa chỉ</h2>
