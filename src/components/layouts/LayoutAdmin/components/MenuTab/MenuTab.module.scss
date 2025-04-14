@@ -7,6 +7,18 @@
 	display: flex;
 	flex-direction: column;
 
+	.closeButton {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		font-size: 20px;
+		cursor: pointer;
+		z-index: 1001;
+		@media (min-width: 769px) {
+			display: none;
+		}
+	}
+
 	.logo {
 		display: flex;
 		justify-content: center;

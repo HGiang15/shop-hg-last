@@ -12,6 +12,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import logo from '../../../../../../public/static/images/logo_small.svg';
 import {ROUTES} from '@/constants/config';
+import {FaTimes} from 'react-icons/fa';
 
 const menuItems = [
 	{label: 'Tổng quan', icon: <DashboardIcon />, path: ROUTES.AdminDashboard},
@@ -23,11 +24,20 @@ const menuItems = [
 	{label: 'Quản lý đơn hàng', icon: <ShoppingCartIcon />, path: ROUTES.AdminOrder},
 ];
 
-const MenuTab = ({menuOpen}) => {
+const MenuTab = ({menuOpen, setMenuOpen}) => {
 	const router = useRouter();
+
+	const handleClose = () => {
+		setMenuOpen(false);
+	};
 
 	return (
 		<div className={styles.menuTab}>
+			{menuOpen && (
+				<div className={styles.closeButton} onClick={handleClose}>
+					<FaTimes />
+				</div>
+			)}
 			<div className={styles.logo}>
 				<Image src={logo} alt='Logo' width={120} height={50} />
 			</div>

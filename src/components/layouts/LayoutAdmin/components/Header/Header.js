@@ -8,8 +8,9 @@ import {HiOutlineMenuAlt2} from 'react-icons/hi';
 import Loading from '@/components/common/Loading/Loading';
 import styles from './Header.module.scss';
 import avatar from '../../../../../../public/static/images/auth/user.svg';
+import {FaTimes} from 'react-icons/fa';
 
-const Header = ({title}) => {
+const Header = ({title, setMenuOpen, menuOpen}) => {
 	const [visible, setVisible] = useState(false);
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(false);
@@ -45,10 +46,16 @@ const Header = ({title}) => {
 		}, 1500);
 	};
 
+	const handleMenuToggle = () => {
+		setMenuOpen(!menuOpen);
+	};
+
 	return (
 		<header className={styles.container}>
 			<div className={styles.left}>
-				<HiOutlineMenuAlt2 className={styles.menuIcon} />
+				<div className={styles.menuIcon} onClick={handleMenuToggle}>
+					{menuOpen ? <FaTimes /> : <HiOutlineMenuAlt2 />}
+				</div>
 				<h1 className={styles.title}>{title}</h1>
 			</div>
 

@@ -19,6 +19,9 @@
 	font-size: 24px;
 	color: #666;
 	cursor: pointer;
+	@media (min-width: 769px) {
+		display: none;
+	}
 }
 
 .title {

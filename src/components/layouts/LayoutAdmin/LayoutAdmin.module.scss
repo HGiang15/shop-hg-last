@@ -11,6 +11,16 @@
 	top: 0;
 	background: #fff;
 	border-right: 1px solid #ddd;
+	transition: transform 0.3s ease-in-out;
+	z-index: 1000;
+
+	@media (max-width: 768px) {
+		transform: translateX(-100%);
+	}
+}
+
+.menuTabOpen {
+	transform: translateX(0);
 }
 
 .header {
@@ -23,6 +33,11 @@
 	border-bottom: 1px solid #ddd;
 	display: flex;
 	align-items: center;
+
+	@media (max-width: 768px) {
+		left: 0;
+		width: 100%;
+	}
 }
 
 .main {
@@ -31,4 +46,9 @@
 	width: calc(100% - 250px);
 	overflow-y: auto;
 	height: calc(100vh - 60px);
+
+	@media (max-width: 768px) {
+		margin-left: 0;
+		width: 100%;
+	}
 }
