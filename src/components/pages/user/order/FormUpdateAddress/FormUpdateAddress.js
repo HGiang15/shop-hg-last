@@ -1,20 +1,32 @@
 import React, {useState} from 'react';
 import styles from './FormUpdateAddress.module.scss';
 import Button from '@/components/common/Button/Button';
+import FormCreateAddress from '../../profile/FormCreateAddress/FormCreateAddress';
 
 const FormUpdateAddress = ({onClose}) => {
-	const [isActive, setIsActive] = useState(false);
+	const [showCreateForm, setShowCreateForm] = useState(false);
+
+	const handleAddAddress = () => {
+		setShowCreateForm(true);
+	};
+
+	const handleCloseCreateForm = () => {
+		setShowCreateForm(false);
+	};
 
 	const handleClose = () => {
-		setIsActive(false);
-		setTimeout(onClose, 100);
+		onClose();
 	};
+
 	return (
-		<div className={styles.overlay} onClick={handleClose}>
+		<div className={styles.overlay}>
 			<div className={styles.container}>
 				<div className={styles.header}>
 					<h2 className={styles.title}>Thay đổi địa chỉ</h2>
-					<span className={styles.addAddress}>Thêm địa chỉ mới</span>
+					<span className={styles.addAddress} onClick={handleAddAddress}>
+						Thêm địa chỉ mới
+					</span>
+					{showCreateForm && <FormCreateAddress onClose={handleCloseCreateForm} />}
 				</div>
 				<div className={styles.addresses}>
 					<div className={styles.addressItem}>
@@ -29,7 +41,7 @@ const FormUpdateAddress = ({onClose}) => {
 					</div>
 				</div>
 				<div className={styles.actions}>
-					<Button className={styles.cancelButton} onClick={onClose}>
+					<Button className={styles.cancelButton} onClick={handleClose}>
 						Hủy bỏ
 					</Button>
 					<Button className={styles.updateButton}>Thay đổi</Button>

@@ -122,7 +122,7 @@ const FormCreateAddress = ({onClose}) => {
 	const isSubmitDisabled = !isFormValid || !selectedProvince || !selectedDistrict || !selectedWard;
 
 	return (
-		<div className={styles.overlay} onClick={onClose}>
+		<div className={styles.overlay}>
 			<form className={styles.form} onSubmit={handleSubmit}>
 				<div className={styles.header}>
 					<h2 className={styles.title}>Thêm mới địa chỉ</h2>

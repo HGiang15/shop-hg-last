@@ -71,7 +71,7 @@ const ShoppingCart = ({onClose}) => {
 				<div className={styles.header}>
 					<h2>Giỏ hàng của bạn ({cartItems.reduce((a, b) => a + b.quantity, 0)})</h2>
 					<Button
-						centerIcon={<Image src={icons.closeCircle} width={24} height={24} />}
+						centerIcon={<Image src={icons.closeCircle} alt='CloseIcon' width={24} height={24} />}
 						className={styles.closeBtn}
 						onClick={handleClose}
 					/>
@@ -92,7 +92,9 @@ const ShoppingCart = ({onClose}) => {
 								<p className={styles.price}>Thành giá: {(item.price * item.quantity).toLocaleString('vi-VN')} VNĐ</p>
 								<div className={styles.actions}>
 									<Button
-										centerIcon={<Image src={icons.trash} width={24} height={24} className={styles.iconTrash} />}
+										centerIcon={
+											<Image src={icons.trash} alt='TrashIcon' width={24} height={24} className={styles.iconTrash} />
+										}
 										className={styles.removeBtn}
 									></Button>
 									<Button onClick={() => handleClick(item.id)} className={styles.detailBtn}>
