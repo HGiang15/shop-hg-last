@@ -13,6 +13,18 @@ export const ROUTES = {
 	// Admin
 	AdminDashboard: '/admin/dashboard',
 	AdminUser: '/admin/user',
+	AdminColor: '/admin/color',
+	AdminSize: '/admin/size',
+	AdminCategory: '/admin/category',
+
+	AdminProduct: '/admin/product',
+	AdminProductCreate: '/admin/product/create',
+	AdminProductUpdate: '/admin/product/update',
+
+	AdminOrder: '/admin/order',
+	AdminOrderConfirm: '/admin/order/delivery',
+	AdminOrderSuccess: '/admin/order/success',
+	AdminOrderCancel: '/admin/order/cancel',
 
 	// Auth
 	Login: '/auth/login',

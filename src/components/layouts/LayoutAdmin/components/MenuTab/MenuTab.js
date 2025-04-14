@@ -16,11 +16,11 @@ import {ROUTES} from '@/constants/config';
 const menuItems = [
 	{label: 'Tổng quan', icon: <DashboardIcon />, path: ROUTES.AdminDashboard},
 	{label: 'Người dùng', icon: <PeopleIcon />, path: ROUTES.AdminUser},
-	{label: 'Màu sản phẩm', icon: <PaletteIcon />, path: '/admin/colors'},
-	{label: 'Kích cỡ sản phẩm', icon: <FormatSizeIcon />, path: '/admin/sizes'},
-	{label: 'Danh mục sản phẩm', icon: <CategoryIcon />, path: '/admin/categories'},
-	{label: 'Quản lý sản phẩm', icon: <InventoryIcon />, path: '/admin/products'},
-	{label: 'Quản lý đơn hàng', icon: <ShoppingCartIcon />, path: '/admin/orders'},
+	{label: 'Màu sản phẩm', icon: <PaletteIcon />, path: ROUTES.AdminColor},
+	{label: 'Kích cỡ sản phẩm', icon: <FormatSizeIcon />, path: ROUTES.AdminSize},
+	{label: 'Danh mục sản phẩm', icon: <CategoryIcon />, path: ROUTES.AdminCategory},
+	{label: 'Quản lý sản phẩm', icon: <InventoryIcon />, path: ROUTES.AdminProduct},
+	{label: 'Quản lý đơn hàng', icon: <ShoppingCartIcon />, path: ROUTES.AdminOrder},
 ];
 
 const MenuTab = ({menuOpen}) => {
