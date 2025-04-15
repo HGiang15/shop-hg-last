@@ -18,19 +18,26 @@
 
 .actions {
 	display: flex;
-	justify-content: center;
 }
 
-.role {
-	background: #ffe4e6;
-	color: #ff2d2d;
-	padding: 5px 10px;
-	border-radius: 4px;
+.colorPickerContainer {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
-.status {
-	background: #e4ffe5;
-	color: #19cd21;
-	padding: 5px 10px;
-	border-radius: 4px;
+.colorDisplay {
+	width: 50px;
+	height: 20px;
+	cursor: pointer;
+}
+
+.chromePickerWrapper {
+	position: absolute;
+	z-index: 1000;
+}
+
+.colorHex {
+	margin: 0;
+	font-size: 14px;
 }
