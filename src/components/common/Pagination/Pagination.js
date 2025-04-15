@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Pagination.module.scss';
 
-function Pagination({currentPage, totalPages, onPageChange}) {
+function Pagination({currentPage, totalPages, onPageChange, totalItems}) {
 	const pages = [];
 	for (let i = 1; i <= totalPages; i++) {
 		pages.push(
@@ -11,7 +11,14 @@ function Pagination({currentPage, totalPages, onPageChange}) {
 		);
 	}
 
-	return <div className={styles.pagination}>{pages}</div>;
+	return (
+		<div className={styles.pagination}>
+			<div className={styles.pageNumbers}>{pages}</div>
+			<div className={styles.totalItems}>
+				Hiển thị {currentPage} trong tổng số {totalItems} kết quả
+			</div>
+		</div>
+	);
 }
 
 export default Pagination;

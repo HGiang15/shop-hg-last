@@ -1,18 +1,28 @@
 .pagination {
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
+	align-items: center;
 	margin-top: 20px;
 }
 
+.pageNumbers {
+	display: flex;
+}
+
 .pageButton {
-	padding: 8px 12px;
-	margin: 0 5px;
+	padding: 4px 10px;
+	margin: 0 2px;
 	border: 1px solid #ddd;
 	background: #fff;
 	cursor: pointer;
+	transition: background 0.1s ease, color 0.3s ease;
 }
 
 .pageButton.active {
 	background: #405189;
 	color: #fff;
+}
+
+.totalItems {
+	font-size: 14px;
 }

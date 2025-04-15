@@ -1,5 +1,8 @@
 .container {
 	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	min-height: 80vh;
 }
 
 .header {
@@ -34,4 +37,10 @@
 	color: #19cd21;
 	padding: 5px 10px;
 	border-radius: 4px;
+}
+
+.tableWrapper {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
 }
