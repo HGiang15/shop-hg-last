@@ -1,14 +1,12 @@
 import React from 'react';
 import styles from './MainPageUser.module.scss';
-import lock from '../../../../../../public/static/icons/lock.svg';
-import unlock from '../../../../../../public/static/icons/unlock.svg';
-import edit from '../../../../../../public/static/icons/edit.svg';
-import changeRole from '../../../../../../public/static/icons/change_role.svg';
-import Table from '@/components/common/Table/Table';
 import Image from 'next/image';
+import IconCustom from '@/components/common/IconCustom/IconCustom';
+import Table from '@/components/common/Table/Table';
+import icons from '@/constants/static/icons';
 
 const users = [
-	{id: 1, name: 'Tesst', phone: '0398162589', email: 'giang@gmail.com', role: 'Quản trị', status: 'Đang hoạt động'},
+	{id: 1, name: 'Test', phone: '0398162589', email: 'giang@gmail.com', role: 'Quản trị', status: 'Đang hoạt động'},
 	{
 		id: 2,
 		name: 'Nguyễn Đăng Hoàng Giang',
@@ -21,21 +19,6 @@ const users = [
 	{id: 5, name: 'ADMIN', phone: '0339940200', email: 'admin@gmail.com', role: 'Quản trị', status: 'Đang hoạt động'},
 ];
 
-const columns = [
-	{key: 'id', label: 'STT'},
-	{key: 'name', label: 'Họ tên'},
-	{key: 'phone', label: 'Số điện thoại'},
-	{key: 'email', label: 'Email'},
-	{key: 'role', label: 'Quyền'},
-	{key: 'status', label: 'Trạng thái'},
-];
-
-const actions = (user) => [
-	{label: 'Edit', icon: edit},
-	{label: 'Lock/Unlock', icon: user.status === 'Đang hoạt động' ? lock : unlock},
-	{label: 'Change Role', icon: changeRole},
-];
-
 const MainPageUser = () => {
 	return (
 		<div className={styles.container}>
@@ -44,7 +27,48 @@ const MainPageUser = () => {
 				<button className={styles.addButton}>Thêm mới người dùng</button>
 			</div>
 
-			<Table columns={columns} data={users} actions={actions} />
+			<Table
+				users={users}
+				headers={[
+					{key: 'id', label: 'STT'},
+					{key: 'name', label: 'Họ tên'},
+					{key: 'phone', label: 'Số điện thoại'},
+					{key: 'email', label: 'Email'},
+					{key: 'role', label: 'Quyền'},
+					{key: 'status', label: 'Trạng thái'},
+				]}
+				renderActions={(user) => (
+					<>
+						<IconCustom
+							icon={<Image src={icons.edit} alt='Edit' width={20} height={20} />}
+							iconFilter='invert(38%) sepia(93%) saturate(1382%) hue-rotate(189deg) brightness(89%) contrast(105%)'
+							backgroundColor='#dce7ff'
+							tooltip='Chỉnh sửa người dùng'
+						/>
+						<IconCustom
+							icon={
+								<Image
+									src={user.status === 'Đang hoạt động' ? icons.lock : icons.unlock}
+									alt='Lock/Unlock'
+									width={20}
+									height={20}
+								/>
+							}
+							iconFilter='invert(66%) sepia(35%) saturate(5412%) hue-rotate(338deg) brightness(98%) contrast(90%)'
+							backgroundColor='#ffe4e4'
+							tooltip={user.status === 'Đang hoạt động' ? 'Khóa người dùng' : 'Mở khóa người dùng'}
+						/>
+						<IconCustom
+							icon={<Image src={icons.changeRole} alt='Change Role' width={20} height={20} />}
+							iconFilter='invert(24%) sepia(87%) saturate(2360%) hue-rotate(270deg) brightness(85%) contrast(96%)'
+							backgroundColor='linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(255, 255, 255, 0.5))'
+							tooltip='Thay đổi quyền người dùng'
+						/>
+					</>
+				)}
+				roleStyle={{background: '#ffe4e6', color: '#ff2d2d', padding: '5px 10px', borderRadius: '4px'}}
+				statusStyle={{background: '#e4ffe5', color: '#19cd21', padding: '5px 10px', borderRadius: '4px'}}
+			/>
 		</div>
 	);
 };

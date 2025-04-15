@@ -1,0 +1,28 @@
+.container {
+	user-select: none;
+	padding: 6px;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 6px;
+	transition: 0.2s;
+	margin-left: 6px;
+	cursor: pointer;
+
+	:hover {
+		opacity: 0.9;
+	}
+
+	&.disabled {
+		pointer-events: none;
+		opacity: 0.3;
+	}
+}
+
+.icon {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

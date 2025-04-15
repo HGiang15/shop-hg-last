@@ -1,51 +1,36 @@
-.userTable {
+.table {
 	width: 100%;
 	border-collapse: collapse;
 }
 
-.userTable th,
-.userTable td {
+.table th,
+.table td {
 	border: 1px solid #ddd;
-	padding: 10px;
-	text-align: center;
-	font-size: 14px;
+	padding: 8px;
+	text-align: left;
 }
 
-.userTable th {
+.table th {
 	background: #405189;
 	color: #fff;
 	font-weight: 600;
 }
 
-.actionBtn {
-	background: none;
-	border: none;
-	cursor: pointer;
-	margin: 0 5px;
+.actions {
+	display: flex;
+	justify-content: center;
 }
 
-.actionBtn img {
-	width: 20px;
-	height: 20px;
-}
-
-.adminRole {
-	background: #ff6b6b;
-	color: #fff;
+.role {
+	background: #ffe4e6;
+	color: #ff2d2d;
 	padding: 5px 10px;
-	border-radius: 5px;
+	border-radius: 4px;
 }
 
-.userRole {
-	background: #2ecc71;
-	color: #fff;
+.status {
+	background: #e4ffe5;
+	color: #19cd21;
 	padding: 5px 10px;
-	border-radius: 5px;
-}
-
-.activeStatus {
-	background: #1abc9c;
-	color: #fff;
-	padding: 5px 10px;
-	border-radius: 5px;
+	border-radius: 4px;
 }

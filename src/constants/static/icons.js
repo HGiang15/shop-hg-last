@@ -12,6 +12,10 @@ import iconTick from '../../../public/static/icons/icon-tick.svg';
 import profileCircle from '../../../public/static/icons/profile-circle.svg';
 import iconAddress from '../../../public/static/icons/icon-address.svg';
 import lockCircle from '../../../public/static/icons/lock-circle.svg';
+import lock from '../../../public/static/icons/lock.svg';
+import unlock from '../../../public/static/icons/unlock.svg';
+import changeRole from '../../../public/static/icons/change_role.svg';
+import edit from '../../../public/static/icons/edit.svg';
 import download from '../../../public/static/icons/download.svg';
 import check from '../../../public/static/icons/check.svg';
 import timesCircle from '../../../public/static/icons/times_circle.svg';
@@ -37,6 +41,9 @@ const icons = {
 	profileCircle,
 	iconAddress,
 	lockCircle,
+	lock,
+	unlock,
+	edit,
 	download,
 	check,
 	timesCircle,
@@ -46,6 +53,7 @@ const icons = {
 	cart,
 	trash,
 	closeCircle,
+	changeRole,
 };
 
 export default icons;

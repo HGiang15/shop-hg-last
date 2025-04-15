@@ -6,78 +6,32 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 15px;
+	margin-bottom: 20px;
 }
 
 .addButton {
 	background: var(--gradient-blue-red);
 	color: #fff;
+	padding: 10px 15px;
 	border: none;
-	padding: 8px 12px;
-	border-radius: 5px;
+	border-radius: 4px;
 	cursor: pointer;
 }
 
-.addButton:hover {
-	opacity: 0.9;
-}
-
-// Role
-// .adminRole {
-// 	background: #ff6b6b;
-// 	color: #fff;
-// 	padding: 5px 10px;
-// 	border-radius: 5px;
-// }
-
-// .userRole {
-// 	background: #2ecc71;
-// 	color: #fff;
-// 	padding: 5px 10px;
-// 	border-radius: 5px;
-// }
-
-// .activeStatus {
-// 	background: #1abc9c;
-// 	color: #fff;
-// 	padding: 5px 10px;
-// 	border-radius: 5px;
-// }
-
-.editBtn,
-.lockBtn,
-.resetBtn {
-	background: none;
-	border: none;
-	cursor: pointer;
-	font-size: 18px;
+.actionButton {
 	margin: 0 5px;
 }
 
-.editBtn img {
-	filter: brightness(0) saturate(100%) invert(44%) sepia(91%) saturate(2122%) hue-rotate(183deg) brightness(96%) contrast(92%);
+.role {
+	background: #ffe4e6;
+	color: #ff2d2d;
+	padding: 5px 10px;
+	border-radius: 4px;
 }
 
-.lockBtn img {
-	filter: brightness(0) saturate(100%) invert(21%) sepia(85%) saturate(7487%) hue-rotate(357deg) brightness(93%) contrast(110%);
-}
-
-.resetBtn img {
-	filter: brightness(0) saturate(100%) invert(68%) sepia(99%) saturate(848%) hue-rotate(5deg) brightness(103%) contrast(97%);
-}
-
-.editBtn:hover img {
-	filter: brightness(0) saturate(100%) invert(30%) sepia(99%) saturate(2000%) hue-rotate(200deg) brightness(100%) contrast(90%);
-}
-
-.lockBtn:hover img {
-	filter: brightness(0) saturate(100%) invert(40%) sepia(100%) saturate(3000%) hue-rotate(350deg) brightness(100%) contrast(90%);
-}
-
-.resetBtn:hover img {
-	filter: brightness(0) saturate(100%) invert(55%) sepia(100%) saturate(500%) hue-rotate(10deg) brightness(110%) contrast(100%);
-}
-
-.trashBtn:hover img {
-	filter: brightness(0) saturate(100%) invert(35%) sepia(100%) saturate(2500%) hue-rotate(5deg) brightness(100%) contrast(90%);
+.status {
+	background: #e4ffe5;
+	color: #19cd21;
+	padding: 5px 10px;
+	border-radius: 4px;
 }

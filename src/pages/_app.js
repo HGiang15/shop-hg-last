@@ -1,5 +1,6 @@
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import 'tippy.js/dist/tippy.css';
 import '../styles/_global.scss';
 
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
