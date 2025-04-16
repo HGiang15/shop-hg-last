@@ -1,20 +1,33 @@
 import React, {useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import {useRouter} from 'next/router';
 import {ROUTES} from '@/constants/config';
 import styles from './MainVerify.module.scss';
 import images from '@/constants/static/images';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
+import {verifyOTP} from '@/services/verifyService';
+import {useSearchParams} from 'next/navigation';
+import {toast, ToastContainer} from 'react-toastify';
+import {registerUser} from '@/services/registerService';
+import {forgotPassword} from '@/services/forgotPasswordService';
 
 const MainVerify = () => {
+	const router = useRouter();
+	const searchParams = useSearchParams();
+
 	const [formData, setFormData] = useState({
 		otp: '',
 	});
 
 	const [errors, setErrors] = useState({});
+	const [serverError, setServerError] = useState('');
+	const [successMessage, setSuccessMessage] = useState('');
+	const [loading, setLoading] = useState(false);
 
-	// Xử lý sự kiện khi người dùng nhập dữ liệu
+	const userId = searchParams.get('userId');
+
 	const handleChange = (e) => {
 		const {name, value} = e.target;
 		setFormData({
@@ -22,7 +35,6 @@ const MainVerify = () => {
 			[name]: value,
 		});
 
-		// Nếu người dùng nhập thì xóa lỗi
 		if (errors[name]) {
 			setErrors({
 				...errors,
@@ -45,8 +57,145 @@ const MainVerify = () => {
 		});
 	};
 
+	const handleVerify = async (e) => {
+		e.preventDefault();
+		setLoading(true);
+		setServerError('');
+
+		try {
+			const response = await verifyOTP(userId, formData.otp);
+			toast.success(response.message, {
+				// Hiển thị toast message thành công
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
+			setTimeout(() => {
+				router.push(ROUTES.Login);
+			}, 3000);
+		} catch (error) {
+			setServerError(error);
+			toast.error(error, {
+				// Hiển thị toast message lỗi
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleResendOTP = async () => {
+		setLoading(true);
+		setServerError('');
+
+		try {
+			const registrationData = JSON.parse(localStorage.getItem('registrationData'));
+			const email = registrationData?.email;
+
+			if (!email) {
+				setServerError('Không tìm thấy thông tin email.');
+				toast.error('Không tìm thấy thông tin email.', {
+					position: 'top-right',
+					autoClose: 3000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+				});
+				return;
+			}
+
+			const response = await forgotPassword(email);
+			toast.success(response.message, {
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
+		} catch (error) {
+			setServerError(error);
+			toast.error(error, {
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	// const handleResendOTP = async () => {
+	// 	setLoading(true);
+	// 	setServerError('');
+
+	// 	try {
+	// 		// Lấy formData từ localStorage
+	// 		const registrationData = JSON.parse(localStorage.getItem('registrationData'));
+
+	// 		if (!registrationData) {
+	// 			setServerError('Không tìm thấy thông tin đăng ký.');
+	// 			toast.error('Không tìm thấy thông tin đăng ký.', {
+	// 				position: 'top-right',
+	// 				autoClose: 3000,
+	// 				hideProgressBar: false,
+	// 				closeOnClick: true,
+	// 				pauseOnHover: true,
+	// 				draggable: true,
+	// 				progress: undefined,
+	// 			});
+	// 			return;
+	// 		}
+
+	// 		// Gọi API registerUser với formData đã lấy
+	// 		const response = await registerUser(registrationData);
+	// 		toast.success(response.message, {
+	// 			position: 'top-right',
+	// 			autoClose: 3000,
+	// 			hideProgressBar: false,
+	// 			closeOnClick: true,
+	// 			pauseOnHover: true,
+	// 			draggable: true,
+	// 			progress: undefined,
+	// 		});
+
+	// 		localStorage.removeItem('registrationData');
+	// 	} catch (error) {
+	// 		setServerError(error);
+	// 		toast.error(error, {
+	// 			position: 'top-right',
+	// 			autoClose: 3000,
+	// 			hideProgressBar: false,
+	// 			closeOnClick: true,
+	// 			pauseOnHover: true,
+	// 			draggable: true,
+	// 			progress: undefined,
+	// 		});
+	// 	} finally {
+	// 		setLoading(false);
+	// 	}
+	// };
+
 	return (
 		<div className={styles.container}>
+			<ToastContainer />
 			<div className={styles.verifyWrapper}>
 				<div className={styles.verifyContent}>
 					<Link href={ROUTES.Home} className={styles.logo}>
@@ -56,7 +205,7 @@ const MainVerify = () => {
 					<h2 className={styles.verifyTitle}>Xác minh email</h2>
 					<p className={styles.verifyLabel}>Bạn đã gửi mã đến Email gianghoang150503@gmail.com</p>
 
-					<form className={styles.formGroup}>
+					<form className={styles.formGroup} onSubmit={handleVerify}>
 						{/* OTP */}
 						<div className={styles.inputWrapper}>
 							<input
@@ -70,13 +219,20 @@ const MainVerify = () => {
 							/>
 						</div>
 						{errors.otp && <span className={styles.errorMsg}>{errors.otp}</span>}
+
+						<div className={styles.actions}>
+							<Button type='submit' className={styles.btnVerify} disabled={loading}>
+								Xác nhận
+							</Button>
+						</div>
 					</form>
 
-					<div className={styles.actions}>
-						<Button type='submit' className={styles.btnVerify}>
-							Xác nhận
-						</Button>
-					</div>
+					{serverError && <p className={styles.errorMsg}>{serverError.message}</p>}
+					{successMessage && <p className={styles.successMsg}>{successMessage.message}</p>}
+
+					<Button type='button' className={styles.btnResendOTP} onClick={handleResendOTP} disabled={loading}>
+						Gửi lại OTP
+					</Button>
 
 					<div className={styles.verifyAccount}>
 						<Link href={ROUTES.Home} className={styles.verifyFree}>

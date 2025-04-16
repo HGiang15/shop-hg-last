@@ -1,20 +1,27 @@
 import React, {useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import {useRouter} from 'next/router';
 import {ROUTES} from '@/constants/config';
 import styles from './MainForgotPassword.module.scss';
 import images from '@/constants/static/images';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
+import {forgotPassword} from '@/services/forgotPasswordService';
+import {toast, ToastContainer} from 'react-toastify';
+import Loading from '@/components/common/Loading/Loading';
 
 const MainForgotPassword = () => {
+	const router = useRouter();
 	const [formData, setFormData] = useState({
 		email: '',
 	});
 
 	const [errors, setErrors] = useState({});
+	const [serverError, setServerError] = useState('');
+	const [successMessage, setSuccessMessage] = useState('');
+	const [loading, setLoading] = useState(false);
 
-	// Xử lý sự kiện khi người dùng nhập dữ liệu
 	const handleChange = (e) => {
 		const {name, value} = e.target;
 		setFormData({
@@ -22,7 +29,6 @@ const MainForgotPassword = () => {
 			[name]: value,
 		});
 
-		// Nếu người dùng nhập thì xóa lỗi
 		if (errors[name]) {
 			setErrors({
 				...errors,
@@ -52,8 +58,46 @@ const MainForgotPassword = () => {
 		});
 	};
 
+	const handleForgotPassword = async (e) => {
+		e.preventDefault();
+		setLoading(true);
+		setServerError('');
+
+		try {
+			const response = await forgotPassword(formData.email);
+			toast.success(response.message, {
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
+			router.push({
+				pathname: ROUTES.ResetPassword,
+				query: {email: formData.email},
+			});
+		} catch (error) {
+			setServerError(error);
+			toast.error(error.message || 'Gửi yêu cầu đặt lại mật khẩu thất bại.', {
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<div className={styles.container}>
+			{loading && <Loading fullScreen />}
+			<ToastContainer />
 			<div className={styles.forgotWrapper}>
 				<div className={styles.forgotContent}>
 					<Link href={ROUTES.Home} className={styles.logo}>
@@ -65,7 +109,7 @@ const MainForgotPassword = () => {
 						Nhập email của bạn bên dưới và chúng tôi sẽ gửi cho bạn hướng dẫn về cách đặt lại mật khẩu.
 					</p>
 
-					<form className={styles.formGroup}>
+					<form className={styles.formGroup} onSubmit={handleForgotPassword}>
 						{/* Email */}
 						<div className={styles.inputWrapper}>
 							<input
@@ -79,13 +123,14 @@ const MainForgotPassword = () => {
 							/>
 						</div>
 						{errors.email && <span className={styles.errorMsg}>{errors.email}</span>}
-					</form>
 
-					<div className={styles.actions}>
-						<Button type='submit' className={styles.btnForgot}>
-							Đặt lại mật khẩu
-						</Button>
-					</div>
+						<div className={styles.actions}>
+							<Button type='submit' className={styles.btnForgot} disabled={loading}>
+								Đặt lại mật khẩu
+							</Button>
+						</div>
+					</form>
+					{serverError && <p className={styles.errorMsg}>{serverError}</p>}
 
 					<div className={styles.forgotAccount}>
 						<Link href={ROUTES.Home} className={styles.forgotFree}>

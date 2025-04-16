@@ -8,6 +8,7 @@ import styles from './MainRegister.module.scss';
 import icons from '@/constants/static/icons';
 import Loading from '@/components/common/Loading/Loading';
 import Button from '@/components/common/Button/Button';
+import {toast, ToastContainer} from 'react-toastify';
 
 const MainRegister = () => {
 	const router = useRouter();
@@ -30,7 +31,6 @@ const MainRegister = () => {
 	const [showSuccessModal, setShowSuccessModal] = useState(false);
 	const [serverError, setServerError] = useState('');
 
-	// Xử lý sự kiện khi người dùng nhập dữ liệu
 	const handleChange = (e) => {
 		const {name, value} = e.target;
 		setFormData({
@@ -38,7 +38,6 @@ const MainRegister = () => {
 			[name]: value,
 		});
 
-		// Nếu người dùng nhập thì xóa lỗi
 		if (errors[name]) {
 			setErrors({
 				...errors,
@@ -89,22 +88,64 @@ const MainRegister = () => {
 		try {
 			setLoading(true);
 			const response = await registerUser(formData);
-			if (response.status === 'Thành công') {
-				setShowSuccessModal(true);
 
-				setTimeout(() => {
-					router.push(ROUTES.Login);
-				}, 3000);
+			if (response.status === 'Đang chờ xác minh') {
+				if (response.data && response.data.userId) {
+					toast.success('Đăng ký thành công, vui lòng xác minh email.', {
+						position: 'top-right',
+						autoClose: 3000,
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+					});
+
+					localStorage.setItem('registrationData', JSON.stringify(formData));
+
+					router.push({
+						pathname: ROUTES.verify_password,
+						query: {userId: response.data.userId},
+					});
+				} else {
+					setServerError('Không tìm thấy userId');
+					toast.error('Đăng ký thất bại, không tìm thấy userId.', {
+						position: 'top-right',
+						autoClose: 3000,
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+					});
+				}
+			} else {
+				setServerError(response.message || 'Đăng ký thất bại');
+				toast.error(response.message || 'Đăng ký thất bại.', {
+					position: 'top-right',
+					autoClose: 3000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+				});
 			}
 		} catch (error) {
 			setServerError(error);
+			toast.error(error, {
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
 		} finally {
-			setTimeout(() => {
-				setLoading(false);
-			}, 4000);
+			setLoading(false);
 		}
 	};
-
 	useEffect(() => {
 		const isValid = Object.values(formData).every((val) => val.trim() !== '') && Object.values(errors).every((err) => err === '');
 		setIsFormValid(isValid);
@@ -113,6 +154,7 @@ const MainRegister = () => {
 	return (
 		<div className={styles.container}>
 			{loading && <Loading fullScreen />}
+			<ToastContainer />
 
 			{showSuccessModal && (
 				<div className={styles.modalOverlay}>

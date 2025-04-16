@@ -9,6 +9,7 @@ import icons from '@/constants/static/icons';
 import images from '@/constants/static/images';
 import Loading from '@/components/common/Loading/Loading';
 import Button from '@/components/common/Button/Button';
+import {toast, ToastContainer} from 'react-toastify';
 
 const MainLogin = () => {
 	const router = useRouter();
@@ -55,7 +56,7 @@ const MainLogin = () => {
 		try {
 			const response = await loginUser(formData.email, formData.password);
 
-			const {id, name, email, role} = response.data; // Get data user API
+			const {id, name, email, role} = response.data;
 			const token = response.token;
 			localStorage.setItem('token', token);
 			localStorage.setItem('name', name);
@@ -63,18 +64,53 @@ const MainLogin = () => {
 			if (rememberMe) {
 				const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
 				localStorage.setItem('email', email);
-				// localStorage.setItem('password', formData.password);
 				localStorage.setItem('remember_expiration', expirationTime);
 			}
 
 			if (role === 1) {
+				toast.success('Đăng nhập thành công!', {
+					position: 'top-right',
+					autoClose: 3000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+				});
 				router.push(ROUTES.Home);
 			} else if (role === 0) {
+				toast.success('Đăng nhập thành công!', {
+					position: 'top-right',
+					autoClose: 3000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+				});
 				router.push(ROUTES.AdminDashboard);
 			} else {
+				toast.error('Vai trò không hợp lệ.', {
+					position: 'top-right',
+					autoClose: 3000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+				});
 				setErrors({general: 'Vai trò không hợp lệ'});
 			}
 		} catch (error) {
+			toast.error(error.message || 'Đăng nhập thất bại.', {
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
 			setErrors({general: error.message || 'Đăng nhập thất bại'});
 		} finally {
 			setTimeout(() => {
@@ -113,7 +149,7 @@ const MainLogin = () => {
 	return (
 		<div className={styles.container}>
 			{loading && <Loading fullScreen />}
-
+			<ToastContainer />
 			<div className={styles.loginWrapper}>
 				<div className={styles.loginContent}>
 					<Link href={ROUTES.Home} className={styles.logo}>
@@ -174,7 +210,7 @@ const MainLogin = () => {
 							</Button>
 						</div>
 					</form>
-					{errors.general && <p className={styles.errorMsg}>{errors.general}</p>}
+					{/* {errors.general && <p className={styles.errorMsg}>{errors.general}</p>} */}
 
 					<div className={styles.contentWrapper}>
 						<input
