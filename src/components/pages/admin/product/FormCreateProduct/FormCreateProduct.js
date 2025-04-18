@@ -38,7 +38,7 @@ const FormCreateProduct = () => {
 		});
 	};
 
-	const handleMoTaChiTietChange = (content) => {
+	const handleDetailDescChange = (content) => {
 		setDetailDesc(content);
 	};
 
@@ -66,47 +66,47 @@ const FormCreateProduct = () => {
 			<form className={styles.formGrid}>
 				{/* Name */}
 				<div className={styles.formGroup}>
-					<label htmlFor='tenSanPham' className={styles.label}>
+					<label htmlFor='name' className={styles.label}>
 						Tên sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='text' id='tenSanPham' className={styles.input} placeholder='Tên sản phẩm' />
+					<input type='text' id='name' name='name' className={styles.input} placeholder='Tên sản phẩm' />
 				</div>
 
 				{/* ID */}
 				<div className={styles.formGroup}>
-					<label htmlFor='maSanPham' className={styles.label}>
+					<label htmlFor='id' className={styles.label}>
 						Mã sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='text' id='maSanPham' className={styles.input} placeholder='Mã sản phẩm' />
+					<input type='text' id='id' name='id' className={styles.input} placeholder='Mã sản phẩm' />
 				</div>
 
 				{/* Type */}
 				<div className={styles.formGroup}>
-					<label htmlFor='loaiSanPham' className={styles.label}>
+					<label htmlFor='type' className={styles.label}>
 						Loại sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<select id='loaiSanPham' className={styles.select}>
+					<select id='type' name='type' className={styles.select}>
 						<option value=''>Chọn loại sản phẩm</option>
 					</select>
 				</div>
 
 				{/* Color */}
 				<div className={styles.formGroup}>
-					<label htmlFor='mauSanPham' className={styles.label}>
+					<label htmlFor='color' className={styles.label}>
 						Màu sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<select id='mauSanPham' className={styles.select}>
+					<select id='color' name='color' className={styles.select}>
 						<option value=''>Chọn màu sản phẩm</option>
 					</select>
 				</div>
 
 				{/* Price */}
 				<div className={styles.formGroup}>
-					<label htmlFor='gia' className={styles.label}>
+					<label htmlFor='price' className={styles.label}>
 						Giá <span style={{color: 'red'}}>*</span>
 					</label>
 					<div className={styles.priceInput}>
-						<input type='number' id='gia' className={styles.input} placeholder='100.000' />
+						<input type='number' id='price' name='price' className={styles.input} placeholder='100.000' />
 						<span className={styles.currencyInside}>VNĐ</span>
 					</div>
 				</div>
@@ -170,7 +170,7 @@ const FormCreateProduct = () => {
 					<label htmlFor='sizeS' className={styles.label}>
 						Nhập số lượng size S <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='number' id='sizeS' className={styles.input} placeholder='0' />
+					<input type='number' id='sizeS' name='sizeS' className={styles.input} placeholder='0' />
 				</div>
 
 				{/* M */}
@@ -178,7 +178,7 @@ const FormCreateProduct = () => {
 					<label htmlFor='sizeM' className={styles.label}>
 						Nhập số lượng size M <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='number' id='sizeM' className={styles.input} placeholder='0' />
+					<input type='number' id='sizeM' name='sizeM' className={styles.input} placeholder='0' />
 				</div>
 
 				{/* L */}
@@ -186,7 +186,7 @@ const FormCreateProduct = () => {
 					<label htmlFor='sizeL' className={styles.label}>
 						Nhập số lượng size L <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='number' id='sizeL' className={styles.input} placeholder='0' />
+					<input type='number' id='sizeL' name='sizeL' className={styles.input} placeholder='0' />
 				</div>
 
 				{/* XL */}
@@ -194,7 +194,7 @@ const FormCreateProduct = () => {
 					<label htmlFor='sizeXL' className={styles.label}>
 						Nhập số lượng size XL <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='number' id='sizeXL' className={styles.input} placeholder='0' />
+					<input type='number' id='sizeXL' name='sizeXL' className={styles.input} placeholder='0' />
 				</div>
 
 				{/* XXL */}
@@ -202,15 +202,15 @@ const FormCreateProduct = () => {
 					<label htmlFor='sizeXXL' className={styles.label}>
 						Nhập số lượng size XXL <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='number' id='sizeXXL' className={styles.input} placeholder='0' />
+					<input type='number' id='sizeXXL' name='sizeXXL' className={styles.input} placeholder='0' />
 				</div>
 
 				{/* Description */}
 				<div className={styles.formGroup}>
-					<label htmlFor='moTaChinh' className={styles.label}>
+					<label htmlFor='description' className={styles.label}>
 						Mô tả chính
 					</label>
-					<textarea id='moTaChinh' className={styles.textarea} placeholder='Nhập mô tả chi tiết' rows={4} />
+					<textarea id='description' name='description' className={styles.textarea} placeholder='Nhập mô tả chi tiết' rows={4} />
 				</div>
 
 				{/* Description all */}
@@ -220,6 +220,7 @@ const FormCreateProduct = () => {
 					</label>
 					<JoditEditor
 						value={detailDesc}
+						name='detailDesc'
 						config={{
 							readonly: false,
 							toolbar: true,
@@ -228,7 +229,7 @@ const FormCreateProduct = () => {
 							placeholder: 'Nhập mô tả chi tiết sản phẩm...',
 						}}
 						tabIndex={1}
-						onBlur={(newContent) => handleMoTaChiTietChange(newContent)} // preferred to onChange if performance is a concern
+						onBlur={(newContent) => handleDetailDescChange(newContent)} // preferred to onChange if performance is a concern
 						onChange={(newContent) => {}}
 					/>
 				</div>
