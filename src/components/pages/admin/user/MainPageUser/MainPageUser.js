@@ -6,6 +6,7 @@ import Table from '@/components/common/Table/Table';
 import icons from '@/constants/static/icons';
 import Pagination from '@/components/common/Pagination/Pagination';
 import {useState} from 'react';
+import Button from '@/components/common/Button/Button';
 
 const users = [
 	{id: 1, name: 'Test', phone: '0398162589', email: 'giang@gmail.com', role: 'Quản trị', status: 'Đang hoạt động'},
@@ -37,7 +38,7 @@ const MainPageUser = () => {
 		<div className={styles.container}>
 			<div className={styles.header}>
 				<h2>Quản lý người dùng</h2>
-				<button className={styles.addButton}>Thêm mới người dùng</button>
+				<Button className={styles.addButton}>Thêm mới người dùng</Button>
 			</div>
 
 			<div className={styles.tableWrapper}>

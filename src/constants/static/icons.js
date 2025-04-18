@@ -6,6 +6,7 @@ import global from '../../../public/static/icons/global.svg';
 import googleIcon from '../../../public/static/icons/google.svg';
 import eyeOpen from '../../../public/static/icons/eye_open.svg';
 import eyeClose from '../../../public/static/icons/eye_close.svg';
+import eye from '../../../public/static/icons/eye.svg';
 import logoSmall from '../../../public/static/images/logo_small.svg';
 import logout from '../../../public/static/icons/logout.svg';
 import iconTick from '../../../public/static/icons/icon-tick.svg';
@@ -35,6 +36,7 @@ const icons = {
 	googleIcon,
 	eyeOpen,
 	eyeClose,
+	eye,
 	logoSmall,
 	logout,
 	iconTick,

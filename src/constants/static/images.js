@@ -17,6 +17,7 @@ import noImg from '../../../public/static/images/no_img.png';
 import logoSmall from '../../../public/static/images/logo_small.svg';
 import logoFooter from '../../../public/static/images/logo.png';
 import defaultAvatar from '../../../public/static/images/auth/user.svg';
+import defaultBg from '../../../public/static/images/defaultBg.png';
 
 const images = {
 	product1,
@@ -37,6 +38,7 @@ const images = {
 	noImg,
 	logoSmall,
 	defaultAvatar,
+	defaultBg,
 	logoFooter,
 };
 

@@ -10,15 +10,12 @@
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 20px;
-}
 
-.addButton {
-	background: var(--gradient-blue-red);
-	color: #fff;
-	padding: 10px 15px;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
+	.addButton {
+		background: var(--gradient-blue-red);
+		color: #fff;
+		padding: 10px 15px;
+	}
 }
 
 .actionButton {

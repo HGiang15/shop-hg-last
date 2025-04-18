@@ -97,7 +97,7 @@ const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 
 					<div className={styles.sizeSelect}>
 						<p>Lựa chọn kích cỡ:</p>
-						{['S', 'M', 'L', 'XL'].map((size) => (
+						{['S', 'M', 'L', 'XL', 'XXL'].map((size) => (
 							<button
 								key={size}
 								className={`${styles.sizeButton} ${selectedSize === size ? styles.active : ''}`}
