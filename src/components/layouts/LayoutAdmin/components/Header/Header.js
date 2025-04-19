@@ -66,7 +66,7 @@ const Header = ({title, setMenuOpen, menuOpen}) => {
 					onClickOutside={() => setVisible(false)}
 					offset={[0, 5]}
 					render={(attrs) => (
-						<div className={styles.dropdown} tabIndex='-1' {...attrs}>
+						<div className={styles.dropdown} tabIndex='-1' ref={attrs.ref} {...attrs}>
 							<ul>
 								<li>
 									<HiOutlineUser className={styles.icon} />

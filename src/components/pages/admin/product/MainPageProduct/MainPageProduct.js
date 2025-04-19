@@ -8,6 +8,9 @@ import Pagination from '@/components/common/Pagination/Pagination';
 import {useState} from 'react';
 import Button from '@/components/common/Button/Button';
 import {ROUTES} from '@/constants/config';
+import {useRouter} from 'next/router';
+import {connect} from 'react-redux';
+import {setActiveMenu} from '@/redux/actions/menuTabActions';
 
 const users = [
 	{
@@ -30,7 +33,9 @@ const users = [
 	},
 ];
 
-const MainPageProduct = () => {
+const MainPageProduct = ({setActiveMenu}) => {
+	const router = useRouter();
+
 	const [currentPage, setCurrentPage] = useState(1);
 	const usersPerPage = 3;
 	const totalPages = Math.ceil(users.length / usersPerPage);
@@ -42,11 +47,16 @@ const MainPageProduct = () => {
 		setCurrentPage(pageNumber);
 	};
 
+	const handleFormCreateProductClick = () => {
+		setActiveMenu(ROUTES.AdminProduct); // Dispatch action khi chuyển đến trang con
+		router.push(ROUTES.AdminProductCreate);
+	};
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
 				<h2>Quản lý sản phẩm</h2>
-				<Button href={ROUTES.AdminProductCreate} className={styles.addButton}>
+				<Button className={styles.addButton} onClick={handleFormCreateProductClick}>
 					Thêm mới sản phẩm
 				</Button>
 			</div>
@@ -93,4 +103,8 @@ const MainPageProduct = () => {
 	);
 };
 
-export default MainPageProduct;
+const mapDispatchToProps = (dispatch) => ({
+	setActiveMenu: (menuPath) => dispatch(setActiveMenu(menuPath)), // Dispatch action để cập nhật state
+});
+
+export default connect(null, mapDispatchToProps)(MainPageProduct);

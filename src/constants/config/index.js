@@ -33,3 +33,5 @@ export const ROUTES = {
 	verify_password: '/auth/verify-password',
 	ResetPassword: '/auth/reset-password',
 };
+
+export const SET_ACTIVE_MENU = 'SET_ACTIVE_MENU';

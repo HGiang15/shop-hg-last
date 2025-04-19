@@ -42,8 +42,8 @@ function Table({users, headers, renderActions, roleStyle, statusStyle}) {
 				</tr>
 			</thead>
 			<tbody>
-				{users.map((user) => (
-					<tr key={user.id}>
+				{users.map((user, index) => (
+					<tr key={`${user.id}-${index}`}>
 						{headers.map((header) => {
 							if (header.key === 'colorCode') {
 								return (

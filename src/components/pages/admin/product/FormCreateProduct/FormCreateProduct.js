@@ -3,13 +3,15 @@ import styles from './FormCreateProduct.module.scss';
 import Button from '@/components/common/Button/Button';
 import Image from 'next/image';
 import icons from '@/constants/static/icons';
-import {useRouter} from 'next/router';
 import images from '@/constants/static/images';
-
+import {useRouter} from 'next/router';
+import {connect} from 'react-redux';
+import {setActiveMenu} from '@/redux/actions/menuTabActions';
 import dynamic from 'next/dynamic';
+import {ROUTES} from '@/constants/config';
 const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 
-const FormCreateProduct = () => {
+const FormCreateProduct = ({setActiveMenu}) => {
 	const router = useRouter();
 
 	const [selectedImages, setSelectedImages] = useState([]);
@@ -42,6 +44,11 @@ const FormCreateProduct = () => {
 		setDetailDesc(content);
 	};
 
+	const handleCancelClick = () => {
+		setActiveMenu(ROUTES.AdminProduct); // Dispatch action khi quay lại trang cha
+		router.back();
+	};
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
@@ -51,7 +58,7 @@ const FormCreateProduct = () => {
 				</div>
 
 				<div className={styles.buttonGroup}>
-					<Button className={styles.cancelButton} onClick={() => router.back()}>
+					<Button className={styles.cancelButton} onClick={handleCancelClick}>
 						Hủy bỏ
 					</Button>
 					<Button
@@ -238,4 +245,8 @@ const FormCreateProduct = () => {
 	);
 };
 
-export default FormCreateProduct;
+const mapDispatchToProps = (dispatch) => ({
+	setActiveMenu: (menuPath) => dispatch(setActiveMenu(menuPath)),
+});
+
+export default connect(null, mapDispatchToProps)(FormCreateProduct);
