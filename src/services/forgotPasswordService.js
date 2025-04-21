@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3003/user';
+const API_URL = 'http://localhost:3003/api/user';
 
 export const forgotPassword = async (email) => {
 	try {
