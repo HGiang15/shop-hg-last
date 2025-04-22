@@ -34,4 +34,6 @@ export const ROUTES = {
 	ResetPassword: '/auth/reset-password',
 };
 
+export const API_URL = 'http://localhost:3003/api/';
+
 export const SET_ACTIVE_MENU = 'SET_ACTIVE_MENU';
