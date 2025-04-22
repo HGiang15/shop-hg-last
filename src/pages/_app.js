@@ -2,6 +2,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import 'tippy.js/dist/tippy.css';
 import 'react-toastify/dist/ReactToastify.css';
+import {ToastContainer} from 'react-toastify';
 import '../styles/_global.scss';
 
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
@@ -20,6 +21,7 @@ export default function App({Component, pageProps}) {
 			<QueryClientProvider client={queryClient}>
 				<LoadingBar />
 				{getLayout(<Component {...pageProps} />)}
+				<ToastContainer />
 			</QueryClientProvider>
 		</Provider>
 	);

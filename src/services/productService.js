@@ -18,3 +18,12 @@ export const getAllProducts = async () => {
 		throw error.response?.data || {message: 'Lấy danh sách sản phẩm thất bại'};
 	}
 };
+
+export const deleteProduct = async (productId) => {
+	try {
+		const response = await axios.delete(`${API_URL}product/deleteProduct/${productId}`);
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Xóa sản phẩm thất bại'};
+	}
+};

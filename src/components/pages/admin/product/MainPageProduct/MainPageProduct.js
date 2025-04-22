@@ -10,13 +10,17 @@ import {ROUTES} from '@/constants/config';
 import {useRouter} from 'next/router';
 import {connect} from 'react-redux';
 import {setActiveMenu} from '@/redux/actions/menuTabActions';
-import {getAllProducts} from '@/services/productService';
+import {getAllProducts, deleteProduct} from '@/services/productService';
+import ConfirmDeleteModal from '@/components/pages/product/ConfirmDeleteModal/ConfirmDeleteModal';
 import images from '@/constants/static/images';
+import {toast} from 'react-toastify';
 
 const MainPageProduct = ({setActiveMenu}) => {
 	const router = useRouter();
 	const [products, setProducts] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [selectedProductId, setSelectedProductId] = useState(null);
 	const productsPerPage = 3;
 
 	useEffect(() => {
@@ -57,7 +61,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 
 			{products.length === 0 ? (
 				<div className={styles.noProducts}>
-					<Image src={images.boxEmpty} alt='Không có sản phẩm' width={180} height={180} />
+					<Image src={images.boxEmpty} alt='Không có sản phẩm' width={180} height={180} priority />
 					<h4>DỮ LIỆU TRỐNG</h4>
 					<p>Hiện tại không có sản phẩm nào!</p>
 					<Button className={styles.btnNoProduct} onClick={handleFormCreateProductClick}>
@@ -111,6 +115,10 @@ const MainPageProduct = ({setActiveMenu}) => {
 										iconFilter='invert(17%) sepia(100%) saturate(7480%) hue-rotate(1deg) brightness(90%) contrast(105%)'
 										backgroundColor='#FFD6D6'
 										tooltip='Xóa sản phẩm'
+										onClick={() => {
+											setIsModalOpen(true);
+											setSelectedProductId(product.uuid);
+										}}
 									/>
 								</>
 							)}
@@ -128,6 +136,25 @@ const MainPageProduct = ({setActiveMenu}) => {
 					)}
 				</>
 			)}
+
+			<ConfirmDeleteModal
+				isOpen={isModalOpen}
+				onClose={() => setIsModalOpen(false)}
+				onConfirm={async () => {
+					try {
+						await deleteProduct(selectedProductId);
+						setIsModalOpen(false);
+						const updatedProducts = await getAllProducts();
+						setProducts(updatedProducts);
+
+						toast.success('Xóa sản phẩm thành công');
+					} catch (error) {
+						console.error('Lỗi khi xóa sản phẩm:', error.message);
+						toast.error(error.message || 'Xóa sản phẩm thất bại');
+					}
+				}}
+				productName={currentProducts.find((product) => product._id === selectedProductId)?.name}
+			/>
 		</div>
 	);
 };

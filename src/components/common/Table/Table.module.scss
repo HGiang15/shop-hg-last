@@ -1,6 +1,11 @@
+.tableWrapper {
+	overflow-x: auto;
+}
+
 .table {
 	width: 100%;
 	border-collapse: collapse;
+	min-width: 800px;
 }
 
 .table th,
@@ -8,6 +13,7 @@
 	border: 1px solid #ddd;
 	padding: 8px;
 	text-align: left;
+	white-space: nowrap;
 }
 
 .table th {
@@ -16,8 +22,25 @@
 	font-weight: 600;
 }
 
+.table th:last-child {
+	position: sticky;
+	top: 0;
+	right: 0;
+	background: #405189;
+	color: #fff;
+	border-left: 1px solid #ddd;
+}
+
+.table td:last-child {
+	position: sticky;
+	right: 0;
+	background: #fff;
+	border-left: 1px solid #ddd;
+}
+
 .actions {
 	display: flex;
+	gap: 5px;
 }
 
 .colorPickerContainer {

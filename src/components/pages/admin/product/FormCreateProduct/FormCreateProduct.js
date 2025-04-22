@@ -11,6 +11,7 @@ import dynamic from 'next/dynamic';
 import {ROUTES} from '@/constants/config';
 import {createProduct} from '@/services/productService';
 const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
+import {toast} from 'react-toastify';
 
 const FormCreateProduct = ({setActiveMenu}) => {
 	const router = useRouter();
@@ -90,11 +91,15 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		try {
 			const response = await createProduct(formData);
 			if (response.message === 'Tạo sản phẩm thành công') {
-				alert('Sản phẩm đã được tạo thành công!');
+				toast.success('🎉 Sản phẩm đã được tạo thành công!', {
+					position: 'top-right',
+				});
 				router.push(ROUTES.AdminProduct);
 			}
 		} catch (error) {
-			alert('Đã có lỗi xảy ra khi tạo sản phẩm!');
+			toast.error('😓 Đã có lỗi xảy ra khi tạo sản phẩm!', {
+				position: 'top-right',
+			});
 		}
 	};
 
@@ -187,7 +192,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					</label>
 					<div className={styles.priceInput}>
 						<input
-							type='number'
+							type='text'
 							id='price'
 							name='price'
 							className={styles.input}
@@ -207,13 +212,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 						<div className={styles.imagePreviewContainer}>
 							{selectedImages.map((file, index) => (
 								<div key={index} className={styles.imagePreview}>
-									<Image
-										src={URL.createObjectURL(file)}
-										alt={`Ảnh ${index + 1}`}
-										width={80}
-										height={80}
-										objectFit='cover'
-									/>
+									<Image src={URL.createObjectURL(file)} alt={`Ảnh ${index + 1}`} width={80} height={80} />
 									<button type='button' className={styles.removeImageButton} onClick={() => handleRemoveImage(index)}>
 										<svg
 											xmlns='http://www.w3.org/2000/svg'
@@ -239,6 +238,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 										alt='icon'
 										className={styles.placeholderIcon}
 										style={{cursor: 'pointer'}}
+										priority
 									/>
 								</label>
 							)}
