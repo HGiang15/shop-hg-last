@@ -9,44 +9,101 @@ import {connect} from 'react-redux';
 import {setActiveMenu} from '@/redux/actions/menuTabActions';
 import dynamic from 'next/dynamic';
 import {ROUTES} from '@/constants/config';
+import {createProduct} from '@/services/productService';
 const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 
 const FormCreateProduct = ({setActiveMenu}) => {
 	const router = useRouter();
 
 	const [selectedImages, setSelectedImages] = useState([]);
-	const [detailDesc, setDetailDesc] = useState('');
+	const [detailDescription, setDetailDesc] = useState('');
+	const [form, setForm] = useState({
+		name: '',
+		code: '',
+		id: '',
+		category: '',
+		colors: '',
+		price: '',
+		description: '',
+		detailDescription: '',
+		sizeS: 0,
+		sizeM: 0,
+		sizeL: 0,
+		sizeXL: 0,
+		sizeXXL: 0,
+	});
 	const MAX_IMAGES = 6;
 
 	const handleImageChange = (event) => {
 		const files = event.target.files;
 		if (files && files.length > 0) {
-			const newImages = Array.from(files)
-				.slice(0, Math.max(0, MAX_IMAGES - selectedImages.length))
-				.map((file) => URL.createObjectURL(file));
-
-			setSelectedImages((prevImages) => {
-				const combinedImages = [...prevImages, ...newImages];
-				return combinedImages.slice(0, MAX_IMAGES);
+			const newFiles = Array.from(files).slice(0, Math.max(0, MAX_IMAGES - selectedImages.length));
+			setSelectedImages((prevFiles) => {
+				const combinedFiles = [...prevFiles, ...newFiles].slice(0, MAX_IMAGES);
+				return combinedFiles;
 			});
 		}
 	};
 
 	const handleRemoveImage = (index) => {
-		setSelectedImages((prevImages) => {
-			const newImages = [...prevImages];
-			newImages.splice(index, 1);
-			return newImages;
+		setSelectedImages((prevFiles) => {
+			const newFiles = [...prevFiles];
+			newFiles.splice(index, 1);
+			return newFiles;
 		});
 	};
 
 	const handleDetailDescChange = (content) => {
 		setDetailDesc(content);
+		setForm((prev) => ({
+			...prev,
+			detailDescription: content,
+		}));
 	};
 
 	const handleCancelClick = () => {
-		setActiveMenu(ROUTES.AdminProduct); // Dispatch action khi quay lại trang cha
+		setActiveMenu(ROUTES.AdminProduct);
 		router.back();
+	};
+
+	const handleSubmitForm = async () => {
+		const formData = new FormData();
+		formData.append('name', form.name);
+		formData.append('code', form.code);
+		formData.append('id', form.id);
+		formData.append('category', form.category);
+		formData.append('colors', form.colors);
+		formData.append('price', form.price);
+		formData.append('sizeS', form.sizeS);
+		formData.append('sizeM', form.sizeM);
+		formData.append('sizeL', form.sizeL);
+		formData.append('sizeXL', form.sizeXL);
+		formData.append('sizeXXL', form.sizeXXL);
+		formData.append('description', form.description);
+		formData.append('detailDescription', detailDescription);
+
+		// Thêm các file ảnh
+		selectedImages.forEach((file) => {
+			formData.append('images', file);
+		});
+
+		try {
+			const response = await createProduct(formData);
+			if (response.message === 'Tạo sản phẩm thành công') {
+				alert('Sản phẩm đã được tạo thành công!');
+				router.push(ROUTES.AdminProduct);
+			}
+		} catch (error) {
+			alert('Đã có lỗi xảy ra khi tạo sản phẩm!');
+		}
+	};
+
+	const handleInputChange = (e) => {
+		const {name, value} = e.target;
+		setForm((prev) => ({
+			...prev,
+			[name]: value,
+		}));
 	};
 
 	return (
@@ -64,46 +121,62 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<Button
 						leftIcon={<Image src={icons.edit} alt='Icon' width={18} height={18} className={styles.icon} />}
 						className={styles.saveButton}
+						onClick={handleSubmitForm}
 					>
 						Lưu lại
 					</Button>
 				</div>
 			</div>
-
 			<form className={styles.formGrid}>
 				{/* Name */}
 				<div className={styles.formGroup}>
 					<label htmlFor='name' className={styles.label}>
 						Tên sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='text' id='name' name='name' className={styles.input} placeholder='Tên sản phẩm' />
+					<input
+						type='text'
+						id='name'
+						name='name'
+						className={styles.input}
+						placeholder='Tên sản phẩm'
+						onChange={handleInputChange}
+					/>
 				</div>
 
 				{/* ID */}
 				<div className={styles.formGroup}>
-					<label htmlFor='id' className={styles.label}>
+					<label htmlFor='code' className={styles.label}>
 						Mã sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='text' id='id' name='id' className={styles.input} placeholder='Mã sản phẩm' />
+					<input
+						type='text'
+						id='code'
+						name='code'
+						className={styles.input}
+						placeholder='Mã sản phẩm'
+						onChange={handleInputChange}
+					/>
 				</div>
 
 				{/* Type */}
 				<div className={styles.formGroup}>
-					<label htmlFor='type' className={styles.label}>
+					<label htmlFor='category' className={styles.label}>
 						Loại sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<select id='type' name='type' className={styles.select}>
+					<select id='category' name='category' className={styles.select} onChange={handleInputChange}>
 						<option value=''>Chọn loại sản phẩm</option>
+						<option value='Áo CLB'>Áo CLB</option>
 					</select>
 				</div>
 
 				{/* Color */}
 				<div className={styles.formGroup}>
-					<label htmlFor='color' className={styles.label}>
+					<label htmlFor='colors' className={styles.label}>
 						Màu sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<select id='color' name='color' className={styles.select}>
+					<select id='colors' name='colors' className={styles.select} onChange={handleInputChange}>
 						<option value=''>Chọn màu sản phẩm</option>
+						<option value='Đỏ'>Màu đỏ</option>
 					</select>
 				</div>
 
@@ -113,7 +186,14 @@ const FormCreateProduct = ({setActiveMenu}) => {
 						Giá <span style={{color: 'red'}}>*</span>
 					</label>
 					<div className={styles.priceInput}>
-						<input type='number' id='price' name='price' className={styles.input} placeholder='100.000' />
+						<input
+							type='number'
+							id='price'
+							name='price'
+							className={styles.input}
+							placeholder='100.000'
+							onChange={handleInputChange}
+						/>
 						<span className={styles.currencyInside}>VNĐ</span>
 					</div>
 				</div>
@@ -125,9 +205,15 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					</label>
 					<div className={styles.imageUpload}>
 						<div className={styles.imagePreviewContainer}>
-							{selectedImages.map((imageUrl, index) => (
+							{selectedImages.map((file, index) => (
 								<div key={index} className={styles.imagePreview}>
-									<Image src={imageUrl} alt={`Ảnh ${index + 1}`} width={80} height={80} objectFit='cover' />
+									<Image
+										src={URL.createObjectURL(file)}
+										alt={`Ảnh ${index + 1}`}
+										width={80}
+										height={80}
+										objectFit='cover'
+									/>
 									<button type='button' className={styles.removeImageButton} onClick={() => handleRemoveImage(index)}>
 										<svg
 											xmlns='http://www.w3.org/2000/svg'
@@ -177,7 +263,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<label htmlFor='sizeS' className={styles.label}>
 						Nhập số lượng size S <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='number' id='sizeS' name='sizeS' className={styles.input} placeholder='0' />
+					<input type='number' id='sizeS' name='sizeS' className={styles.input} placeholder='0' onChange={handleInputChange} />
 				</div>
 
 				{/* M */}
@@ -185,7 +271,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<label htmlFor='sizeM' className={styles.label}>
 						Nhập số lượng size M <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='number' id='sizeM' name='sizeM' className={styles.input} placeholder='0' />
+					<input type='number' id='sizeM' name='sizeM' className={styles.input} placeholder='0' onChange={handleInputChange} />
 				</div>
 
 				{/* L */}
@@ -193,7 +279,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<label htmlFor='sizeL' className={styles.label}>
 						Nhập số lượng size L <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='number' id='sizeL' name='sizeL' className={styles.input} placeholder='0' />
+					<input type='number' id='sizeL' name='sizeL' className={styles.input} placeholder='0' onChange={handleInputChange} />
 				</div>
 
 				{/* XL */}
@@ -201,7 +287,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<label htmlFor='sizeXL' className={styles.label}>
 						Nhập số lượng size XL <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='number' id='sizeXL' name='sizeXL' className={styles.input} placeholder='0' />
+					<input type='number' id='sizeXL' name='sizeXL' className={styles.input} placeholder='0' onChange={handleInputChange} />
 				</div>
 
 				{/* XXL */}
@@ -209,7 +295,14 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<label htmlFor='sizeXXL' className={styles.label}>
 						Nhập số lượng size XXL <span style={{color: 'red'}}>*</span>
 					</label>
-					<input type='number' id='sizeXXL' name='sizeXXL' className={styles.input} placeholder='0' />
+					<input
+						type='number'
+						id='sizeXXL'
+						name='sizeXXL'
+						className={styles.input}
+						placeholder='0'
+						onChange={handleInputChange}
+					/>
 				</div>
 
 				{/* Description */}
@@ -217,17 +310,24 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<label htmlFor='description' className={styles.label}>
 						Mô tả chính
 					</label>
-					<textarea id='description' name='description' className={styles.textarea} placeholder='Nhập mô tả chi tiết' rows={4} />
+					<textarea
+						id='description'
+						name='description'
+						className={styles.textarea}
+						placeholder='Nhập mô tả chi tiết'
+						rows={4}
+						onChange={handleInputChange}
+					/>
 				</div>
 
 				{/* Description all */}
 				<div className={styles.formGroup}>
-					<label htmlFor='detailDesc' className={styles.label}>
+					<label htmlFor='detailDescription' className={styles.label}>
 						Mô tả chi tiết
 					</label>
 					<JoditEditor
-						value={detailDesc}
-						name='detailDesc'
+						value={detailDescription}
+						name='detailDescription'
 						config={{
 							readonly: false,
 							toolbar: true,
@@ -236,8 +336,9 @@ const FormCreateProduct = ({setActiveMenu}) => {
 							placeholder: 'Nhập mô tả chi tiết sản phẩm...',
 						}}
 						tabIndex={1}
-						onBlur={(newContent) => handleDetailDescChange(newContent)} // preferred to onChange if performance is a concern
-						onChange={(newContent) => {}}
+						onBlur={(newContent) => handleDetailDescChange(newContent)}
+						// Xóa hoặc điều chỉnh handler onChange cho JoditEditor
+						// onChange={handleInputChange}
 					/>
 				</div>
 			</form>

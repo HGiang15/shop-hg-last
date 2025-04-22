@@ -9,3 +9,12 @@ export const createProduct = async (productData) => {
 		throw error.response?.data || {message: 'Thêm sản phẩm thất bại'};
 	}
 };
+
+export const getAllProducts = async () => {
+	try {
+		const response = await axios.get(`${API_URL}product/getAllProduct`);
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lấy danh sách sản phẩm thất bại'};
+	}
+};
