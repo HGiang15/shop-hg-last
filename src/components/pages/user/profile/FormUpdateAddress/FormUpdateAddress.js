@@ -4,6 +4,7 @@ import Button from '@/components/common/Button/Button';
 import icons from '@/constants/static/icons';
 import useFormValidation from '@/hooks/useFormValidation';
 import Select from 'react-select';
+import Image from 'next/image';
 
 const FormUpdateAddress = ({onClose, existingData}) => {
 	const validationRules = useMemo(
@@ -227,7 +228,7 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 					</Button>
 					<Button
 						type='submit'
-						leftIcon={<img src={icons.folderOpen.src} alt='Thêm' width={20} height={20} className={styles.icon} />}
+						leftIcon={<Image src={icons.folderOpen.src} alt='Thêm' width={20} height={20} className={styles.icon} />}
 						className={styles.submitButton}
 						disabled={isSubmitDisabled}
 					>

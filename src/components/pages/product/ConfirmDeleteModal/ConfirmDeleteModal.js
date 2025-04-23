@@ -18,7 +18,7 @@ const ConfirmDeleteModal = ({isOpen, onClose, onConfirm, productName}) => {
 				<div className={styles.wrapper}>
 					<Image src={icons.question} alt='Xóa sản phẩm' width={60} height={60} />
 					<h2>Xóa sản phẩm</h2>
-					<p>Bạn có chắc chắn muốn xóa sản phẩm "{productName}"?</p>
+					<p>Bạn có chắc chắn muốn xóa sản phẩm &quot;{productName}&quot;?</p>
 				</div>
 				<div className={styles.actions}>
 					<Button onClick={onClose} className={styles.cancel}>

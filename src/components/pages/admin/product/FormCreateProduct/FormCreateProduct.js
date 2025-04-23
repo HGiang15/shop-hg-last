@@ -171,6 +171,9 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<select id='category' name='category' className={styles.select} onChange={handleInputChange}>
 						<option value=''>Chọn loại sản phẩm</option>
 						<option value='Áo CLB'>Áo CLB</option>
+						<option value='Áo đội tuyển'>Áo đội tuyển</option>
+						<option value='Áo không logo'>Áo không logo</option>
+						<option value='Giày đá bóng'>Giày đá bóng</option>
 					</select>
 				</div>
 
@@ -182,6 +185,9 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<select id='colors' name='colors' className={styles.select} onChange={handleInputChange}>
 						<option value=''>Chọn màu sản phẩm</option>
 						<option value='Đỏ'>Màu đỏ</option>
+						<option value='Xanh'>Màu xanh</option>
+						<option value='Vàng'>Màu vàng</option>
+						<option value='Hồng'>Màu hồng</option>
 					</select>
 				</div>
 

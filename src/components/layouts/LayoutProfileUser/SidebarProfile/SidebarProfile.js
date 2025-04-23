@@ -39,7 +39,7 @@ const SidebarProfile = ({isOpen, onClose}) => {
 				document.removeEventListener('mousedown', handleClickOutside);
 			};
 		}
-	}, [isOpen, isClient]);
+	}, [isOpen, isClient, onClose]);
 
 	return (
 		<div ref={sidebarRef} className={`${styles.container} ${isOpen ? styles.open : styles.closed}`}>

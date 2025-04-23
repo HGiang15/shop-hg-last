@@ -11,7 +11,7 @@ import product10 from '../../../public/static/images/products/ao_kologo/kologo_0
 import product11 from '../../../public/static/images/products/giay_db/nike_01.webp';
 import hero_bg from '../../../public/static/images/hero_bg.jpg';
 import about_home from '../../../public/static/images/about_home.jpg';
-import bgLogin from '../../../public/static/images/auth/login-bg.jpg';
+import bgLogin from '../../../public/static/images/auth/bgLogin.jpg';
 import user from '../../../public/static/images/auth/user.svg';
 import noImg from '../../../public/static/images/no_img.png';
 import logoSmall from '../../../public/static/images/logo_small.svg';
