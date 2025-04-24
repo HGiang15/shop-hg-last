@@ -448,7 +448,14 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 							toolbar: true,
 							spellcheck: true,
 							language: 'en',
-							placeholder: 'Nhập mô tả chi tiết sản phẩm...',
+							toolbarButtonSize: 'medium',
+							toolbarAdaptive: false,
+							showCharsCounter: true,
+							showWordsCounter: true,
+							showXPathInStatusbar: false,
+							askBeforePasteHTML: false,
+							askBeforePasteFromWord: false,
+							defaultActionOnPaste: 'insert_clear_html',
 						}}
 						tabIndex={1}
 						onBlur={(newContent) => handleDetailDescChange(newContent)}

@@ -85,7 +85,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 			XXL: parseInt(form.sizeXXL, 10) || 0,
 		};
 
-		formData.append('quantityBySize', JSON.stringify(quantityBySize)); // Thêm các file ảnh
+		formData.append('quantityBySize', JSON.stringify(quantityBySize));
 
 		selectedImages.forEach((file) => {
 			formData.append('images', file);
@@ -94,19 +94,20 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		try {
 			const response = await createProduct(formData);
 			if (response.message === 'Tạo sản phẩm thành công') {
-				toast.success('🎉 Sản phẩm đã được tạo thành công!', {
+				toast.success('Sản phẩm đã được tạo thành công!', {
 					position: 'top-right',
 				});
 				router.push(ROUTES.AdminProduct);
 			}
 		} catch (error) {
-			toast.error('😓 Đã có lỗi xảy ra khi tạo sản phẩm!', {
+			toast.error('Đã có lỗi xảy ra khi tạo sản phẩm!', {
 				position: 'top-right',
 			});
 		}
 	};
 
 	const handleInputChange = (e) => {
+		if (!e || !e.target) return;
 		const {name, value} = e.target;
 		setForm((prev) => ({
 			...prev,
@@ -342,12 +343,17 @@ const FormCreateProduct = ({setActiveMenu}) => {
 							toolbar: true,
 							spellcheck: true,
 							language: 'en',
-							placeholder: 'Nhập mô tả chi tiết sản phẩm...',
+							toolbarButtonSize: 'medium',
+							toolbarAdaptive: false,
+							showCharsCounter: true,
+							showWordsCounter: true,
+							showXPathInStatusbar: false,
+							askBeforePasteHTML: false,
+							askBeforePasteFromWord: false,
+							defaultActionOnPaste: 'insert_clear_html',
 						}}
 						tabIndex={1}
 						onBlur={(newContent) => handleDetailDescChange(newContent)}
-						// Xóa hoặc điều chỉnh handler onChange cho JoditEditor
-						// onChange={handleInputChange}
 					/>
 				</div>
 			</form>
