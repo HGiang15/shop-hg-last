@@ -444,6 +444,7 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 						value={detailDescription}
 						name='detailDescription'
 						config={{
+							placeholder: 'Nhập mô tả chi tiết',
 							readonly: false,
 							toolbar: true,
 							spellcheck: true,

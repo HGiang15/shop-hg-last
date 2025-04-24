@@ -127,7 +127,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 						/>
 					</div>
 
-					{totalPages > 1 && (
+					{products.length > 0 && (
 						<Pagination
 							currentPage={currentPage}
 							totalPages={totalPages}
