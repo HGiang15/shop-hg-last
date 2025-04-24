@@ -35,5 +35,6 @@ export const ROUTES = {
 };
 
 export const API_URL = 'http://localhost:3003/api/';
+export const API_URL_IMG = 'http://localhost:3003/';
 
 export const SET_ACTIVE_MENU = 'SET_ACTIVE_MENU';

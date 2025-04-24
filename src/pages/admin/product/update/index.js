@@ -1,9 +1,9 @@
 import Head from 'next/head';
 import {Fragment} from 'react';
 import LayoutAdmin from '@/components/layouts/LayoutAdmin/LayoutAdmin';
-import FormUpdateProduct from '@/components/pages/admin/product/FormUpdateProduct/FormUpdateProduct';
+import FormUpdateProduct from '@/components/pages/admin/product/FormUpdateProduct/FormUpdateProduct'; // Đảm bảo đường dẫn này đúng
 
-export default function Page() {
+function Page({}) {
 	return (
 		<Fragment>
 			<Head>
@@ -22,3 +22,5 @@ export default function Page() {
 Page.getLayout = function (page) {
 	return <LayoutAdmin title='Chỉnh sửa sản phẩm'>{page}</LayoutAdmin>;
 };
+
+export default Page;

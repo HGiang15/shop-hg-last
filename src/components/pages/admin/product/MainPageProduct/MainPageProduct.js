@@ -78,7 +78,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 									: 0;
 								return {
 									index: indexOfFirstProduct + index + 1,
-									uuid: product._id,
+									_id: product._id,
 									name: product.name,
 									type: product.category,
 									color: product.colors.join(', '),
@@ -89,7 +89,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 							})}
 							headers={[
 								{key: 'index', label: 'STT'},
-								{key: 'uuid', label: 'Mã sản phẩm'},
+								{key: '_id', label: 'Mã sản phẩm'},
 								{key: 'name', label: 'Tên sản phẩm'},
 								{key: 'type', label: 'Loại sản phẩm'},
 								{key: 'color', label: 'Màu sản phẩm'},
@@ -103,12 +103,14 @@ const MainPageProduct = ({setActiveMenu}) => {
 										iconFilter='invert(38%) sepia(93%) saturate(1382%) hue-rotate(189deg) brightness(89%) contrast(105%)'
 										backgroundColor='#dce7ff'
 										tooltip='Chỉnh sửa sản phẩm'
+										href={`${ROUTES.AdminProductUpdate}?_id=${product?._id}`}
 									/>
 									<IconCustom
 										icon={<Image src={icons.eye} alt='Edit' width={20} height={20} />}
 										iconFilter='brightness(0) '
 										backgroundColor='#FFF200'
 										tooltip='Chi tiết sản phẩm'
+										href={`${ROUTES.AdminProduct}/${product?._id}`}
 									/>
 									<IconCustom
 										icon={<Image src={icons.trash} alt='Xóa sản phẩm' width={20} height={20} />}
@@ -117,7 +119,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 										tooltip='Xóa sản phẩm'
 										onClick={() => {
 											setIsModalOpen(true);
-											setSelectedProductId(product.uuid);
+											setSelectedProductId(product._id);
 										}}
 									/>
 								</>
@@ -146,7 +148,6 @@ const MainPageProduct = ({setActiveMenu}) => {
 						setIsModalOpen(false);
 						const updatedProducts = await getAllProducts();
 						setProducts(updatedProducts);
-
 						toast.success('Xóa sản phẩm thành công');
 					} catch (error) {
 						console.error('Lỗi khi xóa sản phẩm:', error.message);

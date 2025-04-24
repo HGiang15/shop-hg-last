@@ -71,19 +71,22 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		const formData = new FormData();
 		formData.append('name', form.name);
 		formData.append('code', form.code);
-		formData.append('id', form.id);
 		formData.append('category', form.category);
 		formData.append('colors', form.colors);
 		formData.append('price', form.price);
-		formData.append('sizeS', form.sizeS);
-		formData.append('sizeM', form.sizeM);
-		formData.append('sizeL', form.sizeL);
-		formData.append('sizeXL', form.sizeXL);
-		formData.append('sizeXXL', form.sizeXXL);
 		formData.append('description', form.description);
 		formData.append('detailDescription', detailDescription);
 
-		// Thêm các file ảnh
+		const quantityBySize = {
+			S: parseInt(form.sizeS, 10) || 0,
+			M: parseInt(form.sizeM, 10) || 0,
+			L: parseInt(form.sizeL, 10) || 0,
+			XL: parseInt(form.sizeXL, 10) || 0,
+			XXL: parseInt(form.sizeXXL, 10) || 0,
+		};
+
+		formData.append('quantityBySize', JSON.stringify(quantityBySize)); // Thêm các file ảnh
+
 		selectedImages.forEach((file) => {
 			formData.append('images', file);
 		});
