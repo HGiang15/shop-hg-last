@@ -11,9 +11,9 @@ import {useRouter} from 'next/router';
 import {connect} from 'react-redux';
 import {setActiveMenu} from '@/redux/actions/menuTabActions';
 import {getAllProducts, deleteProduct} from '@/services/productService';
-import ConfirmDeleteModal from '@/components/pages/product/ConfirmDeleteModal/ConfirmDeleteModal';
 import images from '@/constants/static/images';
 import {toast} from 'react-toastify';
+import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
 
 const MainPageProduct = ({setActiveMenu}) => {
 	const router = useRouter();
