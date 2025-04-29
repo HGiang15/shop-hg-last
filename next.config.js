@@ -9,6 +9,11 @@ const nextConfig = {
 				port: '3003',
 				pathname: '/uploads/**', // Đường dẫn bắt đầu là /uploads/
 			},
+			{
+				protocol: 'https',
+				hostname: 'lh3.googleusercontent.com',
+				pathname: '/**', // Cho phép tất cả ảnh từ Googleusercontent
+			},
 		],
 	},
 };

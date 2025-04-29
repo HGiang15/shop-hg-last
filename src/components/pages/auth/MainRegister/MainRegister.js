@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {ROUTES} from '@/constants/config';
-import {registerUser} from '@/services/registerService';
+import {registerUser} from '@/services/authService';
 import styles from './MainRegister.module.scss';
 import icons from '@/constants/static/icons';
 import Loading from '@/components/common/Loading/Loading';

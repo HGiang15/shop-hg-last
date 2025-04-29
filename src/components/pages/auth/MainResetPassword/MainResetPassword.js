@@ -8,9 +8,8 @@ import styles from './MainResetPassword.module.scss';
 import images from '@/constants/static/images';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
-import {resetPassword} from '@/services/resetPasswordService';
+import {resetPassword, forgotPassword} from '@/services/authService';
 import {toast, ToastContainer} from 'react-toastify';
-import {forgotPassword} from '@/services/forgotPasswordService';
 
 const MainResetPassword = () => {
 	const router = useRouter();

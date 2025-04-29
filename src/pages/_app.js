@@ -11,18 +11,22 @@ import LoadingBar from '@/components/common/LoadingBar/LoadingBar';
 import {Provider} from 'react-redux';
 import store from '@/redux/store';
 
+import {GoogleOAuthProvider} from '@react-oauth/google';
+
 export default function App({Component, pageProps}) {
 	const [queryClient] = useState(() => new QueryClient());
 
 	const getLayout = Component.getLayout || ((page) => page);
 
 	return (
-		<Provider store={store}>
-			<QueryClientProvider client={queryClient}>
-				<LoadingBar />
-				{getLayout(<Component {...pageProps} />)}
-				<ToastContainer />
-			</QueryClientProvider>
-		</Provider>
+		<GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
+			<Provider store={store}>
+				<QueryClientProvider client={queryClient}>
+					<LoadingBar />
+					{getLayout(<Component {...pageProps} />)}
+					<ToastContainer />
+				</QueryClientProvider>
+			</Provider>
+		</GoogleOAuthProvider>
 	);
 }

@@ -3,13 +3,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {ROUTES} from '@/constants/config';
-import {loginUser} from '@/services/authService';
+import {loginUser, loginWithGoogle} from '@/services/authService';
 import styles from './MainLogin.module.scss';
 import icons from '@/constants/static/icons';
 import images from '@/constants/static/images';
 import Loading from '@/components/common/Loading/Loading';
 import Button from '@/components/common/Button/Button';
 import {toast, ToastContainer} from 'react-toastify';
+import {GoogleLogin} from '@react-oauth/google';
+import jwt_decode from 'jwt-decode';
 
 const MainLogin = () => {
 	const router = useRouter();
@@ -56,10 +58,11 @@ const MainLogin = () => {
 		try {
 			const response = await loginUser(formData.email, formData.password);
 
-			const {id, name, email, role} = response.data;
+			const {id, name, email, avatar, role} = response.data;
 			const token = response.token;
 			localStorage.setItem('token', token);
 			localStorage.setItem('name', name);
+			localStorage.setItem('avatar', avatar);
 
 			if (rememberMe) {
 				const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
@@ -140,7 +143,7 @@ const MainLogin = () => {
 			} else {
 				// Thời gian hết hạn, xoá dữ liệu cũ
 				localStorage.removeItem('email');
-				// localStorage.removeItem('password');
+				localStorage.removeItem('password');
 				localStorage.removeItem('remember_expiration');
 			}
 		}
@@ -160,14 +163,6 @@ const MainLogin = () => {
 					<p className={styles.loginLabel}>
 						Chào mừng bạn đến với hệ thống đặt mua quần áo trực tuyến. Đăng nhập để bắt đầu sử dụng!
 					</p>
-
-					<Button
-						leftIcon={<Image src={icons.googleIcon} alt='Google' width={24} height={24} className={styles.loginImg} />}
-						onClick={() => console.log('Checked')}
-						className={styles.loginAction}
-					>
-						<span className={styles.loginDesc}>Đăng nhập với Google</span>
-					</Button>
 
 					<form className={styles.formGroup} onSubmit={handleLogin}>
 						{/* Email */}
@@ -209,6 +204,27 @@ const MainLogin = () => {
 								Đăng nhập
 							</Button>
 						</div>
+
+						<GoogleLogin
+							onSuccess={async (credentialResponse) => {
+								try {
+									const {credential} = credentialResponse;
+									const {token, data} = await loginWithGoogle(credential);
+
+									localStorage.setItem('token', token);
+									localStorage.setItem('name', data.name);
+									localStorage.setItem('avatar', data.avatar);
+
+									toast.success('Đăng nhập bằng Google thành công!');
+									router.push(data.role === 0 ? ROUTES.AdminDashboard : ROUTES.Home);
+								} catch (err) {
+									console.error('Google login error:', err);
+									toast.error('Lỗi khi đăng nhập với Google');
+								}
+							}}
+							onError={() => toast.error('Đăng nhập bằng Google thất bại')}
+							width='100%'
+						/>
 					</form>
 					{/* {errors.general && <p className={styles.errorMsg}>{errors.general}</p>} */}
 

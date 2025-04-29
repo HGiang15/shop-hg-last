@@ -7,7 +7,7 @@ import styles from './MainForgotPassword.module.scss';
 import images from '@/constants/static/images';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
-import {forgotPassword} from '@/services/forgotPasswordService';
+import {forgotPassword} from '@/services/authService';
 import {toast, ToastContainer} from 'react-toastify';
 import Loading from '@/components/common/Loading/Loading';
 

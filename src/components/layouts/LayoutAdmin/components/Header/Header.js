@@ -3,12 +3,11 @@ import {useRouter} from 'next/router';
 import Image from 'next/image';
 import {jwtDecode} from 'jwt-decode';
 import Tippy from '@tippyjs/react/headless';
-import {HiOutlineUser, HiOutlineKey, HiOutlineLogout} from 'react-icons/hi';
-import {HiOutlineMenuAlt2} from 'react-icons/hi';
+import {HiOutlineUser, HiOutlineKey, HiOutlineLogout, HiOutlineMenuAlt2} from 'react-icons/hi';
 import Loading from '@/components/common/Loading/Loading';
 import styles from './Header.module.scss';
-import avatar from '../../../../../../public/static/images/auth/user.svg';
 import {FaTimes} from 'react-icons/fa';
+import images from '@/constants/static/images';
 
 const Header = ({title, setMenuOpen, menuOpen}) => {
 	const [visible, setVisible] = useState(false);
@@ -23,11 +22,18 @@ const Header = ({title, setMenuOpen, menuOpen}) => {
 	useEffect(() => {
 		const token = localStorage.getItem('token');
 		const name = localStorage.getItem('name');
+		const avatar = localStorage.getItem('avatar');
 
 		if (token) {
 			try {
 				const decoded = jwtDecode(token);
-				setUser({...decoded, name});
+				const validAvatar = avatar && (avatar.startsWith('http') || avatar.startsWith('/')) ? avatar : null;
+
+				setUser({
+					...decoded,
+					name,
+					avatar: validAvatar,
+				});
 			} catch (error) {
 				console.error('Token không hợp lệ', error);
 				localStorage.removeItem('token');
@@ -86,7 +92,7 @@ const Header = ({title, setMenuOpen, menuOpen}) => {
 				>
 					<div className={styles.userInfo} onClick={handleClick}>
 						{user?.name && <span className={styles.userName}>{user.name}</span>}
-						<Image src={avatar} alt='Avatar' className={styles.avatar} width={40} height={40} />
+						<Image src={user?.avatar || images.defaultAvatar} alt='Avatar' className={styles.avatar} width={40} height={40} />
 					</div>
 				</Tippy>
 			</div>

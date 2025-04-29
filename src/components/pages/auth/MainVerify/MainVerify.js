@@ -7,11 +7,9 @@ import styles from './MainVerify.module.scss';
 import images from '@/constants/static/images';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
-import {verifyOTP} from '@/services/verifyService';
+import {verifyOTP, forgotPassword} from '@/services/authService';
 import {useSearchParams} from 'next/navigation';
 import {toast, ToastContainer} from 'react-toastify';
-import {registerUser} from '@/services/registerService';
-import {forgotPassword} from '@/services/forgotPasswordService';
 
 const MainVerify = () => {
 	const router = useRouter();
@@ -141,57 +139,6 @@ const MainVerify = () => {
 			setLoading(false);
 		}
 	};
-
-	// const handleResendOTP = async () => {
-	// 	setLoading(true);
-	// 	setServerError('');
-
-	// 	try {
-	// 		// Lấy formData từ localStorage
-	// 		const registrationData = JSON.parse(localStorage.getItem('registrationData'));
-
-	// 		if (!registrationData) {
-	// 			setServerError('Không tìm thấy thông tin đăng ký.');
-	// 			toast.error('Không tìm thấy thông tin đăng ký.', {
-	// 				position: 'top-right',
-	// 				autoClose: 3000,
-	// 				hideProgressBar: false,
-	// 				closeOnClick: true,
-	// 				pauseOnHover: true,
-	// 				draggable: true,
-	// 				progress: undefined,
-	// 			});
-	// 			return;
-	// 		}
-
-	// 		// Gọi API registerUser với formData đã lấy
-	// 		const response = await registerUser(registrationData);
-	// 		toast.success(response.message, {
-	// 			position: 'top-right',
-	// 			autoClose: 3000,
-	// 			hideProgressBar: false,
-	// 			closeOnClick: true,
-	// 			pauseOnHover: true,
-	// 			draggable: true,
-	// 			progress: undefined,
-	// 		});
-
-	// 		localStorage.removeItem('registrationData');
-	// 	} catch (error) {
-	// 		setServerError(error);
-	// 		toast.error(error, {
-	// 			position: 'top-right',
-	// 			autoClose: 3000,
-	// 			hideProgressBar: false,
-	// 			closeOnClick: true,
-	// 			pauseOnHover: true,
-	// 			draggable: true,
-	// 			progress: undefined,
-	// 		});
-	// 	} finally {
-	// 		setLoading(false);
-	// 	}
-	// };
 
 	return (
 		<div className={styles.container}>

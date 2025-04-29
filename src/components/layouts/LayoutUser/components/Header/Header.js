@@ -26,11 +26,12 @@ function Header() {
 		const token = localStorage.getItem('token');
 		const name = localStorage.getItem('name');
 		const cart = localStorage.getItem('cart'); // Get cart from local storage
+		const avatar = localStorage.getItem('avatar') || '';
 
 		if (token) {
 			try {
 				const decoded = jwtDecode(token);
-				setUser({...decoded, name});
+				setUser({...decoded, name, avatar});
 			} catch (error) {
 				console.error('Token không hợp lệ', error);
 				localStorage.removeItem('token');
@@ -133,12 +134,13 @@ function Header() {
 						<div className={styles.userDropdown}>
 							<div className={styles.userInfo} onClick={toggleDropdown}>
 								<Image
-									src={user.avatar || images.defaultAvatar}
+									src={user?.avatar && user.avatar.startsWith('http') ? user.avatar : images.defaultAvatar}
 									alt='User Avatar'
 									width={40}
 									height={40}
 									className={styles.userAvatar}
 								/>
+
 								<span className={styles.userName}>{user.name || 'Người dùng'}</span>
 							</div>
 
