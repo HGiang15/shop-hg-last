@@ -13,6 +13,7 @@ import {createProduct} from '@/services/productService';
 const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 import {toast} from 'react-toastify';
 import {getAllColors} from '@/services/colorService';
+import {getAllSizes} from '@/services/sizeService';
 
 const FormCreateProduct = ({setActiveMenu}) => {
 	const router = useRouter();
@@ -20,6 +21,9 @@ const FormCreateProduct = ({setActiveMenu}) => {
 	const [selectedImages, setSelectedImages] = useState([]);
 	const [detailDescription, setDetailDesc] = useState('');
 	const [colorOptions, setColorOptions] = useState([]);
+	const [sizes, setSizes] = useState([]);
+	const [sizeQuantities, setSizeQuantities] = useState({});
+
 	const [form, setForm] = useState({
 		name: '',
 		code: '',
@@ -79,16 +83,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		formData.append('price', form.price);
 		formData.append('description', form.description);
 		formData.append('detailDescription', detailDescription);
-
-		const quantityBySize = {
-			S: parseInt(form.sizeS, 10) || 0,
-			M: parseInt(form.sizeM, 10) || 0,
-			L: parseInt(form.sizeL, 10) || 0,
-			XL: parseInt(form.sizeXL, 10) || 0,
-			XXL: parseInt(form.sizeXXL, 10) || 0,
-		};
-
-		formData.append('quantityBySize', JSON.stringify(quantityBySize));
+		formData.append('quantityBySize', JSON.stringify(sizeQuantities));
 
 		selectedImages.forEach((file) => {
 			formData.append('images', file);
@@ -118,6 +113,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		}));
 	};
 
+	// Get all colors
 	useEffect(() => {
 		const fetchColors = async () => {
 			try {
@@ -129,6 +125,32 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		};
 		fetchColors();
 	}, []);
+
+	// Get all sizes
+	useEffect(() => {
+		const fetchSizes = async () => {
+			try {
+				const res = await getAllSizes();
+				setSizes(res);
+				const initialQuantities = {};
+				res.forEach((size) => {
+					initialQuantities[size.name] = 0;
+				});
+				setSizeQuantities(initialQuantities);
+			} catch (err) {
+				console.error('Lỗi khi tải danh sách size:', err.message);
+			}
+		};
+		fetchSizes();
+	}, []);
+
+	const handleSizeQuantityChange = (e, sizeName) => {
+		const value = parseInt(e.target.value, 10) || 0;
+		setSizeQuantities((prev) => ({
+			...prev,
+			[sizeName]: value,
+		}));
+	};
 
 	return (
 		<div className={styles.container}>
@@ -284,55 +306,26 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					</div>
 				</div>
 
-				{/* S */}
-				<div className={styles.formGroup}>
-					<label htmlFor='sizeS' className={styles.label}>
-						Nhập số lượng size S <span style={{color: 'red'}}>*</span>
-					</label>
-					<input type='number' id='sizeS' name='sizeS' className={styles.input} placeholder='0' onChange={handleInputChange} />
-				</div>
-
-				{/* M */}
-				<div className={styles.formGroup}>
-					<label htmlFor='sizeM' className={styles.label}>
-						Nhập số lượng size M <span style={{color: 'red'}}>*</span>
-					</label>
-					<input type='number' id='sizeM' name='sizeM' className={styles.input} placeholder='0' onChange={handleInputChange} />
-				</div>
-
-				{/* L */}
-				<div className={styles.formGroup}>
-					<label htmlFor='sizeL' className={styles.label}>
-						Nhập số lượng size L <span style={{color: 'red'}}>*</span>
-					</label>
-					<input type='number' id='sizeL' name='sizeL' className={styles.input} placeholder='0' onChange={handleInputChange} />
-				</div>
-
-				{/* XL */}
-				<div className={styles.formGroup}>
-					<label htmlFor='sizeXL' className={styles.label}>
-						Nhập số lượng size XL <span style={{color: 'red'}}>*</span>
-					</label>
-					<input type='number' id='sizeXL' name='sizeXL' className={styles.input} placeholder='0' onChange={handleInputChange} />
-				</div>
-
-				{/* XXL */}
-				<div className={styles.formGroup}>
-					<label htmlFor='sizeXXL' className={styles.label}>
-						Nhập số lượng size XXL <span style={{color: 'red'}}>*</span>
-					</label>
-					<input
-						type='number'
-						id='sizeXXL'
-						name='sizeXXL'
-						className={styles.input}
-						placeholder='0'
-						onChange={handleInputChange}
-					/>
-				</div>
+				{/* Size */}
+				{sizes.map((size) => (
+					<div className={`${styles.formGroup} ${styles.sizeInput}`} key={size.name}>
+						<label htmlFor={`size-${size.name}`} className={styles.label}>
+							Nhập số lượng size {size.name} <span style={{color: 'red'}}>*</span>
+						</label>
+						<input
+							type='number'
+							id={`size-${size.name}`}
+							name={size.name}
+							className={styles.input}
+							placeholder='0'
+							value={sizeQuantities[size.name] || ''}
+							onChange={(e) => handleSizeQuantityChange(e, size.name)}
+						/>
+					</div>
+				))}
 
 				{/* Description */}
-				<div className={styles.formGroup}>
+				<div className={`${styles.formGroup} ${styles.description}`}>
 					<label htmlFor='description' className={styles.label}>
 						Mô tả chính
 					</label>
@@ -347,7 +340,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 				</div>
 
 				{/* Description all */}
-				<div className={styles.formGroup}>
+				<div className={`${styles.formGroup} ${styles.detailDescription}`}>
 					<label htmlFor='detailDescription' className={styles.label}>
 						Mô tả chi tiết
 					</label>

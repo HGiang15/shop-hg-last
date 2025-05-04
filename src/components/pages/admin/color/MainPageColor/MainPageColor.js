@@ -17,13 +17,13 @@ import images from '@/constants/static/images';
 const MainPageColor = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [colors, setColors] = useState([]);
-	const usersPerPage = 5;
 	const [showForm, setShowForm] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false); // Create
 	const [selectedColorId, setSelectedColorId] = useState(null); // Create
 	const [showUpdateForm, setShowUpdateForm] = useState(false); // Update
 	const [editColorId, setEditColorId] = useState(null); // Update
 
+	// Get all colors
 	const fetchColors = async () => {
 		try {
 			const data = await getAllColors();
@@ -37,6 +37,7 @@ const MainPageColor = () => {
 		fetchColors();
 	}, []);
 
+	const usersPerPage = 5;
 	const totalPages = Math.ceil(colors.length / usersPerPage);
 	const indexOfLastUser = currentPage * usersPerPage;
 	const indexOfFirstUser = indexOfLastUser - usersPerPage;

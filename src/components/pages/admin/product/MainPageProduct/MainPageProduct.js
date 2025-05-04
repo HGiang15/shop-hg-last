@@ -19,9 +19,8 @@ const MainPageProduct = ({setActiveMenu}) => {
 	const router = useRouter();
 	const [products, setProducts] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [selectedProductId, setSelectedProductId] = useState(null);
-	const productsPerPage = 5;
+	const [isModalOpen, setIsModalOpen] = useState(false); // Create
+	const [selectedProductId, setSelectedProductId] = useState(null); // Create
 
 	useEffect(() => {
 		const fetchProducts = async () => {
@@ -36,6 +35,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 		fetchProducts();
 	}, []);
 
+	const productsPerPage = 5;
 	const totalPages = products.length > 0 ? Math.ceil(products.length / productsPerPage) : 0;
 	const indexOfLastProduct = currentPage * productsPerPage;
 	const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
