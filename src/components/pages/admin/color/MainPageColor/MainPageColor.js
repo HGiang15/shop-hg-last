@@ -12,6 +12,7 @@ import Button from '@/components/common/Button/Button';
 import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
 import FormCreateColor from '../FormCreateColor/FormCreateColor';
 import FormUpdateColor from '../FormUpdateColor/FormUpdateColor';
+import images from '@/constants/static/images';
 
 const MainPageColor = () => {
 	const [currentPage, setCurrentPage] = useState(1);
@@ -59,57 +60,77 @@ const MainPageColor = () => {
 				</Button>
 			</div>
 
-			<div className={styles.tableWrapper}>
-				<Table
-					users={currentUsers}
-					headers={[
-						{key: '_id', label: 'ID'},
-						{
-							key: 'code',
-							label: 'Mã màu',
-							render: (color) => (
-								<div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-									<div
-										style={{
-											width: '20px',
-											height: '20px',
-											backgroundColor: color.code,
-											border: '1px solid #ccc',
-											borderRadius: '4px',
+			{colors.length === 0 ? (
+				<div className={styles.noProducts}>
+					<Image src={images.boxEmpty} alt='Không có màu sắc' width={180} height={180} priority />
+					<h4>DỮ LIỆU TRỐNG</h4>
+					<p>Hiện tại không có màu sắc nào!</p>
+					<Button className={styles.btnNoProduct} onClick={() => setShowForm(true)}>
+						Thêm mới màu sắc
+					</Button>
+				</div>
+			) : (
+				<>
+					<div className={styles.tableWrapper}>
+						<Table
+							users={currentUsers}
+							headers={[
+								{key: '_id', label: 'ID'},
+								{
+									key: 'code',
+									label: 'Mã màu',
+									render: (color) => (
+										<div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+											<div
+												style={{
+													width: '20px',
+													height: '20px',
+													backgroundColor: color.code,
+													border: '1px solid #ccc',
+													borderRadius: '4px',
+												}}
+											/>
+											<span>{color.code}</span>
+										</div>
+									),
+								},
+								{key: 'name', label: 'Tên màu'},
+								{key: 'description', label: 'Mô tả'},
+							]}
+							renderActions={(color) => (
+								<>
+									<IconCustom
+										icon={<Image src={icons.edit} alt='Edit' width={20} height={20} />}
+										iconFilter='invert(38%) sepia(93%) saturate(1382%) hue-rotate(189deg) brightness(89%) contrast(105%)'
+										backgroundColor='#dce7ff'
+										tooltip='Chỉnh sửa màu sắc'
+										onClick={() => handleEditColor(color._id)}
+									/>
+									<IconCustom
+										icon={<Image src={icons.trash} alt='Delete' width={20} height={20} />}
+										iconFilter='invert(66%) sepia(35%) saturate(5412%) hue-rotate(338deg) brightness(98%) contrast(90%)'
+										backgroundColor='#ffe4e4'
+										tooltip='Xóa màu sắc'
+										onClick={() => {
+											setSelectedColorId(color._id);
+											setIsModalOpen(true);
 										}}
 									/>
-									<span>{color.code}</span>
-								</div>
-							),
-						},
-						{key: 'name', label: 'Tên màu'},
-						{key: 'description', label: 'Mô tả'},
-					]}
-					renderActions={(color) => (
-						<>
-							<IconCustom
-								icon={<Image src={icons.edit} alt='Edit' width={20} height={20} />}
-								iconFilter='invert(38%) sepia(93%) saturate(1382%) hue-rotate(189deg) brightness(89%) contrast(105%)'
-								backgroundColor='#dce7ff'
-								tooltip='Chỉnh sửa màu sắc'
-								onClick={() => handleEditColor(color._id)}
-							/>
-							<IconCustom
-								icon={<Image src={icons.trash} alt='Delete' width={20} height={20} />}
-								iconFilter='invert(66%) sepia(35%) saturate(5412%) hue-rotate(338deg) brightness(98%) contrast(90%)'
-								backgroundColor='#ffe4e4'
-								tooltip='Xóa màu sắc'
-								onClick={() => {
-									setSelectedColorId(color._id);
-									setIsModalOpen(true);
-								}}
-							/>
-						</>
-					)}
-				/>
-			</div>
+								</>
+							)}
+						/>
+					</div>
 
-			<Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} totalItems={colors.length} />
+					{colors.length > 0 && (
+						<Pagination
+							currentPage={currentPage}
+							totalPages={totalPages}
+							onPageChange={handlePageChange}
+							totalItems={colors.length}
+						/>
+					)}
+				</>
+			)}
 
 			{showForm && (
 				<ModalWrapper onClose={() => setShowForm(false)}>

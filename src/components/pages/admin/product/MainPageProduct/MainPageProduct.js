@@ -21,7 +21,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedProductId, setSelectedProductId] = useState(null);
-	const productsPerPage = 3;
+	const productsPerPage = 5;
 
 	useEffect(() => {
 		const fetchProducts = async () => {
