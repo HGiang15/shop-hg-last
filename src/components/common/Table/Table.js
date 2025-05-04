@@ -18,7 +18,9 @@ function Table({users, headers, renderActions, roleStyle, statusStyle}) {
 						<tr key={`${user.id}-${index}`}>
 							{headers.map((header) => (
 								<td key={header.key}>
-									{header.key === 'role' ? (
+									{header.render ? (
+										header.render(user) // render nếu là color
+									) : header.key === 'role' ? (
 										<span style={roleStyle}>{user[header.key]}</span>
 									) : header.key === 'status' ? (
 										<span style={statusStyle}>{user[header.key]}</span>
@@ -27,6 +29,7 @@ function Table({users, headers, renderActions, roleStyle, statusStyle}) {
 									)}
 								</td>
 							))}
+
 							<td>
 								<div className={styles.actions}>{renderActions(user)}</div>
 							</td>

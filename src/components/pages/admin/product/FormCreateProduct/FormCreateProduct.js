@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './FormCreateProduct.module.scss';
 import Button from '@/components/common/Button/Button';
 import Image from 'next/image';
@@ -12,12 +12,14 @@ import {ROUTES} from '@/constants/config';
 import {createProduct} from '@/services/productService';
 const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 import {toast} from 'react-toastify';
+import {getAllColors} from '@/services/colorService';
 
 const FormCreateProduct = ({setActiveMenu}) => {
 	const router = useRouter();
 
 	const [selectedImages, setSelectedImages] = useState([]);
 	const [detailDescription, setDetailDesc] = useState('');
+	const [colorOptions, setColorOptions] = useState([]);
 	const [form, setForm] = useState({
 		name: '',
 		code: '',
@@ -67,6 +69,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		router.back();
 	};
 
+	// Create Product
 	const handleSubmitForm = async () => {
 		const formData = new FormData();
 		formData.append('name', form.name);
@@ -114,6 +117,18 @@ const FormCreateProduct = ({setActiveMenu}) => {
 			[name]: value,
 		}));
 	};
+
+	useEffect(() => {
+		const fetchColors = async () => {
+			try {
+				const res = await getAllColors();
+				setColorOptions(res);
+			} catch (err) {
+				console.error('Không thể tải danh sách màu:', err.message);
+			}
+		};
+		fetchColors();
+	}, []);
 
 	return (
 		<div className={styles.container}>
@@ -188,10 +203,11 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					</label>
 					<select id='colors' name='colors' className={styles.select} onChange={handleInputChange}>
 						<option value=''>Chọn màu sản phẩm</option>
-						<option value='Đỏ'>Màu đỏ</option>
-						<option value='Xanh'>Màu xanh</option>
-						<option value='Vàng'>Màu vàng</option>
-						<option value='Hồng'>Màu hồng</option>
+						{colorOptions.map((color) => (
+							<option key={color._id} value={color.name}>
+								{color.name}
+							</option>
+						))}
 					</select>
 				</div>
 

@@ -1,74 +1,150 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './MainPageColor.module.scss';
 import Image from 'next/image';
+import {toast} from 'react-toastify';
 import IconCustom from '@/components/common/IconCustom/IconCustom';
 import Table from '@/components/common/Table/Table';
 import icons from '@/constants/static/icons';
 import Pagination from '@/components/common/Pagination/Pagination';
-import {useState} from 'react';
-
-const users = [
-	{id: 1, colorCode: 'Test', name: 'Màu đỏ', description: 'Mô tả 1', role: 'Quản trị', status: 'Đang hoạt động'},
-	{
-		id: 2,
-		colorCode: 'Nguyễn Đăng Hoàng Giang',
-		name: 'Màu xanh',
-		description: 'Mô tả 2',
-	},
-	{id: 3, colorCode: 'Nguyễn Ngọc Minh', name: 'Màu đen', description: 'Mô tả 3'},
-	{id: 5, colorCode: 'ADMIN', name: 'Màu trắng', description: 'admin@gmail.com'},
-];
+import {getAllColors, deleteColor} from '@/services/colorService';
+import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
+import Button from '@/components/common/Button/Button';
+import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
+import FormCreateColor from '../FormCreateColor/FormCreateColor';
+import FormUpdateColor from '../FormUpdateColor/FormUpdateColor';
 
 const MainPageColor = () => {
 	const [currentPage, setCurrentPage] = useState(1);
-	const usersPerPage = 3;
-	const totalPages = Math.ceil(users.length / usersPerPage);
+	const [colors, setColors] = useState([]);
+	const usersPerPage = 5;
+	const [showForm, setShowForm] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false); // Create
+	const [selectedColorId, setSelectedColorId] = useState(null); // Create
+	const [showUpdateForm, setShowUpdateForm] = useState(false); // Update
+	const [editColorId, setEditColorId] = useState(null); // Update
+
+	const fetchColors = async () => {
+		try {
+			const data = await getAllColors();
+			setColors(data);
+		} catch (error) {
+			console.error('Lỗi lấy danh sách màu:', error.message);
+		}
+	};
+
+	useEffect(() => {
+		fetchColors();
+	}, []);
+
+	const totalPages = Math.ceil(colors.length / usersPerPage);
 	const indexOfLastUser = currentPage * usersPerPage;
 	const indexOfFirstUser = indexOfLastUser - usersPerPage;
-	const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+	const currentUsers = colors.slice(indexOfFirstUser, indexOfLastUser);
 
 	const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
+	};
+
+	const handleEditColor = (id) => {
+		setEditColorId(id);
+		setShowUpdateForm(true);
 	};
 
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
 				<h2>Quản lý màu sắc</h2>
-				<button className={styles.addButton}>Thêm mới màu sắc</button>
+				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
+					Thêm mới màu sắc
+				</Button>
 			</div>
 
 			<div className={styles.tableWrapper}>
 				<Table
 					users={currentUsers}
 					headers={[
-						{key: 'id', label: 'STT'},
-						{key: 'colorCode', label: 'Mã màu'},
+						{key: '_id', label: 'ID'},
+						{
+							key: 'code',
+							label: 'Mã màu',
+							render: (color) => (
+								<div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+									<div
+										style={{
+											width: '20px',
+											height: '20px',
+											backgroundColor: color.code,
+											border: '1px solid #ccc',
+											borderRadius: '4px',
+										}}
+									/>
+									<span>{color.code}</span>
+								</div>
+							),
+						},
 						{key: 'name', label: 'Tên màu'},
 						{key: 'description', label: 'Mô tả'},
 					]}
-					renderActions={(user) => (
+					renderActions={(color) => (
 						<>
 							<IconCustom
 								icon={<Image src={icons.edit} alt='Edit' width={20} height={20} />}
 								iconFilter='invert(38%) sepia(93%) saturate(1382%) hue-rotate(189deg) brightness(89%) contrast(105%)'
 								backgroundColor='#dce7ff'
 								tooltip='Chỉnh sửa màu sắc'
+								onClick={() => handleEditColor(color._id)}
 							/>
 							<IconCustom
-								icon={<Image src={icons.trash} alt='Change Role' width={20} height={20} />}
+								icon={<Image src={icons.trash} alt='Delete' width={20} height={20} />}
 								iconFilter='invert(66%) sepia(35%) saturate(5412%) hue-rotate(338deg) brightness(98%) contrast(90%)'
 								backgroundColor='#ffe4e4'
 								tooltip='Xóa màu sắc'
+								onClick={() => {
+									setSelectedColorId(color._id);
+									setIsModalOpen(true);
+								}}
 							/>
 						</>
 					)}
-					roleStyle={{background: '#ffe4e6', color: '#ff2d2d', padding: '5px 10px', borderRadius: '4px'}}
-					statusStyle={{background: '#e4ffe5', color: '#19cd21', padding: '5px 10px', borderRadius: '4px'}}
 				/>
 			</div>
 
-			<Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} totalItems={users.length} />
+			<Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} totalItems={colors.length} />
+
+			{showForm && (
+				<ModalWrapper onClose={() => setShowForm(false)}>
+					<FormCreateColor onCancel={() => setShowForm(false)} onSuccess={fetchColors} />
+				</ModalWrapper>
+			)}
+
+			{showUpdateForm && (
+				<ModalWrapper onClose={() => setShowUpdateForm(false)}>
+					<FormUpdateColor
+						colorId={editColorId}
+						onCancel={() => setShowUpdateForm(false)}
+						onSuccess={() => {
+							setShowUpdateForm(false);
+							fetchColors();
+						}}
+					/>
+				</ModalWrapper>
+			)}
+
+			<ConfirmDeleteModal
+				isOpen={isModalOpen}
+				onClose={() => setIsModalOpen(false)}
+				onConfirm={async () => {
+					try {
+						await deleteColor(selectedColorId);
+						toast.success('Xóa màu thành công');
+						await fetchColors();
+						setIsModalOpen(false);
+					} catch (error) {
+						toast.error(error.message || 'Xóa màu thất bại');
+					}
+				}}
+				colorName={colors.find((c) => c._id === selectedColorId)?.name}
+			/>
 		</div>
 	);
 };
