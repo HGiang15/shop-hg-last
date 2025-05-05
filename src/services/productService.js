@@ -21,7 +21,7 @@ export const updateProduct = async (productId, productData) => {
 
 export const getAllProducts = async () => {
 	try {
-		const response = await axios.get(`${API_URL}product/getAllProduct`);
+		const response = await axios.get(`${API_URL}product/getAllProducts`);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy danh sách sản phẩm thất bại'};

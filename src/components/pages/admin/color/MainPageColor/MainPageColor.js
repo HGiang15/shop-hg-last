@@ -17,11 +17,11 @@ import images from '@/constants/static/images';
 const MainPageColor = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [colors, setColors] = useState([]);
-	const [showForm, setShowForm] = useState(false);
-	const [isModalOpen, setIsModalOpen] = useState(false); // Create
-	const [selectedColorId, setSelectedColorId] = useState(null); // Create
+	const [showForm, setShowForm] = useState(false); // Create
 	const [showUpdateForm, setShowUpdateForm] = useState(false); // Update
 	const [editColorId, setEditColorId] = useState(null); // Update
+	const [isModalOpen, setIsModalOpen] = useState(false); // Delete
+	const [selectedColorId, setSelectedColorId] = useState(null); // Delete
 
 	// Get all colors
 	const fetchColors = async () => {
@@ -55,7 +55,6 @@ const MainPageColor = () => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
-				<h2>Quản lý màu sắc</h2>
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
 					Thêm mới màu sắc
 				</Button>
@@ -97,6 +96,19 @@ const MainPageColor = () => {
 								},
 								{key: 'name', label: 'Tên màu'},
 								{key: 'description', label: 'Mô tả'},
+								{
+									key: 'createdAt',
+									label: 'Thời gian tạo',
+									render: (color) =>
+										new Date(color.createdAt).toLocaleString('vi-VN', {
+											hour: '2-digit',
+											minute: '2-digit',
+											second: '2-digit',
+											day: '2-digit',
+											month: '2-digit',
+											year: 'numeric',
+										}),
+								},
 							]}
 							renderActions={(color) => (
 								<>

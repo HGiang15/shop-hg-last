@@ -14,6 +14,7 @@ const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 import {toast} from 'react-toastify';
 import {getAllColors} from '@/services/colorService';
 import {getAllSizes} from '@/services/sizeService';
+import {getAllCategories} from '@/services/categoryService';
 
 const FormCreateProduct = ({setActiveMenu}) => {
 	const router = useRouter();
@@ -21,6 +22,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 	const [selectedImages, setSelectedImages] = useState([]);
 	const [detailDescription, setDetailDesc] = useState('');
 	const [colorOptions, setColorOptions] = useState([]);
+	const [categoryOptions, setCategoryOptions] = useState([]);
 	const [sizes, setSizes] = useState([]);
 	const [sizeQuantities, setSizeQuantities] = useState({});
 
@@ -144,6 +146,19 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		fetchSizes();
 	}, []);
 
+	// Get all category
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const res = await getAllCategories();
+				setCategoryOptions(res);
+			} catch (err) {
+				console.error('Không thể tải danh sách danh mục:', err.message);
+			}
+		};
+		fetchCategories();
+	}, []);
+
 	const handleSizeQuantityChange = (e, sizeName) => {
 		const value = parseInt(e.target.value, 10) || 0;
 		setSizeQuantities((prev) => ({
@@ -204,17 +219,18 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					/>
 				</div>
 
-				{/* Type */}
+				{/* Category */}
 				<div className={styles.formGroup}>
 					<label htmlFor='category' className={styles.label}>
 						Loại sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
 					<select id='category' name='category' className={styles.select} onChange={handleInputChange}>
 						<option value=''>Chọn loại sản phẩm</option>
-						<option value='Áo CLB'>Áo CLB</option>
-						<option value='Áo đội tuyển'>Áo đội tuyển</option>
-						<option value='Áo không logo'>Áo không logo</option>
-						<option value='Giày đá bóng'>Giày đá bóng</option>
+						{categoryOptions.map((category) => (
+							<option key={category._id} value={category._id}>
+								{category.name}
+							</option>
+						))}
 					</select>
 				</div>
 

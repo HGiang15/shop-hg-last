@@ -16,11 +16,11 @@ import FormUpdateSize from '../FormUpdateSize/FormUpdateSize';
 const MainPageSize = () => {
 	const [sizes, setSizes] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [showForm, setShowForm] = useState(false);
-	const [selectedSizeId, setSelectedSizeId] = useState(null); // Create
-	const [isModalOpen, setIsModalOpen] = useState(false); // Create
+	const [showForm, setShowForm] = useState(false); // Create
 	const [showUpdateForm, setShowUpdateForm] = useState(false); // Update
 	const [editSizeId, setEditSizeId] = useState(null); // Update
+	const [selectedSizeId, setSelectedSizeId] = useState(null); // Delete
+	const [isModalOpen, setIsModalOpen] = useState(false); // Delete
 
 	// Get all sizes
 	const fetchSizes = async () => {
@@ -61,7 +61,6 @@ const MainPageSize = () => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
-				<h2>Quản lý kích cỡ</h2>
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
 					Thêm mới kích cỡ
 				</Button>
@@ -73,6 +72,19 @@ const MainPageSize = () => {
 					{key: '_id', label: 'ID'},
 					{key: 'name', label: 'Tên kích cỡ'},
 					{key: 'description', label: 'Mô tả'},
+					{
+						key: 'createdAt',
+						label: 'Thời gian tạo',
+						render: (color) =>
+							new Date(color.createdAt).toLocaleString('vi-VN', {
+								hour: '2-digit',
+								minute: '2-digit',
+								second: '2-digit',
+								day: '2-digit',
+								month: '2-digit',
+								year: 'numeric',
+							}),
+					},
 				]}
 				renderActions={(size) => (
 					<>

@@ -1,0 +1,128 @@
+.container {
+	padding: 20px;
+	width: 100%;
+}
+
+.title {
+	text-align: center;
+	font-size: 24px;
+	font-weight: 600;
+	margin-bottom: 30px;
+}
+
+.formGroup {
+	display: flex;
+	align-items: center;
+	margin-bottom: 20px;
+
+	label {
+		width: 120px;
+		font-weight: 500;
+	}
+
+	span.required {
+		color: red;
+		margin-left: 2px;
+	}
+
+	input[type='text'],
+	input[type='color'],
+	textarea {
+		border: none;
+		background: #f3f3f3;
+		border-radius: 8px;
+		padding: 10px 14px;
+		width: 100%;
+		font-size: 14px;
+		outline: none;
+	}
+
+	input[type='text'] {
+		flex: 1;
+		margin-left: 10px;
+	}
+
+	.colorInputGroup {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+
+		input[type='color'] {
+			width: 80px;
+			height: 50px;
+			border: none;
+			background: none;
+			cursor: pointer;
+		}
+	}
+
+	textarea {
+		flex: 1;
+		resize: none;
+		height: 150px;
+		margin-left: 10px;
+	}
+}
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 30px;
+
+	.btnCancel {
+		background: #e0e4e7;
+		color: #000;
+	}
+
+	.btnSave {
+		background: #1a91e0;
+	}
+}
+
+.imageUploadContainer {
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+	background: #f9f9f9;
+	padding: 16px;
+	border-radius: 8px;
+	margin-bottom: 20px;
+}
+
+.imagePlaceholder,
+.previewImage {
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	background: #ddd;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.uploadInstructions {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	font-size: 14px;
+
+	p {
+		margin: 4px 0;
+	}
+
+	.uploadButton {
+		margin-top: 10px;
+		color: #fff;
+		padding: 10px 15px;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 16px;
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		width: fit-content;
+		background: #007bff;
+	}
+}

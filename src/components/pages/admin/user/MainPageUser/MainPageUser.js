@@ -121,7 +121,6 @@ const MainPageUser = () => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
-				<h2>Quản lý người dùng</h2>
 				<Button className={styles.addButton}>Thêm mới người dùng</Button>
 			</div>
 

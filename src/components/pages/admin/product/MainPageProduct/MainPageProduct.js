@@ -19,8 +19,8 @@ const MainPageProduct = ({setActiveMenu}) => {
 	const router = useRouter();
 	const [products, setProducts] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [isModalOpen, setIsModalOpen] = useState(false); // Create
-	const [selectedProductId, setSelectedProductId] = useState(null); // Create
+	const [isModalOpen, setIsModalOpen] = useState(false); // Delete
+	const [selectedProductId, setSelectedProductId] = useState(null); // Delete
 
 	useEffect(() => {
 		const fetchProducts = async () => {
