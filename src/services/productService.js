@@ -45,3 +45,12 @@ export const getProductById = async (productId) => {
 		throw error.response?.data || {message: 'Lấy thông tin sản phẩm thất bại'};
 	}
 };
+
+export const getFeaturedProducts = async () => {
+	try {
+		const response = await axios.get(`${API_URL}product/featuredProducts`);
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lấy sản phẩm nổi bật thất bại'};
+	}
+};

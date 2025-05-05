@@ -83,6 +83,22 @@
 		resize: none;
 	}
 
+	.featured {
+		flex-direction: row;
+	}
+
+	input[type='checkbox'] {
+		width: 20px;
+		height: 20px;
+		accent-color: #4f46e5; // màu xanh tím hiện đại
+		cursor: pointer;
+		transition: transform 0.2s ease;
+
+		&:hover {
+			transform: scale(1.1);
+		}
+	}
+
 	.priceInput {
 		display: flex;
 		align-items: center;
@@ -215,7 +231,11 @@
 .formGrid > div:nth-child(5) {
 	grid-column: 1 / 3;
 } // Giá
+
 .formGrid > div:nth-child(6) {
+	grid-column: 1 / 3;
+} // Giá
+.formGrid > div:nth-child(7) {
 	grid-column: 1 / 3;
 } // Chọn ảnh
 
@@ -233,4 +253,15 @@
 	.formGrid {
 		grid-template-columns: 1fr;
 	}
+}
+
+.formGroup.featured {
+	display: flex;
+	align-items: center;
+	gap: 10px; // khoảng cách giữa label và checkbox
+	flex-direction: row !important; // ép nằm ngang, override cái column ở trên
+}
+
+.formGroup.featured label {
+	margin-bottom: 0;
 }

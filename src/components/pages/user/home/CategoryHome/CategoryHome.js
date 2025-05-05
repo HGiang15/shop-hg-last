@@ -1,35 +1,62 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Image from 'next/image';
-import images from '@/constants/static/images';
 import styles from './CategoryHome.module.scss';
 import Link from 'next/link';
 import {ROUTES} from '@/constants/config';
-
-const categories = [
-	{id: 1, name: 'Áo CLB', image: images.product1},
-	{id: 2, name: 'Áo đội tuyển', image: images.product8},
-	{id: 3, name: 'Áo không logo', image: images.product10},
-	{id: 4, name: 'Giày đá bóng', image: images.product11},
-];
+import {getAllCategories} from '@/services/categoryService';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {Pagination} from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 const CategoryHome = () => {
-	const [activeCategory, setActiveCategory] = useState(categories[0].id);
+	const [categories, setCategories] = useState([]);
+	const [activeCategory, setActiveCategory] = useState(null);
+
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const data = await getAllCategories();
+				setCategories(data);
+				if (data.length > 0) {
+					setActiveCategory(data[0]._id);
+				}
+			} catch (err) {
+				console.error('Lỗi khi tải danh mục:', err);
+			}
+		};
+		fetchCategories();
+	}, []);
 
 	return (
 		<div className={styles.container}>
 			<h2 className={styles.categoryTitle}>Danh mục sản phẩm</h2>
 			<div className={styles.categoryList}>
-				{categories.map((category) => (
-					<Link
-						href={ROUTES.Product}
-						key={category.id}
-						className={`${styles.categoryItem} ${activeCategory === category.id ? styles.active : ''}`}
-						onClick={() => setActiveCategory(category.id)}
-					>
-						<span className={styles.categoryName}>{category.name}</span>
-						<Image src={category.image} alt={category.name} width={80} height={80} />
-					</Link>
-				))}
+				<Swiper
+					spaceBetween={20}
+					slidesPerView={4}
+					modules={[Pagination]}
+					pagination={{clickable: true}}
+					breakpoints={{
+						0: {slidesPerView: 1.5},
+						480: {slidesPerView: 2.5},
+						768: {slidesPerView: 3},
+						1024: {slidesPerView: 4},
+					}}
+				>
+					{categories.map((category) => (
+						<SwiperSlide key={category._id}>
+							<Link
+								href={ROUTES.Product}
+								className={`${styles.categoryItem} ${activeCategory === category._id ? styles.active : ''}`}
+								onClick={() => setActiveCategory(category._id)}
+							>
+								<span className={styles.categoryName}>{category.name}</span>
+								<Image src={category.image} alt={category.name} width={80} height={80} />
+							</Link>
+						</SwiperSlide>
+					))}
+				</Swiper>
 			</div>
 		</div>
 	);

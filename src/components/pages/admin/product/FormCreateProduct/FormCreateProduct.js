@@ -40,6 +40,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		sizeL: 0,
 		sizeXL: 0,
 		sizeXXL: 0,
+		isFeatured: false,
 	});
 	const MAX_IMAGES = 6;
 
@@ -85,6 +86,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		formData.append('price', form.price);
 		formData.append('description', form.description);
 		formData.append('detailDescription', detailDescription);
+		formData.append('isFeatured', form.isFeatured);
 		formData.append('quantityBySize', JSON.stringify(sizeQuantities));
 
 		selectedImages.forEach((file) => {
@@ -265,6 +267,25 @@ const FormCreateProduct = ({setActiveMenu}) => {
 						/>
 						<span className={styles.currencyInside}>VNĐ</span>
 					</div>
+				</div>
+
+				{/* Featured */}
+				<div className={`${styles.formGroup} ${styles.featured}`}>
+					<label htmlFor='isFeatured' className={styles.label}>
+						Sản phẩm nổi bật
+					</label>
+					<input
+						type='checkbox'
+						id='isFeatured'
+						name='isFeatured'
+						checked={form.isFeatured}
+						onChange={(e) =>
+							setForm((prev) => ({
+								...prev,
+								isFeatured: e.target.checked,
+							}))
+						}
+					/>
 				</div>
 
 				{/* Images */}

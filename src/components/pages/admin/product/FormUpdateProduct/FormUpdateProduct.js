@@ -36,6 +36,7 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 		sizeL: 0,
 		sizeXL: 0,
 		sizeXXL: 0,
+		isFeatured: false,
 	});
 	const MAX_IMAGES = 6;
 
@@ -61,6 +62,7 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 						sizeL: productData.quantityBySize?.L || 0,
 						sizeXL: productData.quantityBySize?.XL || 0,
 						sizeXXL: productData.quantityBySize?.XXL || 0,
+						isFeatured: productData.isFeatured || false,
 					});
 
 					setDetailDesc(productData.detailDescription || '');
@@ -125,10 +127,10 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 	};
 
 	const handleInputChange = (e) => {
-		const {name, value} = e.target;
+		const {name, value, type, checked} = e.target;
 		setForm((prev) => ({
 			...prev,
-			[name]: value,
+			[name]: type === 'checkbox' ? checked : value,
 		}));
 	};
 
@@ -154,6 +156,7 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 					XXL: form.sizeXXL,
 				})
 			);
+			formData.append('isFeatured', form.isFeatured ? 'true' : 'false');
 
 			// Thêm ảnh cũ vào formData
 			formData.append('oldImages', JSON.stringify(oldImageFilenames));
@@ -276,6 +279,25 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 						/>
 						<span className={styles.currencyInside}>VNĐ</span>
 					</div>
+				</div>
+
+				{/* Featured */}
+				<div className={`${styles.formGroup} ${styles.featured}`}>
+					<label htmlFor='isFeatured' className={styles.label}>
+						Sản phẩm nổi bật
+					</label>
+					<input
+						type='checkbox'
+						id='isFeatured'
+						name='isFeatured'
+						checked={form.isFeatured}
+						onChange={(e) =>
+							setForm((prev) => ({
+								...prev,
+								isFeatured: e.target.checked,
+							}))
+						}
+					/>
 				</div>
 
 				{/* Image */}
