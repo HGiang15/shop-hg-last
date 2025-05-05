@@ -5,19 +5,6 @@
 	min-height: 80vh;
 }
 
-.header {
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	margin-bottom: 20px;
-
-	.addButton {
-		background: var(--gradient-blue-red);
-		color: #fff;
-		padding: 10px 15px;
-	}
-}
-
 .actionButton {
 	margin: 0 5px;
 }

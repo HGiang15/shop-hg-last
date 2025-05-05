@@ -10,6 +10,8 @@ import {toast} from 'react-toastify';
 import {getListUser, updateUserRole, updateUserStatus} from '@/services/authService';
 import ConfirmModalStatus from '../ConfirmModalStatus/ConfirmModalStatus';
 import ConfirmModalRole from '../ConfirmModalRole/ConfirmModalRole';
+import FormUpdateUser from '../FormUpdateUser/FormUpdateUser';
+import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
 
 const MainPageUser = () => {
 	const [users, setUsers] = useState([]);
@@ -22,6 +24,8 @@ const MainPageUser = () => {
 
 	const [selectedRoleUser, setSelectedRoleUser] = useState(null);
 	const [changeRoleModalOpen, setChangeRoleModalOpen] = useState(false);
+	const [showUpdateForm, setShowUpdateForm] = useState(false); // Update
+	const [editUserId, setEditUserId] = useState(null); // Update
 
 	// Constants
 	const usersPerPage = 4;
@@ -35,6 +39,7 @@ const MainPageUser = () => {
 		try {
 			setLoading(true);
 			const data = await getListUser();
+			console.log('Dữ liệu người dùng:', data);
 			setUsers(data);
 		} catch (error) {
 			console.error('Lỗi lấy danh sách người dùng:', error);
@@ -118,12 +123,14 @@ const MainPageUser = () => {
 		return '';
 	};
 
+	const handleEditClick = (id) => {
+		console.log('EDIT ID:', id);
+		setEditUserId(id);
+		setShowUpdateForm(true);
+	};
+
 	return (
 		<div className={styles.container}>
-			<div className={styles.header}>
-				<Button className={styles.addButton}>Thêm mới người dùng</Button>
-			</div>
-
 			{loading ? (
 				<p>Đang tải dữ liệu...</p>
 			) : error ? (
@@ -152,6 +159,7 @@ const MainPageUser = () => {
 										iconFilter='invert(38%) sepia(93%) saturate(1382%) hue-rotate(189deg) brightness(89%) contrast(105%)'
 										backgroundColor='#dce7ff'
 										tooltip='Chỉnh sửa người dùng'
+										onClick={() => handleEditClick(user.id)}
 									/>
 									<IconCustom
 										icon={
@@ -203,6 +211,19 @@ const MainPageUser = () => {
 						name={selectedRoleUser?.name}
 						currentRole={selectedRoleUser?.role}
 					/>
+
+					{showUpdateForm && (
+						<ModalWrapper onClose={() => setShowUpdateForm(false)}>
+							<FormUpdateUser
+								userId={editUserId}
+								onCancel={() => setShowUpdateForm(false)}
+								onSuccess={() => {
+									setShowUpdateForm(false);
+									fetchUsers();
+								}}
+							/>
+						</ModalWrapper>
+					)}
 				</>
 			)}
 		</div>

@@ -76,6 +76,26 @@ export const getListUser = async () => {
 	}
 };
 
+// Get user by id
+export const getUserById = async (id) => {
+	try {
+		const response = await axios.get(`${API_URL}getUserById/${id}`);
+		return response.data.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lỗi lấy thông tin người dùng'};
+	}
+};
+
+// Update user
+export const updateUser = async (id, updatedData) => {
+	try {
+		const response = await axios.put(`${API_URL}editUser/${id}`, updatedData);
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Cập nhật người dùng thất bại'};
+	}
+};
+
 // Cập nhật trạng thái người dùng
 export const updateUserStatus = async (id, status) => {
 	try {
