@@ -15,8 +15,19 @@ const FilterProduct = ({selectedCategories, setSelectedCategories, selectedColor
 			try {
 				const categoryData = await getAllCategories();
 				const colorData = await getAllColors();
-				setCategories(categoryData);
-				setColors(colorData);
+
+				// Kiểm tra xem categoryData có phải là mảng không
+				if (Array.isArray(categoryData.categories)) {
+					setCategories(categoryData.categories);
+				} else {
+					console.error('Dữ liệu danh mục không hợp lệ:', categoryData);
+				}
+				// Kiểm tra xem colorData.colors có phải là mảng không
+				if (Array.isArray(colorData.colors)) {
+					setColors(colorData.colors);
+				} else {
+					console.error('Dữ liệu màu sắc không hợp lệ:', colorData.colors);
+				}
 			} catch (error) {
 				console.error('Lỗi khi tải danh mục hoặc màu:', error);
 			}
@@ -81,17 +92,23 @@ const FilterProduct = ({selectedCategories, setSelectedCategories, selectedColor
 					<span className={styles.customCheckbox}></span>
 					Tất cả
 				</label>
-				{categories.map((category) => (
-					<label className={styles.filterLabel} key={category._id}>
-						<input
-							type='checkbox'
-							checked={selectedCategories.includes(category.name)}
-							onChange={() => handleCategoryChange(category.name)}
-						/>
-						<span className={styles.customCheckbox}></span>
-						{category.name}
-					</label>
-				))}
+
+				{/* Kiểm tra nếu categories là một mảng hợp lệ */}
+				{Array.isArray(categories) && categories.length > 0 ? (
+					categories.map((category) => (
+						<label className={styles.filterLabel} key={category._id}>
+							<input
+								type='checkbox'
+								checked={selectedCategories.includes(category._id)}
+								onChange={() => handleCategoryChange(category._id)}
+							/>
+							<span className={styles.customCheckbox}></span>
+							{category.name}
+						</label>
+					))
+				) : (
+					<p>Không có danh mục để hiển thị</p>
+				)}
 			</div>
 
 			<div className={styles.filterSection}>
@@ -112,17 +129,22 @@ const FilterProduct = ({selectedCategories, setSelectedCategories, selectedColor
 					Tất cả
 				</label>
 
-				{colors.map((color) => (
-					<label className={styles.filterLabel} key={color._id}>
-						<input
-							type='checkbox'
-							checked={selectedColors.includes(color.name)}
-							onChange={() => handleColorChange(color.name)}
-						/>
-						<span className={styles.customCheckbox}></span>
-						{color.name}
-					</label>
-				))}
+				{/* Kiểm tra nếu colors là một mảng hợp lệ */}
+				{Array.isArray(colors) && colors.length > 0 ? (
+					colors.map((color) => (
+						<label className={styles.filterLabel} key={color._id}>
+							<input
+								type='checkbox'
+								checked={selectedColors.includes(color.name)}
+								onChange={() => handleColorChange(color.name)}
+							/>
+							<span className={styles.customCheckbox}></span>
+							{color.name}
+						</label>
+					))
+				) : (
+					<p>Không có màu sắc để hiển thị</p>
+				)}
 			</div>
 		</div>
 	);

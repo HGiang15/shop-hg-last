@@ -5,6 +5,7 @@ import styles from './ProductCard.module.scss';
 import Link from 'next/link';
 import {filterProducts} from '@/services/productService';
 import Pagination from '@/components/common/Pagination/Pagination';
+import images from '@/constants/static/images';
 
 const ProductCard = ({selectedCategories, selectedColors}) => {
 	const [products, setProducts] = useState([]);
@@ -80,29 +81,37 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 			</div>
 
 			<div className={styles.gridContainer}>
-				{products.map((product) => (
-					<Link href={`/products/${product._id}`} key={product._id} className={styles.card}>
-						{product.images && product.images[0] ? (
-							<Image
-								src={`http://localhost:3003/uploads/${product.images[0]}`}
-								alt={product.name}
-								className={styles.image}
-								width={300}
-								height={400}
-								onError={() => console.error('Lỗi tải ảnh')}
-							/>
-						) : (
-							<div className={styles.placeholderImage}>Không có ảnh</div>
-						)}
-						<div className={styles.info}>
-							<p className={styles.productCode}>Mã: {product.code}</p>
-							<h3 className={styles.productName}>{product.name}</h3>
-							<p className={styles.productPrice}>
-								{product.price?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})}
-							</p>
-						</div>
-					</Link>
-				))}
+				{products.length > 0 ? (
+					products.map((product) => (
+						<Link href={`/products/${product._id}`} key={product._id} className={styles.card}>
+							{product.images && product.images[0] ? (
+								<Image
+									src={`http://localhost:3003/uploads/${product.images[0]}`}
+									alt={product.name}
+									className={styles.image}
+									width={300}
+									height={400}
+									onError={() => console.error('Lỗi tải ảnh')}
+								/>
+							) : (
+								<div className={styles.placeholderImage}>Không có ảnh</div>
+							)}
+							<div className={styles.info}>
+								<p className={styles.productCode}>Mã: {product.code}</p>
+								<h3 className={styles.productName}>{product.name}</h3>
+								<p className={styles.productPrice}>
+									{product.price?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})}
+								</p>
+							</div>
+						</Link>
+					))
+				) : (
+					<div className={styles.noProducts}>
+						<Image src={images.boxEmpty} alt='Không tìm thấy sản phẩm' width={180} height={180} priority />
+						<h4>DỮ LIỆU TRỐNG</h4>
+						<p>Hiện tại không có sản phẩm nào phù hợp!</p>
+					</div>
+				)}
 			</div>
 
 			<Pagination

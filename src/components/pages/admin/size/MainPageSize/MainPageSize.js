@@ -21,12 +21,18 @@ const MainPageSize = () => {
 	const [editSizeId, setEditSizeId] = useState(null); // Update
 	const [selectedSizeId, setSelectedSizeId] = useState(null); // Delete
 	const [isModalOpen, setIsModalOpen] = useState(false); // Delete
+	const [totalPages, setTotalPages] = useState(1);
+	const [totalItems, setTotalItems] = useState(0);
+	const [limit, setLimit] = useState(5);
 
 	// Get all sizes
-	const fetchSizes = async () => {
+	const fetchSizes = async (page = currentPage, customLimit = limit) => {
 		try {
-			const data = await getAllSizes();
-			setSizes(data);
+			const data = await getAllSizes(page, customLimit);
+			setSizes(data.sizes);
+			setCurrentPage(data.currentPage);
+			setTotalPages(data.totalPages);
+			setTotalItems(data.totalItems);
 		} catch (error) {
 			toast.error('Lỗi lấy danh sách kích cỡ');
 		}
@@ -35,10 +41,6 @@ const MainPageSize = () => {
 	useEffect(() => {
 		fetchSizes();
 	}, []);
-
-	const usersPerPage = 5;
-	const totalPages = Math.ceil(sizes.length / usersPerPage);
-	const currentData = sizes.slice((currentPage - 1) * usersPerPage, currentPage * usersPerPage);
 
 	const handleEditSize = (id) => {
 		setEditSizeId(id);
@@ -67,16 +69,22 @@ const MainPageSize = () => {
 			</div>
 
 			<Table
-				users={currentData}
+				users={sizes.map((size, index) => ({
+					index: (currentPage - 1) * limit + index + 1,
+					_id: size._id,
+					name: size.name,
+					description: size.description,
+					createdAt: size.createdAt,
+				}))}
 				headers={[
-					{key: '_id', label: 'ID'},
+					{key: 'index', label: 'STT'},
 					{key: 'name', label: 'Tên kích cỡ'},
 					{key: 'description', label: 'Mô tả'},
 					{
 						key: 'createdAt',
 						label: 'Thời gian tạo',
-						render: (color) =>
-							new Date(color.createdAt).toLocaleString('vi-VN', {
+						render: (size) =>
+							new Date(size.createdAt).toLocaleString('vi-VN', {
 								hour: '2-digit',
 								minute: '2-digit',
 								second: '2-digit',
@@ -109,7 +117,21 @@ const MainPageSize = () => {
 				)}
 			/>
 
-			<Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} totalItems={sizes.length} />
+			<Pagination
+				currentPage={currentPage}
+				totalPages={totalPages}
+				totalItems={totalItems}
+				limit={limit}
+				onPageChange={(page) => {
+					setCurrentPage(page);
+					fetchSizes(page, limit);
+				}}
+				onLimitChange={(newLimit) => {
+					setLimit(newLimit);
+					setCurrentPage(1);
+					fetchSizes(1, newLimit);
+				}}
+			/>
 
 			{showForm && (
 				<ModalWrapper onClose={() => setShowForm(false)}>

@@ -1,9 +1,11 @@
 import {API_URL} from '@/constants/config';
 import axios from 'axios';
 
-export const getAllColors = async () => {
+export const getAllColors = async (page = 1, limit = 10) => {
 	try {
-		const response = await axios.get(`${API_URL}color/getAllColors`);
+		const response = await axios.get(`${API_URL}color/getAllColors`, {
+			params: {page, limit},
+		});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy danh sách màu thất bại'};

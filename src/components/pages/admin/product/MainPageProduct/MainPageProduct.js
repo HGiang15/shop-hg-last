@@ -19,30 +19,34 @@ const MainPageProduct = ({setActiveMenu}) => {
 	const router = useRouter();
 	const [products, setProducts] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const [totalItems, setTotalItems] = useState(0);
+	const [productsPerPage, setProductsPerPage] = useState(5);
 	const [isModalOpen, setIsModalOpen] = useState(false); // Delete
 	const [selectedProductId, setSelectedProductId] = useState(null); // Delete
 
 	useEffect(() => {
 		const fetchProducts = async () => {
 			try {
-				const data = await getAllProducts();
-				setProducts(data);
+				const data = await getAllProducts(currentPage, productsPerPage);
+				setProducts(data.products);
+				setTotalItems(data.totalItems);
+				setTotalPages(data.totalPages);
 			} catch (error) {
 				console.error('Lỗi khi gọi API:', error);
 			}
 		};
 
 		fetchProducts();
-	}, []);
-
-	const productsPerPage = 5;
-	const totalPages = products.length > 0 ? Math.ceil(products.length / productsPerPage) : 0;
-	const indexOfLastProduct = currentPage * productsPerPage;
-	const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-	const currentProducts = products.length > 0 ? products.slice(indexOfFirstProduct, indexOfLastProduct) : [];
+	}, [currentPage, productsPerPage]);
 
 	const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
+	};
+
+	const handleLimitChange = (newLimit) => {
+		setProductsPerPage(newLimit);
+		setCurrentPage(1);
 	};
 
 	const handleFormCreateProductClick = () => {
@@ -53,7 +57,6 @@ const MainPageProduct = ({setActiveMenu}) => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
-				<div></div>
 				<Button className={styles.addButton} onClick={handleFormCreateProductClick}>
 					Thêm mới sản phẩm
 				</Button>
@@ -72,12 +75,12 @@ const MainPageProduct = ({setActiveMenu}) => {
 				<>
 					<div className={styles.tableWrapper}>
 						<Table
-							users={currentProducts.map((product, index) => {
+							users={products.map((product, index) => {
 								const quantity = product.quantityBySize
 									? Object.values(product.quantityBySize).reduce((a, b) => a + b, 0)
 									: 0;
 								return {
-									index: indexOfFirstProduct + index + 1,
+									index: (currentPage - 1) * productsPerPage + index + 1,
 									_id: product._id,
 									name: product.name,
 									type: product.category,
@@ -127,15 +130,14 @@ const MainPageProduct = ({setActiveMenu}) => {
 						/>
 					</div>
 
-					{products.length > 0 && (
-						<Pagination
-							currentPage={currentPage}
-							totalPages={totalPages}
-							onPageChange={handlePageChange}
-							totalItems={products.length}
-							itemsPerPage={productsPerPage}
-						/>
-					)}
+					<Pagination
+						currentPage={currentPage}
+						totalPages={totalPages}
+						totalItems={totalItems}
+						onPageChange={handlePageChange}
+						limit={productsPerPage}
+						onLimitChange={handleLimitChange}
+					/>
 				</>
 			)}
 
@@ -146,15 +148,14 @@ const MainPageProduct = ({setActiveMenu}) => {
 					try {
 						await deleteProduct(selectedProductId);
 						setIsModalOpen(false);
-						const updatedProducts = await getAllProducts();
-						setProducts(updatedProducts);
+						const data = await getAllProducts(currentPage, productsPerPage); // Fetch updated list
+						setProducts(data.products);
 						toast.success('Xóa sản phẩm thành công');
 					} catch (error) {
-						console.error('Lỗi khi xóa sản phẩm:', error.message);
 						toast.error(error.message || 'Xóa sản phẩm thất bại');
 					}
 				}}
-				productName={currentProducts.find((product) => product._id === selectedProductId)?.name}
+				productName={products.find((product) => product._id === selectedProductId)?.name}
 			/>
 		</div>
 	);

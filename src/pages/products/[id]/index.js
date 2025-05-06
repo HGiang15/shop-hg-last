@@ -2,7 +2,6 @@ import Head from 'next/head';
 import LayoutUser from '@/components/layouts/LayoutUser/LayoutUser';
 import {Fragment} from 'react';
 import MainDetailProduct from '@/components/pages/product/MainDetailProduct/MainDetailProduct';
-import {ROUTES} from '@/constants/config';
 
 export default function Page() {
 	return (
@@ -14,12 +13,7 @@ export default function Page() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<Fragment>
-				<MainDetailProduct
-					breadcrumbItems={{
-						titles: ['Trang chủ', 'Sản phẩm', 'Áo đấu CLB'],
-						listHref: [ROUTES.Home, ROUTES.Product],
-					}}
-				/>
+				<MainDetailProduct />
 			</Fragment>
 		</Fragment>
 	);

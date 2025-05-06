@@ -25,24 +25,25 @@ const MainPageCategory = () => {
 	const [editCategoryId, setEditCategoryId] = useState(null); // Update
 	const [selectedCategoryId, setSelectedCategoryId] = useState(null); // Delete
 	const [isModalOpen, setIsModalOpen] = useState(false); // Delete
+	const [limit, setLimit] = useState(5);
+	const [totalPages, setTotalPages] = useState(1);
+	const [totalItems, setTotalItems] = useState(0);
 
-	const fetchCategories = async () => {
+	const fetchCategories = async (page = currentPage, customLimit = limit) => {
 		try {
-			const data = await getAllCategories();
-			console.log('Categories:', data);
-			setCategories(data);
+			const data = await getAllCategories(page, customLimit);
+			setCategories(data.categories);
+			setCurrentPage(data.currentPage);
+			setTotalPages(data.totalPages);
+			setTotalItems(data.totalItems);
 		} catch (error) {
-			console.error('Lỗi lấy danh sách danh mục:', error.message);
+			toast.error('Lỗi lấy danh sách danh mục');
 		}
 	};
 
 	useEffect(() => {
 		fetchCategories();
 	}, []);
-
-	const categoriesPerPage = 5;
-	const totalPages = Math.ceil(categories.length / categoriesPerPage);
-	const currentCategories = categories.slice((currentPage - 1) * categoriesPerPage, currentPage * categoriesPerPage);
 
 	const handlePageChange = (page) => setCurrentPage(page);
 
@@ -71,8 +72,8 @@ const MainPageCategory = () => {
 			) : (
 				<>
 					<Table
-						users={currentCategories.map((category, index) => ({
-							index: (currentPage - 1) * categoriesPerPage + index + 1,
+						users={categories.map((category, index) => ({
+							index: (currentPage - 1) * limit + index + 1,
 							_id: category._id,
 							name: category.name,
 							createdAt: category.createdAt,
@@ -126,9 +127,17 @@ const MainPageCategory = () => {
 					<Pagination
 						currentPage={currentPage}
 						totalPages={totalPages}
-						onPageChange={handlePageChange}
-						totalItems={categories.length}
-						itemsPerPage={categoriesPerPage}
+						totalItems={totalItems}
+						limit={limit}
+						onPageChange={(page) => {
+							setCurrentPage(page);
+							fetchCategories(page, limit);
+						}}
+						onLimitChange={(newLimit) => {
+							setLimit(newLimit);
+							setCurrentPage(1);
+							fetchCategories(1, newLimit);
+						}}
 					/>
 				</>
 			)}

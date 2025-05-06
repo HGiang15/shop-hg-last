@@ -1,14 +1,13 @@
-// pages/product/[id].js
 import React, {useState, useEffect} from 'react';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
-import styles from './MainDetailProduct.module.scss'; // Đảm bảo đường dẫn này đúng
-import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb'; // Đảm bảo đường dẫn này đúng
-import Button from '@/components/common/Button/Button'; // Đảm bảo đường dẫn này đúng
+import styles from './MainDetailProduct.module.scss';
+import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
+import Button from '@/components/common/Button/Button';
 import {ROUTES} from '@/constants/config';
-import {getProductById} from '@/services/productService'; // Đảm bảo đường dẫn này đúng
-import images from '@/constants/static/images'; // Đảm bảo đường dẫn này đúng
-import icons from '@/constants/static/icons'; // Đảm bảo đường dẫn này đúng
+import {getProductById} from '@/services/productService';
+import images from '@/constants/static/images';
+import {getCategoryById} from '@/services/categoryService';
 
 const ProductDetailPage = () => {
 	const router = useRouter();
@@ -20,6 +19,8 @@ const ProductDetailPage = () => {
 	const [selectedSize, setSelectedSize] = useState(null);
 	const [quantity, setQuantity] = useState(1);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [categoryName, setCategoryName] = useState('');
+
 	// State cho đánh giá
 	const [reviews, setReviews] = useState([]);
 	const [newReview, setNewReview] = useState({name: '', rating: 5, comment: ''});
@@ -35,6 +36,13 @@ const ProductDetailPage = () => {
 					const data = await getProductById(id);
 					setProduct(data);
 					setMainImage(data?.images?.[0] ? `${adminBaseUrl}/uploads/${data.images[0]}` : images.placeholder);
+
+					// gọi thêm category name
+					if (data.category) {
+						const categoryData = await getCategoryById(data.category);
+						setCategoryName(categoryData?.name || 'Danh mục');
+					}
+
 					setLoading(false);
 				} catch (err) {
 					setError(err.message || 'Không thể tải thông tin sản phẩm.');
@@ -72,8 +80,8 @@ const ProductDetailPage = () => {
 	}
 
 	const breadcrumbItems = {
-		titles: [product.category, product.name],
-		listHref: [ROUTES.Category, `/product/${product._id}`],
+		titles: ['Trang chủ', 'Danh sách sản phẩm', categoryName, product.name],
+		listHref: [ROUTES.Home, ROUTES.Product, `${ROUTES.Category}?name=${categoryName}`, `/product/${product._id}`],
 	};
 
 	return (

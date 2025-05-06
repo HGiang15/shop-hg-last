@@ -1,9 +1,11 @@
 import {API_URL} from '@/constants/config';
 import axios from 'axios';
 
-export const getAllSizes = async () => {
+export const getAllSizes = async (page = 1, limit = 5) => {
 	try {
-		const response = await axios.get(`${API_URL}size/getAllSizes`);
+		const response = await axios.get(`${API_URL}size/getAllSizes`, {
+			params: {page, limit},
+		});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy danh sách kích cỡ thất bại'};

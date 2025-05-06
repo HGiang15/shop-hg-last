@@ -5,7 +5,6 @@ import IconCustom from '@/components/common/IconCustom/IconCustom';
 import Table from '@/components/common/Table/Table';
 import icons from '@/constants/static/icons';
 import Pagination from '@/components/common/Pagination/Pagination';
-import Button from '@/components/common/Button/Button';
 import {toast} from 'react-toastify';
 import {getListUser, updateUserRole, updateUserStatus} from '@/services/authService';
 import ConfirmModalStatus from '../ConfirmModalStatus/ConfirmModalStatus';
@@ -16,8 +15,11 @@ import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
 const MainPageUser = () => {
 	const [users, setUsers] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
 	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState('');
+	const [error, setError] = useState(false);
+	const [totalItems, setTotalItems] = useState(0);
+	const [limit, setLimit] = useState(5);
 
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [isConfirmLockUnlockOpen, setIsConfirmLockUnlockOpen] = useState(false);
@@ -27,25 +29,16 @@ const MainPageUser = () => {
 	const [showUpdateForm, setShowUpdateForm] = useState(false); // Update
 	const [editUserId, setEditUserId] = useState(null); // Update
 
-	// Constants
-	const usersPerPage = 4;
-	const totalPages = Math.ceil(users.length / usersPerPage);
-	const indexOfLastUser = currentPage * usersPerPage;
-	const indexOfFirstUser = indexOfLastUser - usersPerPage;
-	const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
-
 	// Fetch Users
-	const fetchUsers = async () => {
+	const fetchUsers = async (page = currentPage, customLimit = limit) => {
 		try {
-			setLoading(true);
-			const data = await getListUser();
-			console.log('Dữ liệu người dùng:', data);
-			setUsers(data);
+			const res = await getListUser(page, customLimit);
+			setUsers(res.data);
+			setTotalPages(res.pagination.totalPages);
+			setTotalItems(res.pagination.totalItems);
+			setCurrentPage(res.pagination.currentPage);
 		} catch (error) {
-			console.error('Lỗi lấy danh sách người dùng:', error);
-			setError('Không thể tải danh sách người dùng');
-		} finally {
-			setLoading(false);
+			toast.error('Lỗi khi lấy danh sách người dùng');
 		}
 	};
 
@@ -139,9 +132,9 @@ const MainPageUser = () => {
 				<>
 					<div className={styles.tableWrapper}>
 						<Table
-							users={currentUsers.map((user, idx) => ({
+							users={users.map((user, index) => ({
 								...user,
-								index: indexOfFirstUser + idx + 1,
+								index: (currentPage - 1) * limit + index + 1,
 								roleLabel: getRoleLabel(user.role),
 							}))}
 							headers={[
@@ -192,8 +185,17 @@ const MainPageUser = () => {
 					<Pagination
 						currentPage={currentPage}
 						totalPages={totalPages}
-						onPageChange={handlePageChange}
-						totalItems={users.length}
+						totalItems={totalItems}
+						limit={limit}
+						onPageChange={(page) => {
+							setCurrentPage(page);
+							fetchUsers(page, limit);
+						}}
+						onLimitChange={(newLimit) => {
+							setLimit(newLimit);
+							setCurrentPage(1);
+							fetchUsers(1, newLimit);
+						}}
 					/>
 
 					<ConfirmModalStatus

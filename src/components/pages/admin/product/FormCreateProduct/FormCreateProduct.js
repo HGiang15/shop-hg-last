@@ -117,14 +117,30 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		}));
 	};
 
+	const handleSizeQuantityChange = (e, sizeName) => {
+		const value = parseInt(e.target.value, 10) || 0;
+		setSizeQuantities((prev) => ({
+			...prev,
+			[sizeName]: value,
+		}));
+	};
+
 	// Get all colors
 	useEffect(() => {
 		const fetchColors = async () => {
 			try {
 				const res = await getAllColors();
-				setColorOptions(res);
+				console.log('Colors response:', res);
+				if (res && res.colors) {
+					// Thay đổi từ res.data.colors thành res.colors
+					setColorOptions(res.colors);
+				} else {
+					console.error('Không thể tải danh sách màu: Dữ liệu trả về không hợp lệ', res);
+					toast.error('Lỗi khi tải danh sách màu.', {position: 'top-right'});
+				}
 			} catch (err) {
 				console.error('Không thể tải danh sách màu:', err.message);
+				toast.error('Lỗi kết nối khi tải danh sách màu.', {position: 'top-right'});
 			}
 		};
 		fetchColors();
@@ -135,14 +151,23 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		const fetchSizes = async () => {
 			try {
 				const res = await getAllSizes();
-				setSizes(res);
-				const initialQuantities = {};
-				res.forEach((size) => {
-					initialQuantities[size.name] = 0;
-				});
-				setSizeQuantities(initialQuantities);
+				console.log('sizes response:', res);
+				if (res && res.sizes) {
+					// Thay đổi từ res.data.sizes thành res.sizes
+					setSizes(res.sizes);
+					const initialQuantities = {};
+					res.sizes.forEach((size) => {
+						// Thay đổi từ res.data.sizes thành res.sizes
+						initialQuantities[size.name] = 0;
+					});
+					setSizeQuantities(initialQuantities);
+				} else {
+					console.error('Lỗi khi tải danh sách size: Dữ liệu trả về không hợp lệ', res);
+					toast.error('Lỗi khi tải danh sách size.', {position: 'top-right'});
+				}
 			} catch (err) {
 				console.error('Lỗi khi tải danh sách size:', err.message);
+				toast.error('Lỗi kết nối khi tải danh sách size.', {position: 'top-right'});
 			}
 		};
 		fetchSizes();
@@ -153,21 +178,21 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		const fetchCategories = async () => {
 			try {
 				const res = await getAllCategories();
-				setCategoryOptions(res);
+				console.log('category response:', res);
+				if (res && res.categories) {
+					// Thay đổi từ res.data.categories thành res.categories
+					setCategoryOptions(res.categories);
+				} else {
+					console.error('Không thể tải danh sách danh mục: Dữ liệu trả về không hợp lệ', res);
+					toast.error('Lỗi khi tải danh sách danh mục.', {position: 'top-right'});
+				}
 			} catch (err) {
 				console.error('Không thể tải danh sách danh mục:', err.message);
+				toast.error('Lỗi kết nối khi tải danh sách danh mục.', {position: 'top-right'});
 			}
 		};
 		fetchCategories();
 	}, []);
-
-	const handleSizeQuantityChange = (e, sizeName) => {
-		const value = parseInt(e.target.value, 10) || 0;
-		setSizeQuantities((prev) => ({
-			...prev,
-			[sizeName]: value,
-		}));
-	};
 
 	return (
 		<div className={styles.container}>
@@ -226,7 +251,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<label htmlFor='category' className={styles.label}>
 						Loại sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<select id='category' name='category' className={styles.select} onChange={handleInputChange}>
+					<select id='category' name='category' className={styles.select} onChange={handleInputChange} value={form.category}>
 						<option value=''>Chọn loại sản phẩm</option>
 						{categoryOptions.map((category) => (
 							<option key={category._id} value={category._id}>
@@ -241,7 +266,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<label htmlFor='colors' className={styles.label}>
 						Màu sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<select id='colors' name='colors' className={styles.select} onChange={handleInputChange}>
+					<select id='colors' name='colors' className={styles.select} onChange={handleInputChange} value={form.colors}>
 						<option value=''>Chọn màu sản phẩm</option>
 						{colorOptions.map((color) => (
 							<option key={color._id} value={color.name}>
@@ -344,22 +369,22 @@ const FormCreateProduct = ({setActiveMenu}) => {
 				</div>
 
 				{/* Size */}
-				{sizes.map((size) => (
-					<div className={`${styles.formGroup} ${styles.sizeInput}`} key={size.name}>
-						<label htmlFor={`size-${size.name}`} className={styles.label}>
-							Nhập số lượng size {size.name} <span style={{color: 'red'}}>*</span>
-						</label>
-						<input
-							type='number'
-							id={`size-${size.name}`}
-							name={size.name}
-							className={styles.input}
-							placeholder='0'
-							value={sizeQuantities[size.name] || ''}
-							onChange={(e) => handleSizeQuantityChange(e, size.name)}
-						/>
-					</div>
-				))}
+				{Array.isArray(sizes) &&
+					sizes.map((size) => (
+						<div className={styles.formGroup} key={size.name}>
+							<label htmlFor={`size-${size.name}`} className={styles.label}>
+								Nhập số lượng size {size.name}
+							</label>
+							<input
+								type='number'
+								id={`size-${size.name}`}
+								name={`quantityBySize.${size.name}`}
+								className={styles.input}
+								value={sizeQuantities[size.name] || ''}
+								onChange={(e) => handleSizeQuantityChange(e, size.name)}
+							/>
+						</div>
+					))}
 
 				{/* Description */}
 				<div className={`${styles.formGroup} ${styles.description}`}>

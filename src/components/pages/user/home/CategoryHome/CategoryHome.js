@@ -17,7 +17,7 @@ const CategoryHome = () => {
 		const fetchCategories = async () => {
 			try {
 				const data = await getAllCategories();
-				setCategories(data);
+				setCategories(data.categories);
 				if (data.length > 0) {
 					setActiveCategory(data[0]._id);
 				}

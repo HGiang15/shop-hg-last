@@ -67,10 +67,12 @@ export const verifyOTP = async (userId, otp) => {
 };
 
 // Lấy danh sách người dùng
-export const getListUser = async () => {
+export const getListUser = async (page = 1, limit = 5) => {
 	try {
-		const response = await axios.get(`${API_URL}getListUser`);
-		return response.data.data;
+		const response = await axios.get(`${API_URL}getListUser`, {
+			params: {page, limit},
+		});
+		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lỗi lấy danh sách người dùng'};
 	}

@@ -10,9 +10,11 @@ export const createCategory = async (categoryData) => {
 	}
 };
 
-export const getAllCategories = async () => {
+export const getAllCategories = async (page = 1, limit = 5) => {
 	try {
-		const response = await axios.get(`${API_URL}category/getAllCategories`);
+		const response = await axios.get(`${API_URL}category/getAllCategories`, {
+			params: {page, limit},
+		});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy danh sách danh mục thất bại'};
@@ -25,6 +27,15 @@ export const getCategoryById = async (id) => {
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy danh mục thất bại'};
+	}
+};
+
+export const getCategoryByName = async (name) => {
+	try {
+		const response = await axios.get(`${API_URL}category/getCategoryByName/${name}`);
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lấy danh mục theo tên thất bại'};
 	}
 };
 

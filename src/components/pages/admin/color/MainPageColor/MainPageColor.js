@@ -22,12 +22,17 @@ const MainPageColor = () => {
 	const [editColorId, setEditColorId] = useState(null); // Update
 	const [isModalOpen, setIsModalOpen] = useState(false); // Delete
 	const [selectedColorId, setSelectedColorId] = useState(null); // Delete
+	const [limit, setLimit] = useState(5); // Default limit
+	const [totalItems, setTotalItems] = useState(0);
+	const [totalPages, setTotalPages] = useState(1);
 
-	// Get all colors
+	// Get all colors with pagination
 	const fetchColors = async () => {
 		try {
-			const data = await getAllColors();
-			setColors(data);
+			const data = await getAllColors(currentPage, limit);
+			setColors(data.colors || []);
+			setTotalItems(data.totalItems || 0);
+			setTotalPages(data.totalPages || 1);
 		} catch (error) {
 			console.error('Lỗi lấy danh sách màu:', error.message);
 		}
@@ -35,16 +40,15 @@ const MainPageColor = () => {
 
 	useEffect(() => {
 		fetchColors();
-	}, []);
-
-	const usersPerPage = 5;
-	const totalPages = Math.ceil(colors.length / usersPerPage);
-	const indexOfLastUser = currentPage * usersPerPage;
-	const indexOfFirstUser = indexOfLastUser - usersPerPage;
-	const currentUsers = colors.slice(indexOfFirstUser, indexOfLastUser);
+	}, [currentPage, limit]);
 
 	const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
+	};
+
+	const handleLimitChange = (newLimit) => {
+		setLimit(newLimit); // Update limit
+		setCurrentPage(1); // Reset to page 1 when limit changes
 	};
 
 	const handleEditColor = (id) => {
@@ -73,9 +77,16 @@ const MainPageColor = () => {
 				<>
 					<div className={styles.tableWrapper}>
 						<Table
-							users={currentUsers}
+							users={colors.map((color, index) => ({
+								index: (currentPage - 1) * limit + index + 1, // Tính STT
+								_id: color._id,
+								code: color.code,
+								name: color.name,
+								description: color.description,
+								createdAt: color.createdAt,
+							}))}
 							headers={[
-								{key: '_id', label: 'ID'},
+								{key: 'index', label: 'STT'}, // Thay cột 'ID' thành 'STT'
 								{
 									key: 'code',
 									label: 'Mã màu',
@@ -135,12 +146,16 @@ const MainPageColor = () => {
 					</div>
 
 					{colors.length > 0 && (
-						<Pagination
-							currentPage={currentPage}
-							totalPages={totalPages}
-							onPageChange={handlePageChange}
-							totalItems={colors.length}
-						/>
+						<div className={styles.paginationWrapper}>
+							<Pagination
+								currentPage={currentPage}
+								totalPages={totalPages}
+								totalItems={totalItems}
+								onPageChange={handlePageChange}
+								onLimitChange={handleLimitChange}
+								limit={limit}
+							/>
+						</div>
 					)}
 				</>
 			)}
