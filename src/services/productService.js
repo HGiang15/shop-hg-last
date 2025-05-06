@@ -54,3 +54,12 @@ export const getFeaturedProducts = async () => {
 		throw error.response?.data || {message: 'Lấy sản phẩm nổi bật thất bại'};
 	}
 };
+
+export const filterProducts = async (filters) => {
+	try {
+		const response = await axios.get(`${API_URL}product/filterProducts`, {params: filters});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lọc sản phẩm thất bại'};
+	}
+};

@@ -1,31 +1,50 @@
-import React, {useState} from 'react';
+// pages/product/[id].js
+import React, {useState, useEffect} from 'react';
 import Image from 'next/image';
-import images from '@/constants/static/images';
-import icons from '@/constants/static/icons';
-import styles from './MainDetailProduct.module.scss';
-import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
-import Button from '@/components/common/Button/Button';
+import {useRouter} from 'next/router';
+import styles from './MainDetailProduct.module.scss'; // Đảm bảo đường dẫn này đúng
+import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb'; // Đảm bảo đường dẫn này đúng
+import Button from '@/components/common/Button/Button'; // Đảm bảo đường dẫn này đúng
 import {ROUTES} from '@/constants/config';
+import {getProductById} from '@/services/productService'; // Đảm bảo đường dẫn này đúng
+import images from '@/constants/static/images'; // Đảm bảo đường dẫn này đúng
+import icons from '@/constants/static/icons'; // Đảm bảo đường dẫn này đúng
 
-const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
-	const initialReviews = [
-		{id: 1, name: 'Nguyễn Văn A', rating: 5, comment: 'Sản phẩm rất đẹp, chất lượng tốt!'},
-		{id: 2, name: 'Trần Thị B', rating: 4, comment: 'Áo hơi rộng so với size M, nhưng chất lượng ok!'},
-		{id: 3, name: 'Lê Văn C', rating: 3, comment: 'Giao hàng hơi chậm, nhưng áo đẹp.'},
-	];
-
-	const [isModalOpen, setIsModalOpen] = useState(false);
-
-	const [selectedSize, setSelectedSize] = useState('M');
+const ProductDetailPage = () => {
+	const router = useRouter();
+	const {id} = router.query;
+	const [product, setProduct] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+	const [mainImage, setMainImage] = useState(null);
+	const [selectedSize, setSelectedSize] = useState(null);
 	const [quantity, setQuantity] = useState(1);
-	const [isLoading, setIsLoading] = useState(false);
-	const [reviews, setReviews] = useState(initialReviews);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	// State cho đánh giá
+	const [reviews, setReviews] = useState([]);
 	const [newReview, setNewReview] = useState({name: '', rating: 5, comment: ''});
 
-	console.log(images);
+	const adminBaseUrl = 'http://localhost:3003';
 
-	const productImages = [images.product1, images.product2, images.product3, images.product4, images.product5];
-	const [mainImage, setMainImage] = useState(productImages[0]);
+	useEffect(() => {
+		if (id) {
+			const fetchProductDetails = async () => {
+				setLoading(true);
+				setError(null);
+				try {
+					const data = await getProductById(id);
+					setProduct(data);
+					setMainImage(data?.images?.[0] ? `${adminBaseUrl}/uploads/${data.images[0]}` : images.placeholder);
+					setLoading(false);
+				} catch (err) {
+					setError(err.message || 'Không thể tải thông tin sản phẩm.');
+					setLoading(false);
+				}
+			};
+
+			fetchProductDetails();
+		}
+	}, [id]);
 
 	const handleSizeChange = (size) => setSelectedSize(size);
 
@@ -37,76 +56,114 @@ const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 
 	const handleAddReview = (e) => {
 		e.preventDefault();
-		if (newReview.name && newReview.comment) {
-			const newEntry = {id: Date.now(), ...newReview};
-			setReviews([...reviews, newEntry]);
-			setNewReview({name: '', rating: 5, comment: ''});
-		}
+		// Gọi API để thêm đánh giá
+	};
+
+	if (loading) {
+		return <p>Đang tải thông tin sản phẩm...</p>;
+	}
+
+	if (error) {
+		return <p>Lỗi: {error}</p>;
+	}
+
+	if (!product) {
+		return <p>Không tìm thấy sản phẩm.</p>;
+	}
+
+	const breadcrumbItems = {
+		titles: [product.category, product.name],
+		listHref: [ROUTES.Category, `/product/${product._id}`],
 	};
 
 	return (
 		<div className={styles.container}>
-			{isLoading ? <p>Đang tải...</p> : <Breadcrumb titles={breadcrumbItems.titles} listHref={breadcrumbItems.listHref} />}
+			<Breadcrumb titles={breadcrumbItems.titles} listHref={breadcrumbItems.listHref} />
 
 			<div className={styles.main}>
 				<div className={styles.imageGallery}>
 					<Image
-						src={mainImage}
-						alt='MU Home Kit'
+						src={mainImage || images.placeholder}
+						alt={product.name}
 						width={600}
 						height={600}
 						className={styles.mainImage}
-						onClick={() => setIsModalOpen(true)}
+						onClick={() => setMainImage(mainImage)}
+						onError={(e) => {
+							e.target.onerror = null;
+							e.target.src = images.placeholder;
+						}}
 					/>
 
-					<div className={styles.thumbnailContainer}>
-						{productImages.map((img, index) => (
-							<Image
-								key={index}
-								src={img}
-								alt={`Thumbnail ${index + 1}`}
-								width={80}
-								height={80}
-								className={`${styles.thumbnail} ${mainImage === img ? styles.active : ''}`}
-								onClick={() => setMainImage(img)}
-							/>
-						))}
-					</div>
+					{product.images && product.images.length > 1 && (
+						<div className={styles.thumbnailContainer}>
+							{product.images.map((img, index) => (
+								<Image
+									key={index}
+									src={`${adminBaseUrl}/uploads/${img}`}
+									alt={`Thumbnail ${index + 1}`}
+									width={80}
+									height={80}
+									className={`${styles.thumbnail} ${mainImage === `${adminBaseUrl}/uploads/${img}` ? styles.active : ''}`}
+									onClick={() => setMainImage(`${adminBaseUrl}/uploads/${img}`)}
+									onError={(e) => {
+										e.target.onerror = null;
+										e.target.src = images.placeholder;
+									}}
+								/>
+							))}
+						</div>
+					)}
 
 					{isModalOpen && (
 						<div className={styles.modal} onClick={() => setIsModalOpen(false)}>
 							<div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-								<Image src={mainImage} alt='Zoomed Image' width={650} height={650} className={styles.zoomedImage} />
+								<Image
+									src={mainImage || images.placeholder}
+									alt='Zoomed Image'
+									width={650}
+									height={650}
+									className={styles.zoomedImage}
+								/>
 							</div>
 						</div>
 					)}
 				</div>
 
-				{/* Thông tin sản phẩm */}
 				<div className={styles.productInfo}>
-					<h1 className={styles.productTitle}>MU Home 24-25 bản player full bộ</h1>
-					<p className={styles.productId}>ID0201031505</p>
+					<h1 className={styles.productTitle}>{product.name}</h1>
+					<p className={styles.productId}>{product.code}</p>
 
-					<div className={styles.colorSelect}>
-						<span>Màu: </span> <span className={styles.redDot}></span> Đỏ
-					</div>
+					{product.colors && product.colors.length > 0 && (
+						<div className={styles.colorSelect}>
+							<span>Màu: </span>
+							{product.colors.map((color, index) => (
+								<span key={index} className={styles.colorDot} style={{backgroundColor: color}}></span>
+							))}
+							{product.colors.join(', ')}
+						</div>
+					)}
 
 					<p className={styles.productPrice}>
-						<span className={styles.labelPrice}>Giá: </span>300.000 VNĐ
+						<span className={styles.labelPrice}>Giá: </span>
+						{product.price?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})}
 					</p>
 
-					<div className={styles.sizeSelect}>
-						<p>Lựa chọn kích cỡ:</p>
-						{['S', 'M', 'L', 'XL', 'XXL'].map((size) => (
-							<button
-								key={size}
-								className={`${styles.sizeButton} ${selectedSize === size ? styles.active : ''}`}
-								onClick={() => handleSizeChange(size)}
-							>
-								{size}
-							</button>
-						))}
-					</div>
+					{product.quantityBySize && Object.keys(product.quantityBySize).length > 0 && (
+						<div className={styles.sizeSelect}>
+							<p>Lựa chọn kích cỡ:</p>
+							{Object.keys(product.quantityBySize).map((size) => (
+								<button
+									key={size}
+									className={`${styles.sizeButton} ${selectedSize === size ? styles.active : ''}`}
+									onClick={() => handleSizeChange(size)}
+									disabled={product.quantityBySize[size] <= 0}
+								>
+									{size} ({product.quantityBySize[size]})
+								</button>
+							))}
+						</div>
+					)}
 
 					<div className={styles.quantitySelect}>
 						<p>Số lượng:</p>
@@ -122,54 +179,23 @@ const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 						</Button>
 					</div>
 
-					<div className={styles.additionalDescription}>
-						<h3>Chính sách & Ưu đãi</h3>
-						<ul>
-							<li>
-								<Image src={icons.rotate} alt='Đổi trả' width={22} height={22} className={styles.iconDesc} />
-								Hỗ trợ đổi size hoặc trả hàng trong vòng 7 ngày nếu sản phẩm lỗi hoặc không vừa.
-							</li>
-							<li>
-								<Image src={icons.medalStar} alt='Bảo hành' width={22} height={22} className={styles.iconDesc} />
-								Cam kết bảo hành sản phẩm 6 tháng đối với lỗi do nhà sản xuất.
-							</li>
-							<li>
-								<Image src={icons.change} alt='Quà tặng' width={22} height={22} className={styles.iconDesc} />
-								Mua ngay hôm nay để nhận tặng kèm 1 đôi tất thể thao miễn phí!
-							</li>
-							<li>
-								<Image src={icons.shipper} alt='Giao hàng' width={22} height={22} className={styles.iconDesc} />
-								Nhận hàng trong vòng 2-3 ngày đối với khu vực nội thành.
-							</li>
-							<li>
-								<Image src={icons.global} alt='Miễn phí vận chuyển' width={22} height={22} className={styles.iconDesc} />
-								Đơn hàng từ 500.000 VNĐ trở lên được miễn phí ship toàn quốc.
-							</li>
-						</ul>
-					</div>
+					{product.description && (
+						<div className={styles.additionalDescription}>
+							<h3>Mô tả ngắn</h3>
+							<p>{product.description}</p>
+						</div>
+					)}
 
-					<div className={styles.productDescription}>
-						<h3>Mô tả sản phẩm</h3>
-						<ul>
-							<li>
-								Thiết kế hiện đại, phong cách thể thao: Áo đấu chính thức mùa giải 2024-2025 với kiểu dáng ôm sát body, phù
-								hợp cho các hoạt động thể thao và dạo phố.
-							</li>
-							<li>
-								Chất liệu cao cấp: 95% Polyester + 5% Spandex, thấm hút mồ hôi tốt, thoáng khí, co giãn nhẹ giúp bạn thoải
-								mái khi vận động.
-							</li>
-							<li>
-								Công nghệ in ấn tiên tiến: Logo CLB và nhà tài trợ được in ép nhiệt hoặc thêu tỉ mỉ, bền màu theo thời gian.
-							</li>
-							<li>Màu sắc ấn tượng: Màu đỏ chủ đạo kết hợp các họa tiết tinh tế tạo nên phong cách mạnh mẽ, cuốn hút.</li>
-							<li>Nhiều size phù hợp: Đầy đủ size từ S đến XL, phù hợp với nhiều dáng người.</li>
-							<li>Dễ dàng phối đồ: Kết hợp cùng quần short, quần jean hay jogger để tạo phong cách trẻ trung, năng động.</li>
-						</ul>
-					</div>
+					{product.detailDescription && (
+						<div className={styles.productDescription}>
+							<h3>Mô tả chi tiết</h3>
+							<div dangerouslySetInnerHTML={{__html: product.detailDescription}} />
+						</div>
+					)}
 				</div>
 			</div>
 
+			{/* Review */}
 			<div className={styles.reviewSection}>
 				<h3>Đánh giá sản phẩm</h3>
 				<p>
@@ -192,11 +218,14 @@ const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 					<input
 						type='text'
 						placeholder='Tên của bạn'
-						value={newReview.name}
-						onChange={(e) => setNewReview({...newReview, name: e.target.value})}
+						// value={newReview.name}
+						// onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
 						required
 					/>
-					<select value={newReview.rating} onChange={(e) => setNewReview({...newReview, rating: Number(e.target.value)})}>
+					<select
+					// value={newReview.rating}
+					// onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}
+					>
 						<option value='5'>⭐ 5 - Rất tốt</option>
 						<option value='4'>⭐ 4 - Tốt</option>
 						<option value='3'>⭐ 3 - Bình thường</option>
@@ -205,8 +234,8 @@ const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 					</select>
 					<textarea
 						placeholder='Nhận xét của bạn'
-						value={newReview.comment}
-						onChange={(e) => setNewReview({...newReview, comment: e.target.value})}
+						// value={newReview.comment}
+						// onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
 						required
 					/>
 					<button type='submit'>Gửi đánh giá</button>
@@ -216,4 +245,4 @@ const MainDetailProduct = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	);
 };
 
-export default MainDetailProduct;
+export default ProductDetailPage;

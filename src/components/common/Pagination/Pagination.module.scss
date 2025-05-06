@@ -1,8 +1,9 @@
 .pagination {
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
 	margin-top: 20px;
+	padding: 20px 0;
+	gap: 20px;
 }
 
 .pageNumbers {
@@ -25,4 +26,13 @@
 
 .totalItems {
 	font-size: 14px;
+}
+
+.limitSelect select {
+	padding: 6px 10px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+	background-color: #fff;
+	font-size: 14px;
+	margin-left: 8px;
 }

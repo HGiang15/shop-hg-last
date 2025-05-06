@@ -1,59 +1,126 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './FilterProduct.module.scss';
+import {getAllCategories} from '@/services/categoryService';
+import {getAllColors} from '@/services/colorService';
+import {useRouter} from 'next/router';
 
-const FilterProduct = () => {
-	const [selectedCategories, setSelectedCategories] = useState([]);
-	const [selectedColors, setSelectedColors] = useState([]);
+const FilterProduct = ({selectedCategories, setSelectedCategories, selectedColors, setSelectedColors}) => {
+	const router = useRouter();
 
-	const categories = ['Áo đấu CLB', 'Áo đấu đội tuyển', 'Áo không logo', 'Quần bóng đá', 'Giày đá bóng'];
-	const colors = ['Màu đỏ', 'Màu xanh', 'Màu tím', 'Màu vàng'];
+	const [categories, setCategories] = useState([]);
+	const [colors, setColors] = useState([]);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const categoryData = await getAllCategories();
+				const colorData = await getAllColors();
+				setCategories(categoryData);
+				setColors(colorData);
+			} catch (error) {
+				console.error('Lỗi khi tải danh mục hoặc màu:', error);
+			}
+		};
+
+		fetchData();
+	}, []);
+
+	useEffect(() => {
+		const {category, colors} = router.query;
+
+		if (category) {
+			setSelectedCategories(Array.isArray(category) ? category : category.split(','));
+		}
+		if (colors) {
+			setSelectedColors(Array.isArray(colors) ? colors : colors.split(','));
+		}
+	}, [router.query]);
 
 	const handleCategoryChange = (category) => {
-		setSelectedCategories((prev) => (prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]));
+		const newCategories = selectedCategories.includes(category)
+			? selectedCategories.filter((c) => c !== category)
+			: [...selectedCategories, category];
+
+		setSelectedCategories(newCategories);
+
+		const query = {
+			...router.query,
+			category: newCategories.join(','),
+		};
+		router.push({pathname: router.pathname, query}, undefined, {shallow: true});
 	};
 
 	const handleColorChange = (color) => {
-		setSelectedColors((prev) => (prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]));
+		const newColors = selectedColors.includes(color) ? selectedColors.filter((c) => c !== color) : [...selectedColors, color];
+
+		setSelectedColors(newColors);
+
+		const query = {
+			...router.query,
+			colors: newColors.join(','),
+		};
+		router.push({pathname: router.pathname, query}, undefined, {shallow: true});
 	};
 
 	return (
 		<div className={styles.filterContainer}>
-			{/* Filter Product */}
 			<div className={styles.filterSection}>
 				<h3 className={styles.filterHeading}>DANH MỤC SẢN PHẨM</h3>
 				<div className={styles.divider}></div>
 				<label className={styles.filterLabel}>
-					<input type='checkbox' checked={selectedCategories.length === 0} readOnly />
+					<input
+						type='checkbox'
+						checked={selectedCategories.length === 0}
+						onChange={() => {
+							setSelectedCategories([]);
+							const query = {...router.query};
+							delete query.category; // Xóa khỏi query
+							router.push({pathname: router.pathname, query}, undefined, {shallow: true});
+						}}
+					/>
 					<span className={styles.customCheckbox}></span>
 					Tất cả
 				</label>
 				{categories.map((category) => (
-					<label className={styles.filterLabel} key={category}>
+					<label className={styles.filterLabel} key={category._id}>
 						<input
 							type='checkbox'
-							checked={selectedCategories.includes(category)}
-							onChange={() => handleCategoryChange(category)}
+							checked={selectedCategories.includes(category.name)}
+							onChange={() => handleCategoryChange(category.name)}
 						/>
 						<span className={styles.customCheckbox}></span>
-						{category}
+						{category.name}
 					</label>
 				))}
 			</div>
 
-			{/* Filter Color */}
 			<div className={styles.filterSection}>
 				<h3 className={styles.filterHeading}>MÀU SẮC SẢN PHẨM</h3>
 				<div className={styles.divider}></div>
 				<label className={styles.filterLabel}>
-					<input type='checkbox' checked={selectedColors.length === 0} readOnly />
+					<input
+						type='checkbox'
+						checked={selectedColors.length === 0}
+						onChange={() => {
+							setSelectedColors([]);
+							const query = {...router.query};
+							delete query.colors;
+							router.push({pathname: router.pathname, query}, undefined, {shallow: true});
+						}}
+					/>
 					<span className={styles.customCheckbox}></span>
 					Tất cả
 				</label>
+
 				{colors.map((color) => (
-					<label className={styles.filterLabel} key={color}>
-						<input type='checkbox' checked={selectedColors.includes(color)} onChange={() => handleColorChange(color)} />
+					<label className={styles.filterLabel} key={color._id}>
+						<input
+							type='checkbox'
+							checked={selectedColors.includes(color.name)}
+							onChange={() => handleColorChange(color.name)}
+						/>
 						<span className={styles.customCheckbox}></span>
-						{color}
+						{color.name}
 					</label>
 				))}
 			</div>
