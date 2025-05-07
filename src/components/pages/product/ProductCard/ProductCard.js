@@ -6,6 +6,10 @@ import Link from 'next/link';
 import {filterProducts} from '@/services/productService';
 import Pagination from '@/components/common/Pagination/Pagination';
 import images from '@/constants/static/images';
+import Button from '@/components/common/Button/Button';
+import icons from '@/constants/static/icons';
+import {Tooltip} from 'react-tippy';
+import 'react-tippy/dist/tippy.css';
 
 const ProductCard = ({selectedCategories, selectedColors}) => {
 	const [products, setProducts] = useState([]);
@@ -65,6 +69,17 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 		}
 	};
 
+	const handleAddToCart = async (productId) => {
+		// try {
+		// 	// Gọi API thêm vào giỏ hàng
+		// 	await addToCart(productId); // bạn tự định nghĩa hoặc import service
+		// 	alert('Đã thêm vào giỏ hàng!');
+		// } catch (err) {
+		// 	console.error('Lỗi thêm vào giỏ hàng:', err);
+		// 	alert('Lỗi khi thêm vào giỏ hàng.');
+		// }
+	};
+
 	if (loading) return <div>Đang tải sản phẩm...</div>;
 	if (error) return <div>Lỗi: {error}</div>;
 
@@ -102,6 +117,19 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 								<p className={styles.productPrice}>
 									{product.price?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})}
 								</p>
+
+								<div className={styles.cartWrapper}>
+									<Tooltip title='Thêm vào giỏ hàng' position='top' trigger='mouseenter' arrow={true} duration={200}>
+										<Button
+											className={styles.addToCartBtn}
+											onClick={(e) => {
+												e.preventDefault();
+												handleAddToCart(product._id);
+											}}
+											centerIcon={<Image src={icons.cart} alt='Icon' width={20} height={20} />}
+										/>
+									</Tooltip>
+								</div>
 							</div>
 						</Link>
 					))
