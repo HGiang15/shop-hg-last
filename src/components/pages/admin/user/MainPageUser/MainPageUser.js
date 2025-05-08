@@ -117,7 +117,6 @@ const MainPageUser = () => {
 	};
 
 	const handleEditClick = (id) => {
-		console.log('EDIT ID:', id);
 		setEditUserId(id);
 		setShowUpdateForm(true);
 	};

@@ -45,8 +45,6 @@ const MainPageCategory = () => {
 		fetchCategories();
 	}, []);
 
-	const handlePageChange = (page) => setCurrentPage(page);
-
 	const handleEditCategory = (id) => {
 		setEditCategoryId(id);
 		setShowUpdateForm(true);
@@ -80,7 +78,6 @@ const MainPageCategory = () => {
 						}))}
 						headers={[
 							{key: 'index', label: 'STT'},
-							{key: '_id', label: 'Mã danh mục'},
 							{key: 'name', label: 'Tên danh mục'},
 							{
 								key: 'createdAt',
@@ -150,7 +147,14 @@ const MainPageCategory = () => {
 
 			{showUpdateForm && (
 				<ModalWrapper onClose={() => setShowUpdateForm(false)}>
-					<FormUpdateCategory categoryId={editCategoryId} onCancel={() => setShowUpdateForm(false)} onSuccess={fetchCategories} />
+					<FormUpdateCategory
+						categoryId={editCategoryId}
+						onCancel={() => setShowUpdateForm(false)}
+						onSuccess={() => {
+							setShowUpdateForm(false);
+							fetchCategories();
+						}}
+					/>
 				</ModalWrapper>
 			)}
 
@@ -161,8 +165,9 @@ const MainPageCategory = () => {
 					try {
 						await deleteCategory(selectedCategoryId);
 						toast.success('Xóa danh mục thành công');
+						await fetchCategories();
 						const updated = await getAllCategories();
-						setCategories(updated);
+						setCategories(updated.categories);
 						setIsModalOpen(false);
 					} catch (err) {
 						toast.error(err.message || 'Xóa danh mục thất bại');

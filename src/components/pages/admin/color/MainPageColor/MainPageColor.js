@@ -78,7 +78,7 @@ const MainPageColor = () => {
 					<div className={styles.tableWrapper}>
 						<Table
 							users={colors.map((color, index) => ({
-								index: (currentPage - 1) * limit + index + 1, // Tính STT
+								index: (currentPage - 1) * limit + index + 1, 
 								_id: color._id,
 								code: color.code,
 								name: color.name,
@@ -86,7 +86,7 @@ const MainPageColor = () => {
 								createdAt: color.createdAt,
 							}))}
 							headers={[
-								{key: 'index', label: 'STT'}, // Thay cột 'ID' thành 'STT'
+								{key: 'index', label: 'STT'}, 
 								{
 									key: 'code',
 									label: 'Mã màu',
@@ -106,7 +106,15 @@ const MainPageColor = () => {
 									),
 								},
 								{key: 'name', label: 'Tên màu'},
-								{key: 'description', label: 'Mô tả'},
+								{
+									key: 'description',
+									label: 'Mô tả',
+									render: (color) => (
+										<span className={styles.truncate} title={color.description}>
+											{color.description}
+										</span>
+									),
+								},
 								{
 									key: 'createdAt',
 									label: 'Thời gian tạo',

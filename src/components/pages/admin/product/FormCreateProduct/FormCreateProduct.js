@@ -102,7 +102,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 				router.push(ROUTES.AdminProduct);
 			}
 		} catch (error) {
-			toast.error('Đã có lỗi xảy ra khi tạo sản phẩm!', {
+			toast.error('Vui lòng không để trống các trường', {
 				position: 'top-right',
 			});
 		}
@@ -130,9 +130,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		const fetchColors = async () => {
 			try {
 				const res = await getAllColors();
-				console.log('Colors response:', res);
 				if (res && res.colors) {
-					// Thay đổi từ res.data.colors thành res.colors
 					setColorOptions(res.colors);
 				} else {
 					console.error('Không thể tải danh sách màu: Dữ liệu trả về không hợp lệ', res);
@@ -151,13 +149,10 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		const fetchSizes = async () => {
 			try {
 				const res = await getAllSizes();
-				console.log('sizes response:', res);
 				if (res && res.sizes) {
-					// Thay đổi từ res.data.sizes thành res.sizes
 					setSizes(res.sizes);
 					const initialQuantities = {};
 					res.sizes.forEach((size) => {
-						// Thay đổi từ res.data.sizes thành res.sizes
 						initialQuantities[size.name] = 0;
 					});
 					setSizeQuantities(initialQuantities);
@@ -178,9 +173,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		const fetchCategories = async () => {
 			try {
 				const res = await getAllCategories();
-				console.log('category response:', res);
 				if (res && res.categories) {
-					// Thay đổi từ res.data.categories thành res.categories
 					setCategoryOptions(res.categories);
 				} else {
 					console.error('Không thể tải danh sách danh mục: Dữ liệu trả về không hợp lệ', res);
@@ -380,6 +373,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 								id={`size-${size.name}`}
 								name={`quantityBySize.${size.name}`}
 								className={styles.input}
+								placeholder='0'
 								value={sizeQuantities[size.name] || ''}
 								onChange={(e) => handleSizeQuantityChange(e, size.name)}
 							/>

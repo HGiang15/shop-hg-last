@@ -3,14 +3,14 @@ import axios from 'axios';
 
 export const createCategory = async (categoryData) => {
 	try {
-		const response = await axios.post(`${API_URL}category/createCategory `, categoryData);
+		const response = await axios.post(`${API_URL}category/createCategory`, categoryData);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Thêm sản phẩm thất bại'};
 	}
 };
 
-export const getAllCategories = async (page = 1, limit = 5) => {
+export const getAllCategories = async (page = 1, limit = 20) => {
 	try {
 		const response = await axios.get(`${API_URL}category/getAllCategories`, {
 			params: {page, limit},

@@ -12,6 +12,7 @@ import icons from '@/constants/static/icons';
 import {getAllSizes, deleteSize} from '@/services/sizeService';
 import {toast} from 'react-toastify';
 import FormUpdateSize from '../FormUpdateSize/FormUpdateSize';
+import images from '@/constants/static/images';
 
 const MainPageSize = () => {
 	const [sizes, setSizes] = useState([]);
@@ -68,70 +69,83 @@ const MainPageSize = () => {
 				</Button>
 			</div>
 
-			<Table
-				users={sizes.map((size, index) => ({
-					index: (currentPage - 1) * limit + index + 1,
-					_id: size._id,
-					name: size.name,
-					description: size.description,
-					createdAt: size.createdAt,
-				}))}
-				headers={[
-					{key: 'index', label: 'STT'},
-					{key: 'name', label: 'Tên kích cỡ'},
-					{key: 'description', label: 'Mô tả'},
-					{
-						key: 'createdAt',
-						label: 'Thời gian tạo',
-						render: (size) =>
-							new Date(size.createdAt).toLocaleString('vi-VN', {
-								hour: '2-digit',
-								minute: '2-digit',
-								second: '2-digit',
-								day: '2-digit',
-								month: '2-digit',
-								year: 'numeric',
-							}),
-					},
-				]}
-				renderActions={(size) => (
-					<>
-						<IconCustom
-							icon={<Image src={icons.edit} alt='Edit' width={20} height={20} />}
-							iconFilter='invert(38%) sepia(93%) saturate(1382%) hue-rotate(189deg) brightness(89%) contrast(105%)'
-							backgroundColor='#dce7ff'
-							tooltip='Chỉnh sửa kích cỡ'
-							onClick={() => handleEditSize(size._id)}
-						/>
-						<IconCustom
-							icon={<Image src={icons.trash} alt='Delete' width={20} height={20} />}
-							iconFilter='invert(66%) sepia(35%) saturate(5412%) hue-rotate(338deg) brightness(98%) contrast(90%)'
-							backgroundColor='#ffe4e4'
-							tooltip='Xóa kích cỡ'
-							onClick={() => {
-								setSelectedSizeId(size._id);
-								setIsModalOpen(true);
-							}}
-						/>
-					</>
-				)}
-			/>
+			{sizes.length === 0 ? (
+				<div className={styles.noProducts}>
+					<Image src={images.boxEmpty} alt='Không có kích cỡ' width={180} height={180} priority />
+					<h4>DỮ LIỆU TRỐNG</h4>
+					<p>Hiện tại không có kích cỡ nào!</p>
+					<Button className={styles.btnNoProduct} onClick={() => setShowForm(true)}>
+						Thêm mới kích cỡ
+					</Button>
+				</div>
+			) : (
+				<>
+					<Table
+						users={sizes.map((size, index) => ({
+							index: (currentPage - 1) * limit + index + 1,
+							_id: size._id,
+							name: size.name,
+							description: size.description,
+							createdAt: size.createdAt,
+						}))}
+						headers={[
+							{key: 'index', label: 'STT'},
+							{key: 'name', label: 'Tên kích cỡ'},
+							{key: 'description', label: 'Mô tả'},
+							{
+								key: 'createdAt',
+								label: 'Thời gian tạo',
+								render: (size) =>
+									new Date(size.createdAt).toLocaleString('vi-VN', {
+										hour: '2-digit',
+										minute: '2-digit',
+										second: '2-digit',
+										day: '2-digit',
+										month: '2-digit',
+										year: 'numeric',
+									}),
+							},
+						]}
+						renderActions={(size) => (
+							<>
+								<IconCustom
+									icon={<Image src={icons.edit} alt='Edit' width={20} height={20} />}
+									iconFilter='invert(38%) sepia(93%) saturate(1382%) hue-rotate(189deg) brightness(89%) contrast(105%)'
+									backgroundColor='#dce7ff'
+									tooltip='Chỉnh sửa kích cỡ'
+									onClick={() => handleEditSize(size._id)}
+								/>
+								<IconCustom
+									icon={<Image src={icons.trash} alt='Delete' width={20} height={20} />}
+									iconFilter='invert(66%) sepia(35%) saturate(5412%) hue-rotate(338deg) brightness(98%) contrast(90%)'
+									backgroundColor='#ffe4e4'
+									tooltip='Xóa kích cỡ'
+									onClick={() => {
+										setSelectedSizeId(size._id);
+										setIsModalOpen(true);
+									}}
+								/>
+							</>
+						)}
+					/>
 
-			<Pagination
-				currentPage={currentPage}
-				totalPages={totalPages}
-				totalItems={totalItems}
-				limit={limit}
-				onPageChange={(page) => {
-					setCurrentPage(page);
-					fetchSizes(page, limit);
-				}}
-				onLimitChange={(newLimit) => {
-					setLimit(newLimit);
-					setCurrentPage(1);
-					fetchSizes(1, newLimit);
-				}}
-			/>
+					<Pagination
+						currentPage={currentPage}
+						totalPages={totalPages}
+						totalItems={totalItems}
+						limit={limit}
+						onPageChange={(page) => {
+							setCurrentPage(page);
+							fetchSizes(page, limit);
+						}}
+						onLimitChange={(newLimit) => {
+							setLimit(newLimit);
+							setCurrentPage(1);
+							fetchSizes(1, newLimit);
+						}}
+					/>
+				</>
+			)}
 
 			{showForm && (
 				<ModalWrapper onClose={() => setShowForm(false)}>
