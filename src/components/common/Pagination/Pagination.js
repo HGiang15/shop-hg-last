@@ -26,7 +26,9 @@ function Pagination({currentPage, totalPages, onPageChange, totalItems, onLimitC
 					<option value={30}>30</option>
 				</select>
 			</div>
-			<div className={styles.totalItems}>trong tổng số {totalItems} kết quả</div>
+			<div className={styles.totalItems}>
+				Hiển thị {(currentPage - 1) * limit + 1}–{Math.min(currentPage * limit, totalItems)} trong tổng số {totalItems} kết quả
+			</div>
 		</div>
 	);
 }

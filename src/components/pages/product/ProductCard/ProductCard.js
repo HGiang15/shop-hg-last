@@ -17,6 +17,7 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 	const [error, setError] = useState(null);
 	const [page, setPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
+	const [totalItems, setTotalItems] = useState(0);
 	const [sortBy, setSortBy] = useState('createdAt');
 	const [sortOrder, setSortOrder] = useState('desc');
 	const [limit, setLimit] = useState(8);
@@ -34,8 +35,10 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 					sortOrder,
 				};
 				const data = await filterProducts(filters);
+				console.log('Filter result:', data);
 				setProducts(data.products || []);
 				setTotalPages(data.totalPages || 1);
+				setTotalItems(data.total || 0);
 			} catch (err) {
 				setError(err.message || 'Đã có lỗi xảy ra khi lọc sản phẩm.');
 			}
@@ -147,7 +150,7 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 				currentPage={page}
 				totalPages={totalPages}
 				onPageChange={setPage}
-				totalItems={products.length}
+				totalItems={totalItems}
 				onLimitChange={setLimit}
 				limit={limit}
 			/>
