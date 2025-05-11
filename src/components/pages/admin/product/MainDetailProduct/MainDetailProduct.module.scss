@@ -65,7 +65,7 @@
 .header {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 24px;
+	gap: 15px;
 	margin-bottom: 14px;
 
 	@media (max-width: 992px) {
@@ -117,6 +117,17 @@
 			vertical-align: middle;
 		}
 	}
+}
+
+.badgeFeatured {
+	background-color: #ff5722;
+	color: #fff;
+	padding: 4px 10px;
+	border-radius: 6px;
+	font-size: 0.75rem;
+	font-weight: bold;
+	text-transform: uppercase;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .subTitle {

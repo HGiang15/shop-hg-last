@@ -75,7 +75,7 @@ const MainDetailProduct = () => {
 								Tên sản phẩm: <span>{product.name}</span>
 							</p>
 							<p className={styles.name}>
-								Phân loại sản phẩm: <span>{product.category}</span>
+								Phân loại sản phẩm: <span>{product.category?.[0]?.name}</span>
 							</p>
 							<p className={styles.name}>
 								Giá sản phẩm: <span>{Number(product.price).toLocaleString()} VNĐ</span>
@@ -92,7 +92,7 @@ const MainDetailProduct = () => {
 								Màu sản phẩm:
 								{product.colors?.map((color, idx) => (
 									<span key={idx} style={{marginLeft: '5px'}}>
-										<span className={styles.colorDot} style={{backgroundColor: color}}></span> {color}
+										<span className={styles.colorDot} style={{backgroundColor: color.name}}></span> {color.name}{' '}
 									</span>
 								))}
 							</p>
@@ -102,6 +102,7 @@ const MainDetailProduct = () => {
 							</div>
 						</div>
 					</div>
+					{product.isFeatured && <span className={styles.badgeFeatured}>Sản phẩm nổi bật</span>}
 
 					<h3 className={styles.subTitle}>Danh sách ảnh sản phẩm</h3>
 					<div className={styles.imageList}>
@@ -141,11 +142,11 @@ const MainDetailProduct = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{Object.entries(product.quantityBySize).map(([size, quantity], idx) => (
+							{product.quantityBySize?.map((item, idx) => (
 								<tr key={idx}>
 									<td>{idx + 1}</td>
-									<td>{size}</td>
-									<td>{quantity}</td>
+									<td>{item.name}</td>
+									<td>{item.quantity}</td>
 								</tr>
 							))}
 						</tbody>

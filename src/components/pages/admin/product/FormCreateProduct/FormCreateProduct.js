@@ -8,18 +8,21 @@ import {useRouter} from 'next/router';
 import {connect} from 'react-redux';
 import {setActiveMenu} from '@/redux/actions/menuTabActions';
 import dynamic from 'next/dynamic';
+import Select from 'react-select';
 import {ROUTES} from '@/constants/config';
-import {createProduct} from '@/services/productService';
-const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 import {toast} from 'react-toastify';
+import {createProduct} from '@/services/productService';
 import {getAllColors} from '@/services/colorService';
 import {getAllSizes} from '@/services/sizeService';
 import {getAllCategories} from '@/services/categoryService';
+
+const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 
 const FormCreateProduct = ({setActiveMenu}) => {
 	const router = useRouter();
 
 	const [selectedImages, setSelectedImages] = useState([]);
+	const [errors, setErrors] = useState({});
 	const [detailDescription, setDetailDesc] = useState('');
 	const [colorOptions, setColorOptions] = useState([]);
 	const [categoryOptions, setCategoryOptions] = useState([]);
@@ -35,11 +38,6 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		price: '',
 		description: '',
 		detailDescription: '',
-		sizeS: 0,
-		sizeM: 0,
-		sizeL: 0,
-		sizeXL: 0,
-		sizeXXL: 0,
 		isFeatured: false,
 	});
 	const MAX_IMAGES = 6;
@@ -76,18 +74,45 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		router.back();
 	};
 
-	// Create Product
 	const handleSubmitForm = async () => {
 		const formData = new FormData();
-		formData.append('name', form.name);
+
+		const quantityBySize = sizes
+			.map((size) => ({
+				sizeId: size._id,
+				name: size.name,
+				quantity: sizeQuantities[size.name] || 0,
+			}))
+			.filter((item) => item.quantity > 0);
+
 		formData.append('code', form.code);
-		formData.append('category', form.category);
-		formData.append('colors', form.colors);
+		formData.append('name', form.name);
+		formData.append(
+			'quantityBySize',
+			JSON.stringify(
+				quantityBySize.map((item) => ({
+					sizeId: item.sizeId.toString(),
+					name: item.name,
+					quantity: item.quantity,
+				}))
+			)
+		);
+
+		const category = JSON.parse(form.category || '{}');
+		formData.append(
+			'category',
+			JSON.stringify({
+				categoryId: category.categoryId || '',
+				name: category.name || '',
+			})
+		);
+
+		const colors = JSON.parse(form.colors || '[]');
+		formData.append('colors', JSON.stringify(colors));
 		formData.append('price', form.price);
 		formData.append('description', form.description);
 		formData.append('detailDescription', detailDescription);
 		formData.append('isFeatured', form.isFeatured);
-		formData.append('quantityBySize', JSON.stringify(sizeQuantities));
 
 		selectedImages.forEach((file) => {
 			formData.append('images', file);
@@ -102,27 +127,81 @@ const FormCreateProduct = ({setActiveMenu}) => {
 				router.push(ROUTES.AdminProduct);
 			}
 		} catch (error) {
-			toast.error('Vui lòng không để trống các trường', {
-				position: 'top-right',
-			});
+			if (error.response && error.response.data?.errors) {
+				setErrors(error.response.data.errors); // hiển thị lỗi theo field
+			} else {
+				toast.error(error.message || 'Vui lòng điền đầy đủ thông tin sản phẩm', {
+					position: 'top-right',
+				});
+			}
+			console.error('Lỗi tạo sản phẩm:', error);
 		}
 	};
 
 	const handleInputChange = (e) => {
-		if (!e || !e.target) return;
 		const {name, value} = e.target;
-		setForm((prev) => ({
-			...prev,
-			[name]: value,
-		}));
+
+		if (name === 'category') {
+			const selectedCategory = categoryOptions.find((cat) => cat._id === value);
+			if (selectedCategory) {
+				setForm((prev) => ({
+					...prev,
+					category: JSON.stringify({
+						categoryId: selectedCategory._id,
+						name: selectedCategory.name,
+					}),
+				}));
+			}
+		} else if (name === 'colors') {
+			const selectedColor = colorOptions.find((color) => color._id === value);
+			if (selectedColor) {
+				setForm((prev) => ({
+					...prev,
+					colors: JSON.stringify([
+						{
+							colorId: selectedColor._id,
+							name: selectedColor.name,
+						},
+					]),
+				}));
+			}
+		} else {
+			setForm((prev) => ({
+				...prev,
+				[name]: value,
+			}));
+			setErrors((prev) => ({...prev, [name]: null}));
+		}
 	};
 
 	const handleSizeQuantityChange = (e, sizeName) => {
-		const value = parseInt(e.target.value, 10) || 0;
+		let value = parseInt(e.target.value, 10);
+		if (isNaN(value) || value < 0) value = 0;
+
 		setSizeQuantities((prev) => ({
 			...prev,
 			[sizeName]: value,
 		}));
+	};
+
+	const parseColors = (colorsString) => {
+		try {
+			const parsedColors = JSON.parse(colorsString || '[]');
+			return Array.isArray(parsedColors)
+				? parsedColors.map((color) => ({value: color?.colorId || '', label: color?.name || ''}))
+				: [];
+		} catch (error) {
+			console.error('Lỗi parse form.colors:', error);
+			return [];
+		}
+	};
+
+	const formatPriceDisplay = (value) => {
+		return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+	};
+
+	const parsePriceInput = (value) => {
+		return value.replace(/\./g, '');
 	};
 
 	// Get all colors
@@ -222,6 +301,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 						placeholder='Tên sản phẩm'
 						onChange={handleInputChange}
 					/>
+					{errors.name && <p className={styles.errorText}>{errors.name}</p>}
 				</div>
 
 				{/* ID */}
@@ -244,7 +324,13 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<label htmlFor='category' className={styles.label}>
 						Loại sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<select id='category' name='category' className={styles.select} onChange={handleInputChange} value={form.category}>
+					<select
+						id='category'
+						name='category'
+						className={styles.select}
+						onChange={handleInputChange}
+						value={JSON.parse(form.category || '{}').categoryId || ''}
+					>
 						<option value=''>Chọn loại sản phẩm</option>
 						{categoryOptions.map((category) => (
 							<option key={category._id} value={category._id}>
@@ -259,14 +345,25 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<label htmlFor='colors' className={styles.label}>
 						Màu sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<select id='colors' name='colors' className={styles.select} onChange={handleInputChange} value={form.colors}>
-						<option value=''>Chọn màu sản phẩm</option>
-						{colorOptions.map((color) => (
-							<option key={color._id} value={color.name}>
-								{color.name}
-							</option>
-						))}
-					</select>
+					<Select
+						isMulti
+						name='colors'
+						options={colorOptions.map((color) => ({value: color._id, label: color.name}))}
+						className={styles.select}
+						classNamePrefix='react-select'
+						onChange={(selectedOptions) => {
+							const selectedColors = selectedOptions
+								? selectedOptions.map((option) => ({colorId: option.value, name: option.label}))
+								: [];
+							setForm((prev) => ({
+								...prev,
+								colors: JSON.stringify(selectedColors),
+							}));
+						}}
+						value={parseColors(form.colors)}
+						placeholder='Chọn màu sản phẩm'
+						isSearchable
+					/>
 				</div>
 
 				{/* Price */}
@@ -281,8 +378,18 @@ const FormCreateProduct = ({setActiveMenu}) => {
 							name='price'
 							className={styles.input}
 							placeholder='100.000'
-							onChange={handleInputChange}
+							value={formatPriceDisplay(form.price)}
+							onChange={(e) => {
+								const raw = parsePriceInput(e.target.value);
+								if (/^\d*$/.test(raw)) {
+									setForm((prev) => ({
+										...prev,
+										price: raw,
+									}));
+								}
+							}}
 						/>
+
 						<span className={styles.currencyInside}>VNĐ</span>
 					</div>
 				</div>
@@ -374,6 +481,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 								name={`quantityBySize.${size.name}`}
 								className={styles.input}
 								placeholder='0'
+								min={0}
 								value={sizeQuantities[size.name] || ''}
 								onChange={(e) => handleSizeQuantityChange(e, size.name)}
 							/>

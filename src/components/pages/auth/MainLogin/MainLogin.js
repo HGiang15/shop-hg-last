@@ -12,6 +12,7 @@ import Button from '@/components/common/Button/Button';
 import {toast, ToastContainer} from 'react-toastify';
 import {GoogleLogin} from '@react-oauth/google';
 import jwt_decode from 'jwt-decode';
+import {addToCart, mergeCart} from '@/services/cartService';
 
 const MainLogin = () => {
 	const router = useRouter();
@@ -57,12 +58,15 @@ const MainLogin = () => {
 
 		try {
 			const response = await loginUser(formData.email, formData.password);
-
 			const {id, name, email, avatar, role} = response.data;
 			const token = response.token;
+
 			localStorage.setItem('token', token);
 			localStorage.setItem('name', name);
 			localStorage.setItem('avatar', avatar);
+
+			// ✅ Gọi mergeCart để chuyển giỏ hàng từ cookie sang userId
+			await mergeCart(); // không cần truyền localItems nếu BE đã lấy từ DB theo cartToken
 
 			if (rememberMe) {
 				const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
@@ -70,55 +74,20 @@ const MainLogin = () => {
 				localStorage.setItem('remember_expiration', expirationTime);
 			}
 
+			toast.success('Đăng nhập thành công!', {position: 'top-right', autoClose: 3000});
+
 			if (role === 1) {
-				toast.success('Đăng nhập thành công!', {
-					position: 'top-right',
-					autoClose: 3000,
-					hideProgressBar: false,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-				});
 				router.push(ROUTES.Home);
 			} else if (role === 0) {
-				toast.success('Đăng nhập thành công!', {
-					position: 'top-right',
-					autoClose: 3000,
-					hideProgressBar: false,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-				});
 				router.push(ROUTES.AdminDashboard);
 			} else {
-				toast.error('Vai trò không hợp lệ.', {
-					position: 'top-right',
-					autoClose: 3000,
-					hideProgressBar: false,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-				});
+				toast.error('Vai trò không hợp lệ.');
 				setErrors({general: 'Vai trò không hợp lệ'});
 			}
 		} catch (error) {
-			toast.error(error.message || 'Đăng nhập thất bại.', {
-				position: 'top-right',
-				autoClose: 3000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-			});
-			setErrors({general: error.message || 'Đăng nhập thất bại'});
+			toast.error(error.message || 'Đăng nhập thất bại.');
 		} finally {
-			setTimeout(() => {
-				setLoading(false);
-			}, 4000);
+			setLoading(false);
 		}
 	};
 

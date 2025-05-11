@@ -8,10 +8,14 @@ import {useRouter} from 'next/router';
 import {connect} from 'react-redux';
 import {setActiveMenu} from '@/redux/actions/menuTabActions';
 import dynamic from 'next/dynamic';
-import {ROUTES, API_URL, API_URL_IMG} from '@/constants/config';
+import {ROUTES, API_URL_IMG} from '@/constants/config';
 import {getProductById, updateProduct} from '@/services/productService';
-const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 import {toast} from 'react-toastify';
+import Select from 'react-select';
+import {getAllColors} from '@/services/colorService';
+import {getAllSizes} from '@/services/sizeService';
+import {getAllCategories} from '@/services/categoryService';
+const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 
 const FormUpdateProduct = ({setActiveMenu, productId}) => {
 	const router = useRouter();
@@ -21,6 +25,10 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 	const [selectedFiles, setSelectedFiles] = useState([]);
 	const [detailDescription, setDetailDesc] = useState('');
 	const [oldImageFilenames, setOldImageFilenames] = useState([]);
+	const [colorOptions, setColorOptions] = useState([]);
+	const [categoryOptions, setCategoryOptions] = useState([]);
+	const [sizes, setSizes] = useState([]);
+	const [sizeQuantities, setSizeQuantities] = useState({});
 
 	const [form, setForm] = useState({
 		name: '',
@@ -31,15 +39,11 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 		price: '',
 		description: '',
 		detailDescription: '',
-		sizeS: 0,
-		sizeM: 0,
-		sizeL: 0,
-		sizeXL: 0,
-		sizeXXL: 0,
 		isFeatured: false,
 	});
 	const MAX_IMAGES = 6;
 
+	// Detail Product
 	useEffect(() => {
 		setActiveMenu(ROUTES.AdminProduct);
 		if (productIdFromRouter) {
@@ -48,29 +52,41 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 					const productData = await getProductById(productIdFromRouter);
 					if (!productData) throw new Error('Không tìm thấy sản phẩm với ID này!');
 
+					// Cập nhật dữ liệu form từ API
 					setForm({
 						name: productData.name || '',
 						code: productData.code || '',
 						id: productData._id || '',
-						category: productData.category || '',
-						colors: productData.colors?.join(', ') || '',
+						category: JSON.stringify({
+							categoryId: productData.category[0]?.categoryId || '',
+							name: productData.category[0]?.name || '',
+						}),
+						colors: JSON.stringify(
+							productData.colors.map((color) => ({
+								colorId: color.colorId || '',
+								name: color.name || '',
+							}))
+						),
 						price: productData.price || '',
 						description: productData.description || '',
 						detailDescription: productData.detailDescription || '',
-						sizeS: productData.quantityBySize?.S || 0,
-						sizeM: productData.quantityBySize?.M || 0,
-						sizeL: productData.quantityBySize?.L || 0,
-						sizeXL: productData.quantityBySize?.XL || 0,
-						sizeXXL: productData.quantityBySize?.XXL || 0,
 						isFeatured: productData.isFeatured || false,
 					});
 
 					setDetailDesc(productData.detailDescription || '');
 
+					const initialQuantities = {};
+					sizes.forEach((size) => {
+						const productSize = productData.quantityBySize.find((item) => item.name === size.name);
+						initialQuantities[size.name] = productSize ? productSize.quantity : ''; // Gán '' nếu không có
+					});
+
+					setSizeQuantities(initialQuantities);
+
 					const oldFilenames = productData.images || [];
 					setOldImageFilenames(oldFilenames); // Cập nhật tên ảnh cũ
-
 					const oldImageUrls = oldFilenames.map((filename) => `${API_URL_IMG}uploads/${filename}`);
+
 					setSelectedImages(oldImageUrls);
 				} catch (err) {
 					toast.error(err.message || 'Lỗi khi tải dữ liệu sản phẩm!');
@@ -78,7 +94,7 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 				}
 			})();
 		}
-	}, [setActiveMenu, productIdFromRouter, router]);
+	}, [setActiveMenu, productIdFromRouter, router, sizes]);
 
 	const handleImageChange = (event) => {
 		const files = event.target.files;
@@ -127,41 +143,146 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 	};
 
 	const handleInputChange = (e) => {
-		const {name, value, type, checked} = e.target;
+		const {name, value} = e.target;
+
+		if (name === 'category') {
+			const selectedCategory = categoryOptions.find((cat) => cat._id === value);
+			if (selectedCategory) {
+				setForm((prev) => ({
+					...prev,
+					category: JSON.stringify({
+						categoryId: selectedCategory._id,
+						name: selectedCategory.name,
+					}),
+				}));
+			}
+		} else {
+			setForm((prev) => ({
+				...prev,
+				[name]: value,
+			}));
+		}
+	};
+
+	const handleColorChange = (selectedOptions) => {
+		const selectedColors = selectedOptions ? selectedOptions.map((option) => ({colorId: option.value, name: option.label})) : [];
 		setForm((prev) => ({
 			...prev,
-			[name]: type === 'checkbox' ? checked : value,
+			colors: JSON.stringify(selectedColors),
 		}));
 	};
+
+	const handleSizeQuantityChange = (e, sizeName) => {
+		let value = parseInt(e.target.value, 10);
+		if (isNaN(value) || value < 0) value = 0;
+
+		setSizeQuantities((prev) => ({
+			...prev,
+			[sizeName]: value,
+		}));
+	};
+
+	// Get all Colors
+	useEffect(() => {
+		const fetchColors = async () => {
+			try {
+				const res = await getAllColors();
+				if (res?.colors) {
+					setColorOptions(res.colors.map((color) => ({value: color._id, label: color.name})));
+				} else {
+					toast.error('Lỗi khi tải danh sách màu.');
+				}
+			} catch (error) {
+				toast.error('Không thể kết nối để lấy màu.');
+			}
+		};
+		fetchColors();
+	}, []);
+
+	// Get all sizes
+	useEffect(() => {
+		const fetchSizes = async () => {
+			try {
+				const res = await getAllSizes();
+				if (res?.sizes) {
+					setSizes(res.sizes);
+				} else {
+					toast.error('Lỗi khi tải danh sách size.');
+				}
+			} catch (error) {
+				toast.error('Không thể kết nối để lấy size.');
+			}
+		};
+		fetchSizes();
+	}, []);
+
+	// Get all categories
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const res = await getAllCategories();
+				if (res?.categories) {
+					setCategoryOptions(res.categories);
+				} else {
+					toast.error('Lỗi khi tải danh sách danh mục.');
+				}
+			} catch (error) {
+				toast.error('Không thể kết nối để lấy danh mục.');
+			}
+		};
+		fetchCategories();
+	}, []);
 
 	const handleUpdateProduct = async () => {
 		if (!productIdFromRouter) return toast.error('Không có ID sản phẩm để cập nhật!');
 
 		try {
 			const formData = new FormData();
+
+			const quantityBySize = sizes
+				.map((size) => ({
+					sizeId: size._id,
+					name: size.name,
+					quantity: sizeQuantities[size.name] || 0,
+				}))
+				.filter((item) => item.quantity > 0);
+
 			formData.append('code', form.code);
 			formData.append('name', form.name);
-			formData.append('category', form.category);
-			formData.append('colors', form.colors);
+			formData.append(
+				'quantityBySize',
+				JSON.stringify(
+					quantityBySize.map((item) => ({
+						sizeId: item.sizeId.toString(),
+						name: item.name,
+						quantity: item.quantity,
+					}))
+				)
+			);
+
+			// Lấy category từ form.category
+			const category = JSON.parse(form.category || '{}');
+			formData.append(
+				'category',
+				JSON.stringify({
+					categoryId: category.categoryId || '',
+					name: category.name || '',
+				})
+			);
+
+			// Lấy colors từ form.colors
+			const colors = JSON.parse(form.colors || '[]');
+			formData.append('colors', JSON.stringify(colors));
+
 			formData.append('price', form.price);
 			formData.append('description', form.description);
 			formData.append('detailDescription', detailDescription);
-			formData.append(
-				'quantityBySize',
-				JSON.stringify({
-					S: form.sizeS,
-					M: form.sizeM,
-					L: form.sizeL,
-					XL: form.sizeXL,
-					XXL: form.sizeXXL,
-				})
-			);
-			formData.append('isFeatured', form.isFeatured ? 'true' : 'false');
+			formData.append('isFeatured', form.isFeatured);
 
-			// Thêm ảnh cũ vào formData
+			// Thêm tên ảnh cũ để server có thể xử lý (nếu cần xóa)
 			formData.append('oldImages', JSON.stringify(oldImageFilenames));
 
-			// Thêm ảnh mới vào formData
+			// Thêm ảnh mới
 			selectedFiles.forEach((file) => formData.append('images', file));
 
 			const response = await updateProduct(productIdFromRouter, formData, {
@@ -178,6 +299,26 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 
 	const handleSubmitForm = () => {
 		handleUpdateProduct();
+	};
+
+	const parseColors = (colorsString) => {
+		try {
+			const parsedColors = JSON.parse(colorsString || '[]');
+			return Array.isArray(parsedColors)
+				? parsedColors.map((color) => ({value: color?.colorId || '', label: color?.name || ''}))
+				: [];
+		} catch (error) {
+			console.error('Lỗi parse form.colors:', error);
+			return [];
+		}
+	};
+
+	const formatPriceDisplay = (value) => {
+		return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+	};
+
+	const parsePriceInput = (value) => {
+		return value.replace(/\./g, '');
 	};
 
 	return (
@@ -239,12 +380,19 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 					<label htmlFor='category' className={styles.label}>
 						Loại sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<select id='category' name='category' className={styles.select} onChange={handleInputChange} value={form.category}>
+					<select
+						id='category'
+						name='category'
+						className={styles.select}
+						onChange={handleInputChange}
+						value={form.category ? JSON.parse(form.category).categoryId : ''}
+					>
 						<option value=''>Chọn loại sản phẩm</option>
-						<option value='Áo CLB'>Áo CLB</option>
-						<option value='Áo đội tuyển'>Áo đội tuyển</option>
-						<option value='Áo không logo'>Áo không logo</option>
-						<option value='Giày đá bóng'>Giày đá bóng</option>
+						{categoryOptions.map((category) => (
+							<option key={category._id} value={category.categoryId}>
+								{category.name}
+							</option>
+						))}
 					</select>
 				</div>
 
@@ -253,13 +401,17 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 					<label htmlFor='colors' className={styles.label}>
 						Màu sản phẩm <span style={{color: 'red'}}>*</span>
 					</label>
-					<select id='colors' name='colors' className={styles.select} onChange={handleInputChange} value={form.colors}>
-						<option value=''>Chọn màu sản phẩm</option>
-						<option value='Đỏ'>Màu đỏ</option>
-						<option value='Xanh'>Màu xanh</option>
-						<option value='Vàng'>Màu vàng</option>
-						<option value='Hồng'>Màu hồng</option>
-					</select>
+					<Select
+						isMulti
+						name='colors'
+						options={colorOptions}
+						className={styles.select}
+						classNamePrefix='react-select'
+						onChange={handleColorChange}
+						value={parseColors(form.colors)}
+						placeholder='Chọn màu sản phẩm'
+						isSearchable
+					/>
 				</div>
 
 				{/* Price */}
@@ -274,8 +426,16 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 							name='price'
 							className={styles.input}
 							placeholder='100.000'
-							onChange={handleInputChange}
-							value={form.price}
+							value={formatPriceDisplay(form.price)}
+							onChange={(e) => {
+								const raw = parsePriceInput(e.target.value);
+								if (/^\d*$/.test(raw)) {
+									setForm((prev) => ({
+										...prev,
+										price: raw,
+									}));
+								}
+							}}
 						/>
 						<span className={styles.currencyInside}>VNĐ</span>
 					</div>
@@ -361,88 +521,28 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 					</div>
 				</div>
 
-				{/* S */}
-				<div className={styles.formGroup}>
-					<label htmlFor='sizeS' className={styles.label}>
-						Nhập số lượng size S <span style={{color: 'red'}}>*</span>
-					</label>
-					<input
-						type='number'
-						id='sizeS'
-						name='sizeS'
-						className={styles.input}
-						placeholder='0'
-						onChange={handleInputChange}
-						value={form.sizeS}
-					/>
-				</div>
-
-				{/* M */}
-				<div className={styles.formGroup}>
-					<label htmlFor='sizeM' className={styles.label}>
-						Nhập số lượng size M <span style={{color: 'red'}}>*</span>
-					</label>
-					<input
-						type='number'
-						id='sizeM'
-						name='sizeM'
-						className={styles.input}
-						placeholder='0'
-						onChange={handleInputChange}
-						value={form.sizeM}
-					/>
-				</div>
-
-				{/* L */}
-				<div className={styles.formGroup}>
-					<label htmlFor='sizeL' className={styles.label}>
-						Nhập số lượng size L <span style={{color: 'red'}}>*</span>
-					</label>
-					<input
-						type='number'
-						id='sizeL'
-						name='sizeL'
-						className={styles.input}
-						placeholder='0'
-						onChange={handleInputChange}
-						value={form.sizeL}
-					/>
-				</div>
-
-				{/* XL */}
-				<div className={styles.formGroup}>
-					<label htmlFor='sizeXL' className={styles.label}>
-						Nhập số lượng size XL <span style={{color: 'red'}}>*</span>
-					</label>
-					<input
-						type='number'
-						id='sizeXL'
-						name='sizeXL'
-						className={styles.input}
-						placeholder='0'
-						onChange={handleInputChange}
-						value={form.sizeXL}
-					/>
-				</div>
-
-				{/* XXL */}
-				<div className={styles.formGroup}>
-					<label htmlFor='sizeXXL' className={styles.label}>
-						Nhập số lượng size XXL <span style={{color: 'red'}}>*</span>
-					</label>
-					<input
-						type='number'
-						id='sizeXXL'
-						name='sizeXXL'
-						className={styles.input}
-						placeholder='0'
-						onChange={handleInputChange}
-						value={form.sizeXXL}
-					/>
-				</div>
+				{/* Size */}
+				{Array.isArray(sizes) &&
+					sizes.map((size) => (
+						<div className={styles.formGroup} key={size.name}>
+							<label htmlFor={`size-${size.name}`} className={styles.label}>
+								Nhập số lượng size {size.name}
+							</label>
+							<input
+								type='number'
+								id={`size-${size.name}`}
+								name={`quantityBySize.${size.name}`}
+								className={styles.input}
+								placeholder='0'
+								min={0}
+								value={sizeQuantities[size.name] || ''}
+								onChange={(e) => handleSizeQuantityChange(e, size.name)}
+							/>
+						</div>
+					))}
 
 				{/* Description */}
-				<div className={styles.formGroup}>
+				<div className={`${styles.formGroup} ${styles.description}`}>
 					<label htmlFor='description' className={styles.label}>
 						Mô tả chính
 					</label>
@@ -458,7 +558,7 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 				</div>
 
 				{/* DescriptionDetail */}
-				<div className={styles.formGroup}>
+				<div className={`${styles.formGroup} ${styles.detailDescription}`}>
 					<label htmlFor='detailDescription' className={styles.label}>
 						Mô tả chi tiết
 					</label>

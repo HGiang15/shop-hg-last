@@ -77,14 +77,15 @@ const MainPageProduct = ({setActiveMenu}) => {
 						<Table
 							users={products.map((product, index) => {
 								const quantity = product.quantityBySize
-									? Object.values(product.quantityBySize).reduce((a, b) => a + b, 0)
+									? product.quantityBySize.reduce((total, size) => total + size.quantity, 0)
 									: 0;
+
 								return {
 									index: (currentPage - 1) * productsPerPage + index + 1,
 									_id: product._id,
 									name: product.name,
-									type: product.category,
-									color: product.colors.join(', '),
+									type: product.category?.[0]?.name,
+									color: product.colors.map((color) => color.name).join(', '),
 									price: product.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'}),
 									quantity: quantity,
 									product,

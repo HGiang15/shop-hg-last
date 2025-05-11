@@ -19,7 +19,7 @@ function Header() {
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [showDropdown, setShowDropdown] = useState(false);
-	const [cartItemCount, setCartItemCount] = useState(1);
+	const [cartItemCount, setCartItemCount] = useState(0);
 	const [showCart, setShowCart] = useState(false);
 
 	useEffect(() => {
@@ -56,6 +56,10 @@ function Header() {
 
 	const toggleDropdown = () => {
 		setShowDropdown(!showDropdown);
+	};
+
+	const updateCartCount = (newCount) => {
+		setCartItemCount(newCount);
 	};
 
 	const handleLogout = () => {
@@ -126,7 +130,7 @@ function Header() {
 					{cartItemCount > 0 && <span className={styles.cart__count}>{cartItemCount}</span>}
 				</Button>
 
-				{showCart && <ShoppingCart onClose={() => setShowCart(false)} />}
+				{showCart && <ShoppingCart onClose={() => setShowCart(false)} onUpdateCartCount={updateCartCount} />}
 
 				<div className={styles.header__auth}>
 					{user ? (

@@ -8,6 +8,8 @@ import {ROUTES} from '@/constants/config';
 import {getProductById} from '@/services/productService';
 import images from '@/constants/static/images';
 import {getCategoryById} from '@/services/categoryService';
+import {addToCart, getAllCart} from '@/services/cartService';
+import {toast} from 'react-toastify';
 
 const ProductDetailPage = () => {
 	const router = useRouter();
@@ -20,6 +22,9 @@ const ProductDetailPage = () => {
 	const [quantity, setQuantity] = useState(1);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [categoryName, setCategoryName] = useState('');
+	const [selectedColor, setSelectedColor] = useState('');
+	const [colors, setColors] = useState([]);
+	const [sizes, setSizes] = useState([]);
 
 	// State cho đánh giá
 	const [reviews, setReviews] = useState([]);
@@ -37,10 +42,15 @@ const ProductDetailPage = () => {
 					setProduct(data);
 					setMainImage(data?.images?.[0] ? `${adminBaseUrl}/uploads/${data.images[0]}` : images.placeholder);
 
-					// gọi thêm category name
-					if (data.category) {
-						const categoryData = await getCategoryById(data.category);
-						setCategoryName(categoryData?.name || 'Danh mục');
+					// Cập nhật màu sắc và kích thước
+					if (data.colors && data.colors.length > 0) {
+						setColors(data.colors);
+						setSelectedColor(data.colors[0]); // Chọn màu đầu tiên
+					}
+
+					if (data.sizes && data.sizes.length > 0) {
+						setSizes(data.sizes);
+						setSelectedSize(data.sizes[0]); // Chọn size đầu tiên
 					}
 
 					setLoading(false);
@@ -54,13 +64,51 @@ const ProductDetailPage = () => {
 		}
 	}, [id]);
 
-	const handleSizeChange = (size) => setSelectedSize(size);
+	const handleSizeChange = (size) => {
+		setSelectedSize(size);
+		console.log('Chọn size: ', size); // Debug để kiểm tra
+	};
 
 	const handleQuantityChange = (type) => {
 		setQuantity((prev) => (type === 'increase' ? Math.min(prev + 1, 10) : Math.max(prev - 1, 1)));
 	};
 
 	const averageRating = reviews.length > 0 ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length : 0;
+
+	const handleAddToCart = async () => {
+		if (!selectedSize) {
+			toast.warn('Vui lòng chọn kích thước!');
+			return;
+		}
+
+		const selectedImage = product.images?.[0] || '';
+		const defaultColor = product.colors?.[0] || 'Không xác định';
+
+		const payload = {
+			productId: product._id,
+			color: defaultColor, // Lấy màu đầu tiên
+			image: selectedImage,
+			sizeId: selectedSize,
+			quantity: quantity,
+		};
+
+		try {
+			console.log(payload);
+
+			await addToCart(payload);
+
+			const updatedCart = await getAllCart();
+			localStorage.setItem('cart', JSON.stringify(updatedCart.items || []));
+			if (typeof window !== 'undefined') {
+				window.dispatchEvent(new Event('storage'));
+			}
+
+			toast.success('Đã thêm vào giỏ hàng!');
+		} catch (err) {
+			console.error(err);
+			toast.error('Không thể thêm vào giỏ hàng.');
+		}
+	};
 
 	const handleAddReview = (e) => {
 		e.preventDefault();
@@ -142,15 +190,11 @@ const ProductDetailPage = () => {
 					<h1 className={styles.productTitle}>{product.name}</h1>
 					<p className={styles.productId}>{product.code}</p>
 
-					{product.colors && product.colors.length > 0 && (
-						<div className={styles.colorSelect}>
-							<span>Màu: </span>
-							{product.colors.map((color, index) => (
-								<span key={index} className={styles.colorDot} style={{backgroundColor: color}}></span>
-							))}
-							{product.colors.join(', ')}
-						</div>
-					)}
+					<div className={styles.colorSelect}>
+						<span>Màu: </span>
+						<span className={styles.colorDot} style={{backgroundColor: product.colors?.[0]}}></span>
+						{product.colors?.[0]}
+					</div>
 
 					<p className={styles.productPrice}>
 						<span className={styles.labelPrice}>Giá: </span>
@@ -181,7 +225,9 @@ const ProductDetailPage = () => {
 					</div>
 
 					<div className={styles.buttonGroup}>
-						<Button className={styles.addToCart}>Thêm giỏ hàng</Button>
+						<Button className={styles.addToCart} onClick={handleAddToCart}>
+							Thêm giỏ hàng
+						</Button>
 						<Button href={ROUTES.Order} className={styles.buyNow}>
 							Thanh toán ngay
 						</Button>

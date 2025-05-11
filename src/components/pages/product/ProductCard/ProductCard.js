@@ -10,6 +10,8 @@ import Button from '@/components/common/Button/Button';
 import icons from '@/constants/static/icons';
 import {Tooltip} from 'react-tippy';
 import 'react-tippy/dist/tippy.css';
+import {addToCart} from '@/services/cartService';
+import AddToCartModal from '../AddToCartModal/AddToCartModal';
 
 const ProductCard = ({selectedCategories, selectedColors}) => {
 	const [products, setProducts] = useState([]);
@@ -21,6 +23,18 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 	const [sortBy, setSortBy] = useState('createdAt');
 	const [sortOrder, setSortOrder] = useState('desc');
 	const [limit, setLimit] = useState(8);
+	const [showModal, setShowModal] = useState(false);
+	const [selectedProduct, setSelectedProduct] = useState(null);
+
+	const openModal = (product) => {
+		setSelectedProduct(product);
+		setShowModal(true);
+	};
+
+	const closeModal = () => {
+		setSelectedProduct(null);
+		setShowModal(false);
+	};
 
 	useEffect(() => {
 		const fetchProducts = async () => {
@@ -35,7 +49,6 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 					sortOrder,
 				};
 				const data = await filterProducts(filters);
-				console.log('Filter result:', data);
 				setProducts(data.products || []);
 				setTotalPages(data.totalPages || 1);
 				setTotalItems(data.total || 0);
@@ -73,14 +86,20 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 	};
 
 	const handleAddToCart = async (productId) => {
-		// try {
-		// 	// Gọi API thêm vào giỏ hàng
-		// 	await addToCart(productId); // bạn tự định nghĩa hoặc import service
-		// 	alert('Đã thêm vào giỏ hàng!');
-		// } catch (err) {
-		// 	console.error('Lỗi thêm vào giỏ hàng:', err);
-		// 	alert('Lỗi khi thêm vào giỏ hàng.');
-		// }
+		try {
+			const productData = {
+				productId,
+				quantity: 1, // Mặc định là 1 khi bấm thêm từ danh sách
+				colorId: null, // Hoặc ID thực nếu sản phẩm có chọn màu
+				sizeId: null, // Hoặc ID thực nếu sản phẩm có chọn size
+			};
+
+			await addToCart(productData);
+			alert('Đã thêm sản phẩm vào giỏ hàng!');
+		} catch (err) {
+			console.error('Lỗi khi thêm vào giỏ hàng:', err);
+			alert(err.message || 'Thêm sản phẩm vào giỏ hàng thất bại!');
+		}
 	};
 
 	if (loading) return <div>Đang tải sản phẩm...</div>;
@@ -104,7 +123,7 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 						<Link href={`/products/${product._id}`} key={product._id} className={styles.card}>
 							{product.images && product.images[0] ? (
 								<Image
-									src={`http://localhost:3003/uploads/${product.images[0]}`}
+									src={product.images[0]}
 									alt={product.name}
 									className={styles.image}
 									width={300}
@@ -127,7 +146,7 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 											className={styles.addToCartBtn}
 											onClick={(e) => {
 												e.preventDefault();
-												handleAddToCart(product._id);
+												openModal(product);
 											}}
 											centerIcon={<Image src={icons.cart} alt='Icon' width={20} height={20} />}
 										/>
@@ -144,6 +163,8 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 					</div>
 				)}
 			</div>
+
+			{selectedProduct && <AddToCartModal product={selectedProduct} show={showModal} onClose={closeModal} />}
 
 			<Pagination
 				className={styles.pagination}
