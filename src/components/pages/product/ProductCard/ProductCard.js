@@ -85,23 +85,6 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 		}
 	};
 
-	const handleAddToCart = async (productId) => {
-		try {
-			const productData = {
-				productId,
-				quantity: 1, // Mặc định là 1 khi bấm thêm từ danh sách
-				colorId: null, // Hoặc ID thực nếu sản phẩm có chọn màu
-				sizeId: null, // Hoặc ID thực nếu sản phẩm có chọn size
-			};
-
-			await addToCart(productData);
-			alert('Đã thêm sản phẩm vào giỏ hàng!');
-		} catch (err) {
-			console.error('Lỗi khi thêm vào giỏ hàng:', err);
-			alert(err.message || 'Thêm sản phẩm vào giỏ hàng thất bại!');
-		}
-	};
-
 	if (loading) return <div>Đang tải sản phẩm...</div>;
 	if (error) return <div>Lỗi: {error}</div>;
 

@@ -12,6 +12,7 @@ import {Provider} from 'react-redux';
 import store from '@/redux/store';
 
 import {GoogleOAuthProvider} from '@react-oauth/google';
+import {CartProvider} from '@/redux/context/CartContext';
 
 export default function App({Component, pageProps}) {
 	const [queryClient] = useState(() => new QueryClient());
@@ -22,9 +23,11 @@ export default function App({Component, pageProps}) {
 		<GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
 			<Provider store={store}>
 				<QueryClientProvider client={queryClient}>
-					<LoadingBar />
-					{getLayout(<Component {...pageProps} />)}
-					<ToastContainer />
+					<CartProvider>
+						<LoadingBar />
+						{getLayout(<Component {...pageProps} />)}
+						<ToastContainer />
+					</CartProvider>
 				</QueryClientProvider>
 			</Provider>
 		</GoogleOAuthProvider>

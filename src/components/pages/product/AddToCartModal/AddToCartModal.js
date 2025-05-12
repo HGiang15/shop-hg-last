@@ -3,8 +3,11 @@ import styles from './AddToCartModal.module.scss';
 import {addToCart} from '@/services/cartService';
 import {getAllSizes} from '@/services/sizeService';
 import {toast} from 'react-toastify';
+import useCart from '@/hooks/useCart';
 
 const AddToCartModal = ({product, show, onClose}) => {
+	const {dispatch} = useCart();
+
 	const [sizeId, setSizeId] = useState('');
 	const [quantity, setQuantity] = useState(1);
 	const [sizes, setSizes] = useState([]);
@@ -36,12 +39,27 @@ const AddToCartModal = ({product, show, onClose}) => {
 			return;
 		}
 		try {
-			await addToCart({
+			// Gọi API thêm vào giỏ hàng trên BE
+			const res = await addToCart({
 				productId: product._id,
 				colorId: product.colors?.[0],
 				sizeId,
 				quantity,
 			});
+
+			// ✅ Thêm vào state context
+			dispatch({
+				type: 'ADD_ITEM',
+				payload: {
+					product: {
+						...product,
+						colorId: product.colors?.[0],
+						sizeId,
+						quantity,
+					},
+				},
+			});
+
 			toast.success('Đã thêm sản phẩm vào giỏ hàng!');
 			onClose();
 		} catch (err) {

@@ -12,10 +12,13 @@ import Button from '@/components/common/Button/Button';
 import {toast, ToastContainer} from 'react-toastify';
 import {GoogleLogin} from '@react-oauth/google';
 import jwt_decode from 'jwt-decode';
-import {addToCart, mergeCart} from '@/services/cartService';
+import {addToCart, getAllCart, mergeCart} from '@/services/cartService';
+import useCart from '@/hooks/useCart';
 
 const MainLogin = () => {
 	const router = useRouter();
+	const {dispatch} = useCart();
+
 	const [formData, setFormData] = useState({
 		email: '',
 		password: '',
@@ -61,28 +64,29 @@ const MainLogin = () => {
 			const {id, name, email, avatar, role} = response.data;
 			const token = response.token;
 
+			// Lưu thông tin người dùng vào localStorage
 			localStorage.setItem('token', token);
 			localStorage.setItem('name', name);
 			localStorage.setItem('avatar', avatar);
 
-			// ✅ Gọi mergeCart để chuyển giỏ hàng từ cookie sang userId
-			await mergeCart(); // không cần truyền localItems nếu BE đã lấy từ DB theo cartToken
-
-			if (rememberMe) {
-				const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
-				localStorage.setItem('email', email);
-				localStorage.setItem('remember_expiration', expirationTime);
+			// Nếu có cart local -> merge vào cart BE
+			const localCart = JSON.parse(localStorage.getItem('cart')) || [];
+			if (localCart.length > 0) {
+				await mergeCart(localCart); // Gửi cart tạm lên server
 			}
 
-			toast.success('Đăng nhập thành công!', {position: 'top-right', autoClose: 3000});
+			localStorage.removeItem('cartToken'); // clear cartToken sau khi merge
+
+			const serverCart = await getAllCart();
+			// Cập nhật giỏ hàng từ server vào context
+			dispatch({type: 'SET_CART', payload: serverCart.items || []});
+
+			localStorage.removeItem('cart'); // không cần cart local nữa
 
 			if (role === 1) {
 				router.push(ROUTES.Home);
 			} else if (role === 0) {
 				router.push(ROUTES.AdminDashboard);
-			} else {
-				toast.error('Vai trò không hợp lệ.');
-				setErrors({general: 'Vai trò không hợp lệ'});
 			}
 		} catch (error) {
 			toast.error(error.message || 'Đăng nhập thất bại.');

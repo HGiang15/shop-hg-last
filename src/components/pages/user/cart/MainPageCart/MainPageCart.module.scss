@@ -291,3 +291,23 @@
 		width: 100px;
 	}
 }
+
+.noProducts {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	margin: 60px auto;
+
+	h4 {
+		margin-top: 20px;
+		font-size: 18px;
+		font-weight: 600;
+	}
+
+	p {
+		font-size: 14px;
+		margin-top: 8px;
+	}
+}

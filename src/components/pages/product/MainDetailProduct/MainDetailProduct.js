@@ -42,15 +42,18 @@ const ProductDetailPage = () => {
 					setProduct(data);
 					setMainImage(data?.images?.[0] ? `${adminBaseUrl}/uploads/${data.images[0]}` : images.placeholder);
 
-					// Cập nhật màu sắc và kích thước
+					if (data.category && data.category.length > 0) {
+						setCategoryName(data.category[0].name);
+					}
+
 					if (data.colors && data.colors.length > 0) {
 						setColors(data.colors);
-						setSelectedColor(data.colors[0]); // Chọn màu đầu tiên
+						setSelectedColor(data.colors[0]);
 					}
 
 					if (data.sizes && data.sizes.length > 0) {
 						setSizes(data.sizes);
-						setSelectedSize(data.sizes[0]); // Chọn size đầu tiên
+						setSelectedSize(data.sizes[0]);
 					}
 
 					setLoading(false);
@@ -64,9 +67,8 @@ const ProductDetailPage = () => {
 		}
 	}, [id]);
 
-	const handleSizeChange = (size) => {
-		setSelectedSize(size);
-		console.log('Chọn size: ', size); // Debug để kiểm tra
+	const handleSizeChange = (sizeId) => {
+		setSelectedSize(sizeId);
 	};
 
 	const handleQuantityChange = (type) => {
@@ -129,7 +131,7 @@ const ProductDetailPage = () => {
 
 	const breadcrumbItems = {
 		titles: ['Trang chủ', 'Danh sách sản phẩm', categoryName, product.name],
-		listHref: [ROUTES.Home, ROUTES.Product, `${ROUTES.Category}?name=${categoryName}`, `/product/${product._id}`],
+		listHref: [ROUTES.Home, ROUTES.Product, `/product/${product._id}`, `/product/${product._id}`],
 	};
 
 	return (
@@ -192,8 +194,12 @@ const ProductDetailPage = () => {
 
 					<div className={styles.colorSelect}>
 						<span>Màu: </span>
-						<span className={styles.colorDot} style={{backgroundColor: product.colors?.[0]}}></span>
-						{product.colors?.[0]}
+						{product.colors?.[0] && (
+							<>
+								<span className={styles.colorDot} style={{backgroundColor: product.colors[0].colorCode || '#000'}}></span>
+								<span>{product.colors[0].name}</span>
+							</>
+						)}
 					</div>
 
 					<p className={styles.productPrice}>
@@ -201,17 +207,17 @@ const ProductDetailPage = () => {
 						{product.price?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})}
 					</p>
 
-					{product.quantityBySize && Object.keys(product.quantityBySize).length > 0 && (
+					{product.quantityBySize && product.quantityBySize.length > 0 && (
 						<div className={styles.sizeSelect}>
 							<p>Lựa chọn kích cỡ:</p>
-							{Object.keys(product.quantityBySize).map((size) => (
+							{product.quantityBySize.map((sizeObj) => (
 								<button
-									key={size}
-									className={`${styles.sizeButton} ${selectedSize === size ? styles.active : ''}`}
-									onClick={() => handleSizeChange(size)}
-									disabled={product.quantityBySize[size] <= 0}
+									key={sizeObj._id}
+									className={`${styles.sizeButton} ${selectedSize === sizeObj.sizeId ? styles.active : ''}`}
+									onClick={() => handleSizeChange(sizeObj.sizeId)}
+									disabled={sizeObj.quantity <= 0}
 								>
-									{size} ({product.quantityBySize[size]})
+									{sizeObj.name} ({sizeObj.quantity})
 								</button>
 							))}
 						</div>
