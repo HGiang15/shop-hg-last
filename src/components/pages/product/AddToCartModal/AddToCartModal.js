@@ -4,6 +4,7 @@ import {addToCart} from '@/services/cartService';
 import {getAllSizes} from '@/services/sizeService';
 import {toast} from 'react-toastify';
 import useCart from '@/hooks/useCart';
+import images from '@/constants/static/images';
 
 const AddToCartModal = ({product, show, onClose}) => {
 	const {dispatch} = useCart();
@@ -33,35 +34,58 @@ const AddToCartModal = ({product, show, onClose}) => {
 
 	if (!show) return null;
 
+	const adminBaseUrl = 'http://localhost:3003'; // nên đưa lên đầu file nếu chưa có
+	// const selectedImage = product.images?.[0]
+	// 	? product.images[0].startsWith('http')
+	// 		? product.images[0]
+	// 		: `${adminBaseUrl}/uploads/${product.images[0]}`
+	// 	: images.defaultBg;
+	const selectedImage = product.images?.[0] || '';
+
 	const handleConfirm = async () => {
 		if (!sizeId || quantity < 1) {
 			toast.warn('Vui lòng chọn đầy đủ thông tin!');
 			return;
 		}
 		try {
-			// Gọi API thêm vào giỏ hàng trên BE
 			const res = await addToCart({
 				productId: product._id,
 				colorId: product.colors?.[0],
 				sizeId,
 				quantity,
+				image: selectedImage,
 			});
 
-			// ✅ Thêm vào state context
+			// Tìm đối tượng size object để lưu vào store
+			const sizeObj = sizes.find((s) => s._id === sizeId);
+
+			const newItem = {
+				productId: product,
+				sizeId: sizeObj,
+				colorId: product.colors?.[0],
+				quantity,
+				image: selectedImage,
+			};
+
 			dispatch({
 				type: 'ADD_ITEM',
-				payload: {
-					product: {
-						...product,
-						colorId: product.colors?.[0],
-						sizeId,
-						quantity,
-					},
-				},
+				payload: newItem,
 			});
 
+			// Cập nhật localStorage
+			const prevCart = JSON.parse(localStorage.getItem('cart')) || [];
+			const updatedCart = [...prevCart, newItem];
+			localStorage.setItem('cart', JSON.stringify(updatedCart));
+
+			if (res.cartToken) {
+				localStorage.setItem('cartToken', res.cartToken);
+			}
+
 			toast.success('Đã thêm sản phẩm vào giỏ hàng!');
-			onClose();
+
+			setTimeout(() => {
+				onClose();
+			}, 400);
 		} catch (err) {
 			toast.error(err.message || 'Lỗi thêm sản phẩm');
 		}

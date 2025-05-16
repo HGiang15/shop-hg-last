@@ -17,20 +17,29 @@ const ShoppingCart = ({onClose, onUpdateCartCount}) => {
 	useEffect(() => {
 		const fetchCart = async () => {
 			try {
-				const data = await getAllCart(); // Gọi API lấy giỏ hàng người dùng từ BE
+				const cartToken = localStorage.getItem('cartToken');
+
+				if (!cartToken) {
+					const localCart = localStorage.getItem('cart');
+					if (localCart) {
+						const items = JSON.parse(localCart);
+						setCartItems(items);
+						if (onUpdateCartCount) onUpdateCartCount(items.reduce((a, b) => a + b.quantity, 0));
+						return;
+					}
+
+					// Không có gì thì reset
+					setCartItems([]);
+					if (onUpdateCartCount) onUpdateCartCount(0);
+					return;
+				}
+
+				// ✅ Có cartToken: gọi API
+				const data = await getAllCart();
 				const items = data.items || [];
 
 				setCartItems(items);
-				localStorage.setItem('cart', JSON.stringify(items)); // Lưu giỏ hàng vào localStorage
-
-				// Nếu có cartToken thì lưu lại
-				if (data.cartToken) {
-					localStorage.setItem('cartToken', data.cartToken);
-				} else {
-					localStorage.removeItem('cartToken'); // Xoá nếu không cần nữa
-				}
-
-				if (onUpdateCartCount) onUpdateCartCount(items.length);
+				if (onUpdateCartCount) onUpdateCartCount(items.reduce((a, b) => a + b.quantity, 0));
 			} catch (error) {
 				console.error('Lỗi khi load giỏ hàng:', error.message);
 			} finally {
@@ -39,13 +48,13 @@ const ShoppingCart = ({onClose, onUpdateCartCount}) => {
 		};
 
 		const handleStorageChange = (event) => {
-			if (event.key === 'cart') {
-				fetchCart(); // Chỉ reload lại nếu cart thay đổi
+			if (event.key === 'cartToken' || event.key === 'triggerCartReload') {
+				fetchCart();
 			}
 		};
 
 		setIsActive(true);
-		fetchCart(); // Load lần đầu khi component mount
+		fetchCart(); // lần đầu load
 
 		window.addEventListener('storage', handleStorageChange);
 		return () => window.removeEventListener('storage', handleStorageChange);
@@ -103,8 +112,12 @@ const ShoppingCart = ({onClose, onUpdateCartCount}) => {
 							<div key={index} className={styles.cartItem}>
 								<Image
 									src={
-										item.productId?.images?.length > 0
+										item.productId?.images?.[0]
 											? `${adminBaseUrl}/uploads/${item.productId.images[0]}`
+											: item.image
+											? item.image.startsWith('http')
+												? item.image
+												: `${adminBaseUrl}/uploads/${item.image}`
 											: '/default-product.jpg'
 									}
 									alt={item.productId?.name || 'Sản phẩm'}

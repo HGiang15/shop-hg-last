@@ -11,9 +11,11 @@ import images from '@/constants/static/images';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
 import ShoppingCart from '@/components/pages/user/cart/ShoppingCart/ShoppingCart';
+import useCart from '@/hooks/useCart';
 
 function Header() {
 	const router = useRouter();
+	const {dispatch} = useCart();
 
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [user, setUser] = useState(null);
@@ -25,7 +27,7 @@ function Header() {
 	useEffect(() => {
 		const token = localStorage.getItem('token');
 		const name = localStorage.getItem('name');
-		const cart = localStorage.getItem('cart'); // Get cart from local storage
+		const cart = localStorage.getItem('cart');
 		const avatar = localStorage.getItem('avatar') || '';
 
 		if (token) {
@@ -42,7 +44,8 @@ function Header() {
 		if (cart) {
 			try {
 				const cartItems = JSON.parse(cart);
-				setCartItemCount(cartItems.length);
+				const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+				setCartItemCount(totalQuantity);
 			} catch (error) {
 				console.error('Lỗi khi phân tích giỏ hàng từ localStorage', error);
 				setCartItemCount(0);
@@ -65,7 +68,18 @@ function Header() {
 	const handleLogout = () => {
 		setLoading(true);
 		localStorage.removeItem('token');
+		localStorage.removeItem('cart');
+		localStorage.removeItem('name');
+		localStorage.removeItem('avatar');
+		localStorage.removeItem('cartToken');
+
+		// ✅ Xoá giỏ hàng trong context
+		dispatch({type: 'CLEAR_CART'});
+
 		setUser(null);
+
+		// Đồng bộ các tab (nếu dùng nhiều tab)
+		window.dispatchEvent(new Event('storage'));
 
 		setTimeout(() => {
 			setLoading(false);

@@ -24,7 +24,9 @@ function cartReducer(state, action) {
 				(item) =>
 					item.productId._id === productId._id &&
 					item.sizeId._id === sizeId._id &&
-					item.colors.some((color) => color._id === colorId) // Kiểm tra trong mảng màu
+					item.colorId &&
+					item.colorId._id === colorId._id
+				// Kiểm tra trong mảng màu
 			);
 
 			let updatedItems = [...state.cartItems];

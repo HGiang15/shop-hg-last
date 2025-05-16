@@ -25,9 +25,14 @@ export const removeItemFromCart = async (itemId) => {
 
 export const addToCart = async (productData) => {
 	try {
+		const token = localStorage.getItem('token');
+		const headers = token ? {Authorization: `Bearer ${token}`} : {};
+
 		const response = await axios.post(`${API_URL}cart/addToCart`, productData, {
+			headers,
 			withCredentials: true,
 		});
+
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Thêm vào giỏ hàng thất bại'};

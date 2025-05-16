@@ -83,7 +83,9 @@ const ProductDetailPage = () => {
 			return;
 		}
 
-		const selectedImage = product.images?.[0] || '';
+		// const selectedImage = product.images?.[0] || '';
+		const selectedImage = product.images?.[0] ? `${adminBaseUrl}/uploads/${product.images[0]}` : images.placeholder;
+
 		const defaultColor = product.colors?.[0] || 'Không xác định';
 
 		const payload = {
