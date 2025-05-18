@@ -135,8 +135,8 @@ const FilterProduct = ({selectedCategories, setSelectedCategories, selectedColor
 						<label className={styles.filterLabel} key={color._id}>
 							<input
 								type='checkbox'
-								checked={selectedColors.includes(color.name)}
-								onChange={() => handleColorChange(color.name)}
+								checked={selectedColors.includes(color._id)}
+								onChange={() => handleColorChange(color._id)}
 							/>
 							<span className={styles.customCheckbox}></span>
 							{color.name}
