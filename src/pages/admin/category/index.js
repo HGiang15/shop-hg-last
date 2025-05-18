@@ -2,6 +2,7 @@ import Head from 'next/head';
 import {Fragment} from 'react';
 import LayoutAdmin from '@/components/layouts/LayoutAdmin/LayoutAdmin';
 import MainPageCategory from '@/components/pages/admin/category/MainPageCategory/MainPageCategory';
+import {withUserRole} from '@/utils/withAuth';
 
 export default function Page() {
 	return (
@@ -22,3 +23,5 @@ export default function Page() {
 Page.getLayout = function (page) {
 	return <LayoutAdmin title='Quản lý danh mục'>{page}</LayoutAdmin>;
 };
+
+export const getServerSideProps = withUserRole(['admin']);

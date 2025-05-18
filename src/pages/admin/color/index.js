@@ -3,7 +3,9 @@ import {Fragment} from 'react';
 import LayoutAdmin from '@/components/layouts/LayoutAdmin/LayoutAdmin';
 import MainPageColor from '@/components/pages/admin/color/MainPageColor/MainPageColor';
 
-export default function Page() {
+import {withUserRole} from '@/utils/withAuth'; // import hàm bảo vệ
+
+export default function Page({user}) {
 	return (
 		<Fragment>
 			<Head>
@@ -22,3 +24,5 @@ export default function Page() {
 Page.getLayout = function (page) {
 	return <LayoutAdmin title='Quản lý màu sắc'>{page}</LayoutAdmin>;
 };
+
+export const getServerSideProps = withUserRole(['admin']);

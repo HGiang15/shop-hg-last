@@ -4,6 +4,7 @@ import MainPageProfile from '@/components/pages/user/profile/MainPageProfile/Mai
 import Head from 'next/head';
 import {Fragment} from 'react';
 import {ROUTES} from '@/constants/config';
+import {withUserRole} from '@/utils/withAuth';
 
 export default function Page() {
 	return (
@@ -29,3 +30,5 @@ export default function Page() {
 Page.getLayout = function getLayout(page) {
 	return <LayoutUser>{page}</LayoutUser>;
 };
+
+export const getServerSideProps = withUserRole(['user']);
