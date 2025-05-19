@@ -83,22 +83,16 @@ const ProductDetailPage = () => {
 			return;
 		}
 
-		// const selectedImage = product.images?.[0] || '';
-		const selectedImage = product.images?.[0] ? `${adminBaseUrl}/uploads/${product.images[0]}` : images.placeholder;
-
-		const defaultColor = product.colors?.[0] || 'Không xác định';
-
 		const payload = {
 			productId: product._id,
-			color: defaultColor, // Lấy màu đầu tiên
-			image: selectedImage,
+			color: product.colors?.[0] || 'Không xác định',
+			image: product.images?.[0] ? `${adminBaseUrl}/uploads/${product.images[0]}` : images.noImg,
 			sizeId: selectedSize,
 			quantity: quantity,
 		};
 
 		try {
-			console.log(payload);
-
+			// console.log(payload);
 			await addToCart(payload);
 
 			const updatedCart = await getAllCart();

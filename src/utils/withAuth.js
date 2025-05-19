@@ -4,13 +4,10 @@ import {ROUTES} from '@/constants/config';
 
 const SECRET_KEY = process.env.JWT_SECRET;
 
-if (!SECRET_KEY) {
-	throw new Error('❌ JWT_SECRET không được định nghĩa trong biến môi trường');
-}
-
 export function withUserRole(allowedRoles = [], getServerSidePropsFn) {
 	return async (ctx) => {
 		const {token} = parseCookies(ctx);
+		console.log('🪝 TOKEN:', token);
 
 		if (!token) {
 			return {
@@ -24,6 +21,7 @@ export function withUserRole(allowedRoles = [], getServerSidePropsFn) {
 		let user;
 		try {
 			user = jwt.verify(token, SECRET_KEY);
+			console.log('👤 USER DECODED:', user);
 		} catch (err) {
 			return {
 				redirect: {
@@ -63,9 +61,9 @@ export function withUserRole(allowedRoles = [], getServerSidePropsFn) {
 
 // Cách dùng
 // Trang admin, chỉ admin mới được vào:
-// export const getServerSideProps = withUserRole(['admin']);
+// export const getServerSideProps = withUserRole([0]);
 // Trang user, chỉ user (hoặc admin) mới được vào:
-// export const getServerSideProps = withUserRole(['user', 'admin']);
+// export const getServerSideProps = withUserRole([1, 0]);
 // Trang chỉ cần đăng nhập, không phân biệt role:
 // export const getServerSideProps = withUserRole([]);
 // export const getServerSideProps = withUserRole();

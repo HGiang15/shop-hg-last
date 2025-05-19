@@ -31,4 +31,4 @@ Page.getLayout = function getLayout(page) {
 	return <LayoutUser>{page}</LayoutUser>;
 };
 
-export const getServerSideProps = withUserRole(['user']);
+export const getServerSideProps = withUserRole([1]);

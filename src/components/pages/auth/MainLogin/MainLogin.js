@@ -17,7 +17,7 @@ import useCart from '@/hooks/useCart';
 
 const MainLogin = () => {
 	const router = useRouter();
-	const {dispatch} = useCart();
+	const {dispatch, setCartFromServer} = useCart();
 
 	const [formData, setFormData] = useState({
 		email: '',
@@ -31,26 +31,26 @@ const MainLogin = () => {
 
 	const handleChange = (e) => {
 		const {name, value} = e.target;
-		setFormData({
-			...formData,
+		setFormData((prev) => ({
+			...prev,
 			[name]: value,
-		});
+		}));
 
 		if (errors[name]) {
-			setErrors({
-				...errors,
+			setErrors((prev) => ({
+				...prev,
 				[name]: '',
-			});
+			}));
 		}
 	};
 
 	const handleBlur = (e) => {
 		const {name, value} = e.target;
 		if (!value.trim()) {
-			setErrors({
-				...errors,
+			setErrors((prev) => ({
+				...prev,
 				[name]: 'Vui lòng nhập trường này',
-			});
+			}));
 		}
 	};
 
@@ -64,30 +64,34 @@ const MainLogin = () => {
 			const {id, name, email, avatar, role} = response.data;
 			const token = response.token;
 
-			// Lưu thông tin người dùng vào localStorage
 			localStorage.setItem('token', token);
 			localStorage.setItem('name', name);
 			localStorage.setItem('avatar', avatar);
 
-			// Nếu có cart local -> merge vào cart BE
-			const localCart = JSON.parse(localStorage.getItem('cart')) || [];
-			if (localCart.length > 0) {
-				await mergeCart(localCart); // Gửi cart tạm lên server
+			// Lưu remember me nếu được chọn
+			if (rememberMe) {
+				const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
+				localStorage.setItem('email', formData.email);
+				localStorage.setItem('remember_expiration', expirationTime);
+			} else {
+				localStorage.removeItem('email');
+				localStorage.removeItem('remember_expiration');
 			}
 
-			localStorage.removeItem('cartToken'); // clear cartToken sau khi merge
+			// Merge cart nếu có
+			const localCart = JSON.parse(localStorage.getItem('cart')) || [];
+			const validCart = localCart.filter((item) => item.productId?._id && item.sizeId?._id && item.quantity > 0);
+			if (validCart.length > 0) {
+				await mergeCart(validCart);
+			}
+
+			localStorage.removeItem('cart');
+			localStorage.removeItem('cartToken');
 
 			const serverCart = await getAllCart();
-			// Cập nhật giỏ hàng từ server vào context
-			dispatch({type: 'SET_CART', payload: serverCart.items || []});
+			setCartFromServer(serverCart.items || []);
 
-			localStorage.removeItem('cart'); // không cần cart local nữa
-
-			if (role === 1) {
-				router.push(ROUTES.Home);
-			} else if (role === 0) {
-				router.push(ROUTES.AdminDashboard);
-			}
+			router.push(role === 0 ? ROUTES.AdminDashboard : ROUTES.Home);
 		} catch (error) {
 			toast.error(error.message || 'Đăng nhập thất bại.');
 		} finally {
@@ -101,22 +105,18 @@ const MainLogin = () => {
 
 	useEffect(() => {
 		const savedEmail = localStorage.getItem('email');
-		// const savedPassword = localStorage.getItem('password');
 		const expirationTime = localStorage.getItem('remember_expiration');
 
 		if (savedEmail && expirationTime) {
 			const currentTime = new Date().getTime();
-
 			if (currentTime < expirationTime) {
-				setFormData({
+				setFormData((prev) => ({
+					...prev,
 					email: savedEmail,
-					// password: savedPassword,
-				});
+				}));
 				setRememberMe(true);
 			} else {
-				// Thời gian hết hạn, xoá dữ liệu cũ
 				localStorage.removeItem('email');
-				localStorage.removeItem('password');
 				localStorage.removeItem('remember_expiration');
 			}
 		}
@@ -138,7 +138,6 @@ const MainLogin = () => {
 					</p>
 
 					<form className={styles.formGroup} onSubmit={handleLogin}>
-						{/* Email */}
 						<div className={styles.inputWrapper}>
 							<input
 								type='email'
@@ -152,7 +151,6 @@ const MainLogin = () => {
 						</div>
 						{errors.email && <span className={styles.errorMsg}>{errors.email}</span>}
 
-						{/* Password */}
 						<div className={styles.inputWrapper}>
 							<input
 								type={showPassword ? 'text' : 'password'}
@@ -188,6 +186,20 @@ const MainLogin = () => {
 									localStorage.setItem('name', data.name);
 									localStorage.setItem('avatar', data.avatar);
 
+									// Merge cart Google
+									const localCart = JSON.parse(localStorage.getItem('cart')) || [];
+									const validCart = localCart.filter(
+										(item) => item.productId?._id && item.sizeId?._id && item.quantity > 0
+									);
+									if (validCart.length > 0) {
+										await mergeCart(validCart);
+									}
+									localStorage.removeItem('cart');
+									localStorage.removeItem('cartToken');
+
+									const serverCart = await getAllCart();
+									setCartFromServer(serverCart.items || []);
+
 									toast.success('Đăng nhập bằng Google thành công!');
 									router.push(data.role === 0 ? ROUTES.AdminDashboard : ROUTES.Home);
 								} catch (err) {
@@ -199,7 +211,6 @@ const MainLogin = () => {
 							width='100%'
 						/>
 					</form>
-					{/* {errors.general && <p className={styles.errorMsg}>{errors.general}</p>} */}
 
 					<div className={styles.contentWrapper}>
 						<input

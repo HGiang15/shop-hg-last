@@ -25,4 +25,4 @@ Page.getLayout = function (page) {
 	return <LayoutAdmin title='Quản lý màu sắc'>{page}</LayoutAdmin>;
 };
 
-export const getServerSideProps = withUserRole(['admin']);
+export const getServerSideProps = withUserRole([0]);

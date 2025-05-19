@@ -11,22 +11,22 @@ function cartReducer(state, action) {
 	switch (action.type) {
 		case 'SET_CART':
 			return {...state, cartItems: action.payload, isLoading: false};
+
 		case 'ADD_ITEM': {
-			// Kiểm tra sự tồn tại của action.payload.productId
+			// Thêm sản phẩm vào giỏ hàng hoặc tăng số lượng nếu đã tồn tại
 			const {productId, sizeId, colorId, quantity} = action.payload;
 
 			if (!productId || !productId._id || !sizeId || !colorId) {
 				console.error('Invalid product data:', action.payload);
-				return state; // Trả về state hiện tại nếu dữ liệu không hợp lệ
+				return state;
 			}
 
 			const existingIndex = state.cartItems.findIndex(
 				(item) =>
 					item.productId._id === productId._id &&
 					item.sizeId._id === sizeId._id &&
-					item.colorId &&
-					item.colorId._id === colorId._id
-				// Kiểm tra trong mảng màu
+					((item.colorId?._id && colorId?._id && item.colorId._id === colorId._id) ||
+						(typeof item.colorId === 'string' && typeof colorId === 'string' && item.colorId === colorId))
 			);
 
 			let updatedItems = [...state.cartItems];

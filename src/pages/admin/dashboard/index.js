@@ -49,4 +49,4 @@ Page.getLayout = function (page) {
 	return <LayoutAdmin title='Báo cáo thống kê'>{page}</LayoutAdmin>;
 };
 
-export const getServerSideProps = withUserRole(['admin']);
+export const getServerSideProps = withUserRole(['0']);

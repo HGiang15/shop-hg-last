@@ -1,13 +1,13 @@
 import {useEffect, useState} from 'react';
 import styles from './AddToCartModal.module.scss';
-import {addToCart} from '@/services/cartService';
+import {addToCart, getAllCart} from '@/services/cartService';
 import {getAllSizes} from '@/services/sizeService';
 import {toast} from 'react-toastify';
 import useCart from '@/hooks/useCart';
 import images from '@/constants/static/images';
 
 const AddToCartModal = ({product, show, onClose}) => {
-	const {dispatch} = useCart();
+	const {dispatch, setCartFromServer} = useCart();
 
 	const [sizeId, setSizeId] = useState('');
 	const [quantity, setQuantity] = useState(1);
@@ -34,59 +34,45 @@ const AddToCartModal = ({product, show, onClose}) => {
 
 	if (!show) return null;
 
-	const adminBaseUrl = 'http://localhost:3003'; // nên đưa lên đầu file nếu chưa có
-	// const selectedImage = product.images?.[0]
-	// 	? product.images[0].startsWith('http')
-	// 		? product.images[0]
-	// 		: `${adminBaseUrl}/uploads/${product.images[0]}`
-	// 	: images.defaultBg;
-	const selectedImage = product.images?.[0] || '';
+	const adminBaseUrl = 'http://localhost:3003';
+
+	const selectedImage = product.images?.[0]
+		? product.images[0].startsWith('http')
+			? product.images[0]
+			: `${adminBaseUrl}/uploads/${product.images[0]}`
+		: images.noImg;
 
 	const handleConfirm = async () => {
 		if (!sizeId || quantity < 1) {
 			toast.warn('Vui lòng chọn đầy đủ thông tin!');
 			return;
 		}
+
 		try {
+			// ✅ Gửi lên server
 			const res = await addToCart({
 				productId: product._id,
-				colorId: product.colors?.[0],
+				colorId: product.colors?.[0] || 'Không xác định',
 				sizeId,
 				quantity,
 				image: selectedImage,
 			});
 
-			// Tìm đối tượng size object để lưu vào store
-			const sizeObj = sizes.find((s) => s._id === sizeId);
-
-			const newItem = {
-				productId: product,
-				sizeId: sizeObj,
-				colorId: product.colors?.[0],
-				quantity,
-				image: selectedImage,
-			};
-
-			dispatch({
-				type: 'ADD_ITEM',
-				payload: newItem,
-			});
-
-			// Cập nhật localStorage
-			const prevCart = JSON.parse(localStorage.getItem('cart')) || [];
-			const updatedCart = [...prevCart, newItem];
-			localStorage.setItem('cart', JSON.stringify(updatedCart));
-
+			// ✅ Nếu có cartToken mới, lưu lại
 			if (res.cartToken) {
 				localStorage.setItem('cartToken', res.cartToken);
 			}
 
-			toast.success('Đã thêm sản phẩm vào giỏ hàng!');
+			// ✅ Đồng bộ lại giỏ hàng từ BE để tránh cộng dồn
+			const serverCart = await getAllCart();
+			setCartFromServer(serverCart.items || []);
 
+			toast.success('Đã thêm sản phẩm vào giỏ hàng!');
 			setTimeout(() => {
 				onClose();
 			}, 400);
 		} catch (err) {
+			console.error(err);
 			toast.error(err.message || 'Lỗi thêm sản phẩm');
 		}
 	};
