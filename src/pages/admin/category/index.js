@@ -24,4 +24,4 @@ Page.getLayout = function (page) {
 	return <LayoutAdmin title='Quản lý danh mục'>{page}</LayoutAdmin>;
 };
 
-export const getServerSideProps = withUserRole([0]);
+// export const getServerSideProps = withUserRole([0]);

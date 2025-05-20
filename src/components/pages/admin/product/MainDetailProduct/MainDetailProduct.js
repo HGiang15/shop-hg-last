@@ -81,6 +81,9 @@ const MainDetailProduct = () => {
 								Giá sản phẩm: <span>{Number(product.price).toLocaleString()} VNĐ</span>
 							</p>
 							<p className={styles.name}>
+								Tổng số sản phẩm đã bán: <span>{product.totalSold ?? 0}</span>
+							</p>
+							<p className={styles.name}>
 								Mô tả chính: <span>{product.description}</span>
 							</p>
 						</div>
@@ -95,6 +98,9 @@ const MainDetailProduct = () => {
 										<span className={styles.colorDot} style={{backgroundColor: color.name}}></span> {color.name}{' '}
 									</span>
 								))}
+							</p>
+							<p className={styles.name}>
+								Trạng thái sản phẩm: <span>{product.status === 'active' ? 'Hoạt động' : 'Ngừng hoạt động'}</span>
 							</p>
 							<span className={styles.name}>Mô tả chi tiết:</span>
 							<div className={styles.wrapper}>

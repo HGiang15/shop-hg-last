@@ -39,6 +39,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		description: '',
 		detailDescription: '',
 		isFeatured: false,
+		status: 'active',
 	});
 	const MAX_IMAGES = 6;
 
@@ -113,6 +114,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		formData.append('description', form.description);
 		formData.append('detailDescription', detailDescription);
 		formData.append('isFeatured', form.isFeatured);
+		formData.append('status', form.status);
 
 		selectedImages.forEach((file) => {
 			formData.append('images', file);
@@ -411,6 +413,26 @@ const FormCreateProduct = ({setActiveMenu}) => {
 							}))
 						}
 					/>
+				</div>
+
+				{/* Status */}
+				<div className={styles.formGroup}>
+					<label htmlFor='status' className={styles.label}>
+						Trạng thái sản phẩm <span style={{color: 'red'}}>*</span>
+					</label>
+					<select id='status' name='status' className={styles.select} onChange={handleInputChange} value={form.status}>
+						<option value=''>Chọn trạng thái</option>
+						<option value='active'>Hoạt động</option>
+						<option value='inactive'>Không hoạt động</option>
+						<option value='discontinued'>Ngừng bán</option>
+					</select>
+					{errors.status && <p className={styles.errorText}>{errors.status}</p>}
+				</div>
+
+				{/* Total Sold */}
+				<div className={styles.formGroup}>
+					<label className={styles.label}>Số lượng đã bán</label>
+					<input type='number' className={styles.input} value={0} disabled />
 				</div>
 
 				{/* Images */}
