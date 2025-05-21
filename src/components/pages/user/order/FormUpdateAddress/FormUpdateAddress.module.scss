@@ -13,8 +13,8 @@
 	padding: 20px;
 	border-radius: 8px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	width: 500px;
-	max-width: 90%;
+	width: 1000px;
+	max-width: 100%;
 }
 
 .header {
@@ -66,9 +66,41 @@
 	.cancelButton {
 		background: #9ba1a6;
 	}
+}
 
-	.updateButton {
-		background: #007bff;
-		color: #fff;
+.addressTop {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.info {
+	flex-grow: 1;
+}
+
+.actionsInline {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+
+	.setDefault,
+	.delete {
+		color: #007bff;
+		cursor: pointer;
+		font-size: 16px;
 	}
+
+	.delete {
+		color: #dc3545;
+	}
+}
+
+.defaultTag {
+	color: #fff;
+	background-color: #0070f3;
+	border-radius: 4px;
+	padding: 2px 6px;
+	font-size: 12px;
+	display: inline-block;
+	margin-top: 4px;
 }

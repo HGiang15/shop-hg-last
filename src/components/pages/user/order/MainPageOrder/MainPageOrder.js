@@ -1,65 +1,121 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styles from './MainPageOrder.module.scss';
 import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 import Button from '@/components/common/Button/Button';
-import Image from 'next/image';
 import FormUpdateAddress from '../FormUpdateAddress/FormUpdateAddress';
+import {createOrder} from '@/services/orderService';
+import {ROUTES} from '@/constants/config';
+import {useRouter} from 'next/router';
+import {getUserAddresses} from '@/services/userAddressService';
 
 const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
+	const router = useRouter();
+	const [orderList, setOrderList] = useState([]);
+	const [totalAmount, setTotalAmount] = useState(0);
 	const [policyChecked, setPolicyChecked] = useState(false);
 	const [showUpdateAddress, setShowUpdateAddress] = useState(false);
+	const [addressId, setAddressId] = useState(null); // giả sử bạn có id địa chỉ
+
+	const [userAddresses, setUserAddresses] = useState([]);
+	const [selectedAddress, setSelectedAddress] = useState(null);
+
+	const fetchAddresses = async () => {
+		try {
+			const res = await getUserAddresses();
+			setUserAddresses(res);
+
+			// Chọn lại địa chỉ mặc định mới nhất
+			if (res.length > 0) {
+				const defaultAddress = res.find((a) => a.isDefault) || res[0];
+				setSelectedAddress(defaultAddress);
+				setAddressId(defaultAddress._id);
+			}
+		} catch (err) {
+			console.error('Lỗi khi lấy địa chỉ:', err);
+		}
+	};
 
 	useEffect(() => {
-		if (!Array.isArray(breadcrumbItems.titles) || !Array.isArray(breadcrumbItems.listHref)) {
-			console.error('Invalid breadcrumb data');
+		fetchAddresses();
+	}, []);
+
+	// 1) Đọc buyNow từ localStorage
+	useEffect(() => {
+		const raw = typeof window !== 'undefined' && localStorage.getItem('buyNow');
+		if (raw) {
+			try {
+				const items = JSON.parse(raw);
+				setOrderList(items);
+			} catch {}
 		}
-	}, [breadcrumbItems]);
+	}, []);
 
-	const orderList = [
-		{id: 1, name: 'MU Home 2024-2025 - (Đỏ) - (XL)', quantity: 1},
-		{id: 2, name: 'MU Khách 2024-2025 - (Đen) - (XXL)', quantity: 2},
-		{id: 3, name: 'Chelsea đặc biệt 2024-2025 - (Đen) - (XL)', quantity: 1},
-	];
+	// 2) Tính tổng
+	useEffect(() => {
+		const sum = orderList.reduce((acc, item) => acc + item.price * item.quantity, 0);
+		setTotalAmount(sum);
+	}, [orderList]);
 
-	const totalAmount = '1.200.000 VND';
-
-	const handlePolicyChange = (e) => {
-		setPolicyChecked(e.target.checked);
-	};
-
-	const handleShowUpdateAddress = () => {
-		setShowUpdateAddress(true);
-	};
-
-	const handleCloseUpdateAddress = () => {
-		setShowUpdateAddress(false);
+	const handlePlaceOrder = async () => {
+		if (!policyChecked) return;
+		try {
+			await createOrder({
+				items: orderList.map((item) => ({
+					productId: item.productId,
+					sizeId: item.sizeId,
+					quantity: item.quantity,
+					price: item.price,
+				})),
+				addressId,
+				paymentMethod: 'COD',
+			});
+			// dọn localStorage
+			localStorage.removeItem('buyNow');
+			router.push(ROUTES.HistoryOrder);
+		} catch (err) {
+			console.error(err);
+			alert('Tạo đơn thất bại');
+		}
 	};
 
 	return (
 		<div className={styles.container}>
 			<Breadcrumb titles={breadcrumbItems.titles} listHref={breadcrumbItems.listHref} />
+
 			<div className={styles.main}>
 				<div className={styles.orderSummary}>
 					<div className={styles.orderWrap}>
 						<h2 className={styles.orderTitle}>Đơn hàng của bạn</h2>
 						<h2 className={styles.orderTitle}>Số lượng</h2>
+						<h2 className={styles.orderTitle}>Thành tiền</h2>
 					</div>
+
 					<div className={styles.orderList}>
-						{orderList.map((item) => (
-							<div key={item.id} className={styles.orderItem}>
-								<span className={styles.itemName}>{item.name}</span>
+						{orderList.map((item, idx) => (
+							<div key={idx} className={styles.orderItem}>
+								<span className={styles.itemName}>
+									{item.name} - ({item.color}) - ({item.sizeName})
+								</span>
 								<span className={styles.itemQuantity}>{item.quantity}</span>
+								<span className={styles.itemTotal}>{(item.price * item.quantity).toLocaleString('vi-VN')} VNĐ</span>
 							</div>
 						))}
 					</div>
+
 					<div className={styles.total}>
-						Tổng thanh toán: <span className={styles.totalAmount}>{totalAmount}</span>
+						Tổng thanh toán: <span className={styles.totalAmount}>{totalAmount.toLocaleString('vi-VN')} VNĐ</span>
 					</div>
+
 					<div className={styles.policyCheckbox}>
-						<input type='checkbox' id='policy' checked={policyChecked} onChange={handlePolicyChange} />
-						<label htmlFor='policy'>Bạn đã hiểu điều chính sách của HG Shop</label>
+						<input type='checkbox' id='policy' checked={policyChecked} onChange={(e) => setPolicyChecked(e.target.checked)} />
+						<label htmlFor='policy'>Tôi đã đọc và đồng ý chính sách</label>
 					</div>
-					<Button className={styles.placeOrderButton} disabled={!policyChecked}>
+
+					<Button
+						className={styles.placeOrderButton}
+						disabled={!policyChecked || orderList.length === 0}
+						onClick={handlePlaceOrder}
+					>
 						Đặt hàng
 					</Button>
 				</div>
@@ -71,20 +127,42 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 							Đổi địa chỉ
 						</span>
 					</div>
+					{/* TODO: lấy thông tin địa chỉ theo addressId */}
 					<div className={styles.deliveryDetails}>
-						<div className={styles.wrapper}>
-							<p>Nguyễn Đăng Hoàng Giang</p>
-							<span>0398162589</span>
-						</div>
-						<p>202 B4 Đức Giang, phường Thượng Thanh, quận Long Biên, thành phố Hà Nội</p>
+						{selectedAddress ? (
+							<>
+								<div className={styles.wrapper}>
+									<p>{selectedAddress.name}</p>
+									<span>{selectedAddress.phone}</span>
+								</div>
+								<p>
+									{selectedAddress.address}, {selectedAddress.ward.name}, {selectedAddress.district.name},{' '}
+									{selectedAddress.province.name}
+								</p>
+							</>
+						) : (
+							<p>Không có địa chỉ nào</p>
+						)}
 					</div>
+
 					<div className={styles.note}>
 						<label>Ghi chú đơn hàng</label>
-						<input type='text' placeholder='Nhập ghi chú đơn hàng (nếu có)' className={styles.noteInput} />
+						<input type='text' placeholder='Nhập ghi chú (nếu có)' className={styles.noteInput} />
 					</div>
 				</div>
 			</div>
-			{showUpdateAddress && <FormUpdateAddress onClose={() => setShowUpdateAddress(false)} />}
+
+			{showUpdateAddress && (
+				<FormUpdateAddress
+					onClose={() => setShowUpdateAddress(false)}
+					currentAddressId={addressId}
+					onAddressSelected={(address) => {
+						setSelectedAddress(address);
+						setAddressId(address._id);
+					}}
+					onReloadAddresses={fetchAddresses}
+				/>
+			)}
 		</div>
 	);
 };

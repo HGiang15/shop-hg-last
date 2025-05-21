@@ -1,21 +1,70 @@
-import React, {useState} from 'react';
+import {useEffect, useState} from 'react';
 import styles from './FormUpdateAddress.module.scss';
 import Button from '@/components/common/Button/Button';
 import FormCreateAddress from '../../profile/FormCreateAddress/FormCreateAddress';
+import {getUserAddresses, deleteAddress, setDefaultAddress} from '@/services/userAddressService';
+import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
+import {toast} from 'react-toastify';
 
-const FormUpdateAddress = ({onClose}) => {
+const FormUpdateAddress = ({onClose, onAddressSelected, currentAddressId, onReloadAddresses}) => {
 	const [showCreateForm, setShowCreateForm] = useState(false);
+	const [addresses, setAddresses] = useState([]);
+	const [selectedAddressId, setSelectedAddressId] = useState(null);
 
-	const handleAddAddress = () => {
-		setShowCreateForm(true);
+	// Thêm state cho modal xác nhận xóa
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [addressToDelete, setAddressToDelete] = useState({id: null, name: ''});
+
+	useEffect(() => {
+		reloadAddresses();
+	}, []);
+
+	const reloadAddresses = async () => {
+		try {
+			const res = await getUserAddresses();
+			setAddresses(res || []);
+			if (res.length > 0) {
+				if (currentAddressId && res.some((addr) => addr._id === currentAddressId)) {
+					setSelectedAddressId(currentAddressId);
+				} else {
+					setSelectedAddressId(res[0]._id);
+				}
+			}
+		} catch (error) {
+			console.error('Không thể tải lại địa chỉ:', error);
+		}
 	};
 
-	const handleCloseCreateForm = () => {
-		setShowCreateForm(false);
+	const handleAddAddress = () => setShowCreateForm(true);
+	const handleCloseCreateForm = () => setShowCreateForm(false);
+	const handleClose = () => onClose();
+
+	const handleSetDefault = async (id) => {
+		try {
+			await setDefaultAddress(id);
+			await reloadAddresses();
+			onReloadAddresses?.();
+		} catch (err) {
+			alert('Không thể đặt địa chỉ mặc định');
+		}
 	};
 
-	const handleClose = () => {
-		onClose();
+	//  modal xác nhận xóa
+	const handleRequestDelete = (id, name) => {
+		setAddressToDelete({id, name});
+		setShowDeleteModal(true);
+	};
+
+	// Delete address
+	const handleConfirmDelete = async () => {
+		try {
+			await deleteAddress(addressToDelete.id);
+			await reloadAddresses();
+			setShowDeleteModal(false);
+			toast.success('Xóa địa chỉ thành công!');
+		} catch (err) {
+			alert(err.message || 'Xóa địa chỉ thất bại');
+		}
 	};
 
 	return (
@@ -26,27 +75,50 @@ const FormUpdateAddress = ({onClose}) => {
 					<span className={styles.addAddress} onClick={handleAddAddress}>
 						Thêm địa chỉ mới
 					</span>
-					{showCreateForm && <FormCreateAddress onClose={handleCloseCreateForm} />}
 				</div>
+
+				{showCreateForm && <FormCreateAddress onClose={handleCloseCreateForm} onAddressCreated={reloadAddresses} />}
+
 				<div className={styles.addresses}>
-					<div className={styles.addressItem}>
-						<p className={styles.name}>Nguyễn Đăng Hoàng Giang</p>
-						<span className={styles.phone}>0398162589</span>
-						<p className={styles.address}>202 B4 Đức Giang, phường Thượng Thanh, quận Long Biên, thành phố Hà Nội</p>
-					</div>
-					<div className={styles.addressItem}>
-						<p className={styles.name}>Nguyễn Đăng Hoàng Giang</p>
-						<span className={styles.phone}>0338625862</span>
-						<p className={styles.address}>130 Nguyễn Đức Cảnh, phường Tương Mai, quận Hoàng Mai, thành phố Hà Nội</p>
-					</div>
+					{addresses.map((addr) => (
+						<div key={addr._id} className={styles.addressItem}>
+							<div className={styles.addressTop}>
+								<div className={styles.info}>
+									<p className={styles.name}>{addr.name}</p>
+									<span className={styles.phone}>{addr.phone}</span>
+									<p className={styles.address}>
+										{addr.address}, {addr.ward?.name}, {addr.district?.name}, {addr.province?.name}
+									</p>
+									{addr.isDefault && <span className={styles.defaultTag}>Mặc định</span>}
+								</div>
+								<div className={styles.actionsInline}>
+									{!addr.isDefault && (
+										<span className={styles.setDefault} onClick={() => handleSetDefault(addr._id)}>
+											Đặt mặc định
+										</span>
+									)}
+									<span className={styles.delete} onClick={() => handleRequestDelete(addr._id, addr.name)}>
+										Xóa
+									</span>
+								</div>
+							</div>
+						</div>
+					))}
 				</div>
+
 				<div className={styles.actions}>
 					<Button className={styles.cancelButton} onClick={handleClose}>
-						Hủy bỏ
+						Đóng
 					</Button>
-					<Button className={styles.updateButton}>Thay đổi</Button>
 				</div>
 			</div>
+
+			<ConfirmDeleteModal
+				isOpen={showDeleteModal}
+				onClose={() => setShowDeleteModal(false)}
+				onConfirm={handleConfirmDelete}
+				addressName={addressToDelete.name}
+			/>
 		</div>
 	);
 };

@@ -181,7 +181,31 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 						Tổng thanh toán: <span>{totalAmount ? totalAmount.toLocaleString('vi-VN') : '0'} VNĐ</span>
 					</div>
 
-					<Button href={ROUTES.Order} className={styles.checkoutButton} disabled={cartItems.length === 0}>
+					<Button
+						className={styles.checkoutButton}
+						onClick={() => {
+							const selectedForCheckout = cartItems
+								.filter((item) => selectedItems.includes(item._id))
+								.map((item) => ({
+									productId: item.productId,
+									name: item.name,
+									color: item.color,
+									image: item.image,
+									sizeId: item.sizeId,
+									sizeName: item.sizeName,
+									quantity: item.quantity,
+									price: item.price,
+								}));
+
+							if (selectedForCheckout.length === 0) {
+								toast.warn('Vui lòng chọn sản phẩm để thanh toán');
+								return;
+							}
+
+							localStorage.setItem('buyNow', JSON.stringify(selectedForCheckout));
+							router.push(ROUTES.Order);
+						}}
+					>
 						Thanh toán
 					</Button>
 				</div>

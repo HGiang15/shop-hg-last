@@ -230,7 +230,29 @@ const ProductDetailPage = () => {
 						<Button className={styles.addToCart} onClick={handleAddToCart}>
 							Thêm giỏ hàng
 						</Button>
-						<Button href={ROUTES.Order} className={styles.buyNow}>
+						<Button
+							className={styles.buyNow}
+							onClick={() => {
+								if (!selectedSize) {
+									toast.warn('Vui lòng chọn kích thước!');
+									return;
+								}
+
+								const buyNowItem = {
+									productId: product._id,
+									name: product.name,
+									color: product.colors?.[0]?.name || 'Không xác định',
+									image: product.images?.[0] ? `${adminBaseUrl}/uploads/${product.images[0]}` : images.noImg,
+									sizeId: selectedSize,
+									sizeName: product.quantityBySize?.find((s) => s.sizeId === selectedSize)?.name || '',
+									quantity: quantity,
+									price: product.price,
+								};
+
+								localStorage.setItem('buyNow', JSON.stringify([buyNowItem]));
+								router.push(ROUTES.Order); // chuyển sang trang Order
+							}}
+						>
 							Thanh toán ngay
 						</Button>
 					</div>
