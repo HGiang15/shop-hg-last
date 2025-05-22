@@ -4,9 +4,10 @@ import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 import Button from '@/components/common/Button/Button';
 import FormUpdateAddress from '../FormUpdateAddress/FormUpdateAddress';
 import {createOrder} from '@/services/orderService';
-import {ROUTES} from '@/constants/config';
 import {useRouter} from 'next/router';
 import {getUserAddresses} from '@/services/userAddressService';
+import {toast} from 'react-toastify';
+import OrderSuccessModal from '../OrderSuccessModal/OrderSuccessModal';
 
 const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const router = useRouter();
@@ -14,7 +15,9 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const [totalAmount, setTotalAmount] = useState(0);
 	const [policyChecked, setPolicyChecked] = useState(false);
 	const [showUpdateAddress, setShowUpdateAddress] = useState(false);
-	const [addressId, setAddressId] = useState(null); // giả sử bạn có id địa chỉ
+	const [addressId, setAddressId] = useState(null);
+	const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+	const [showSuccessModal, setShowSuccessModal] = useState(false);
 
 	const [userAddresses, setUserAddresses] = useState([]);
 	const [selectedAddress, setSelectedAddress] = useState(null);
@@ -57,24 +60,32 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	}, [orderList]);
 
 	const handlePlaceOrder = async () => {
-		if (!policyChecked) return;
+		if (!policyChecked || isPlacingOrder) return;
+
+		setIsPlacingOrder(true);
+
 		try {
 			await createOrder({
+				shippingAddress: addressId,
 				items: orderList.map((item) => ({
 					productId: item.productId,
-					sizeId: item.sizeId,
+					name: item.name,
+					image: item.image,
+					color: item.color,
+					size: item.sizeName,
 					quantity: item.quantity,
 					price: item.price,
 				})),
-				addressId,
-				paymentMethod: 'COD',
 			});
-			// dọn localStorage
+
 			localStorage.removeItem('buyNow');
-			router.push(ROUTES.HistoryOrder);
+			toast.success('Đặt hàng thành công');
+			setShowSuccessModal(true);
 		} catch (err) {
 			console.error(err);
-			alert('Tạo đơn thất bại');
+			toast.error('Tạo đơn hàng thất bại');
+		} finally {
+			setIsPlacingOrder(false);
 		}
 	};
 
@@ -113,10 +124,10 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 
 					<Button
 						className={styles.placeOrderButton}
-						disabled={!policyChecked || orderList.length === 0}
+						disabled={!policyChecked || orderList.length === 0 || isPlacingOrder}
 						onClick={handlePlaceOrder}
 					>
-						Đặt hàng
+						{isPlacingOrder ? 'Đang xử lý...' : 'Đặt hàng'}
 					</Button>
 				</div>
 
@@ -163,6 +174,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 					onReloadAddresses={fetchAddresses}
 				/>
 			)}
+			{showSuccessModal && <OrderSuccessModal onClose={() => setShowSuccessModal(false)} />}
 		</div>
 	);
 };

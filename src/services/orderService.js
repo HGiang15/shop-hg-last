@@ -4,7 +4,12 @@ import axios from 'axios';
 // Tạo đơn hàng
 export const createOrder = async (orderData) => {
 	try {
-		const response = await axios.post(`${API_URL}orders/create`, orderData);
+		const token = localStorage.getItem('token');
+		const response = await axios.post(`${API_URL}order/create-order`, orderData, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Tạo đơn hàng thất bại'};
@@ -14,7 +19,12 @@ export const createOrder = async (orderData) => {
 // Lấy đơn hàng của người dùng đang đăng nhập
 export const getUserOrders = async () => {
 	try {
-		const response = await axios.get(`${API_URL}orders/my-orders`);
+		const token = localStorage.getItem('token');
+		const response = await axios.get(`${API_URL}order/my-order`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy đơn hàng thất bại'};
@@ -24,7 +34,7 @@ export const getUserOrders = async () => {
 // Lấy tất cả đơn hàng (admin)
 export const getAllOrders = async () => {
 	try {
-		const response = await axios.get(`${API_URL}orders/getAllOrders`);
+		const response = await axios.get(`${API_URL}order/getAllOrders`);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lỗi khi lấy danh sách đơn hàng'};
@@ -34,9 +44,22 @@ export const getAllOrders = async () => {
 // Cập nhật trạng thái đơn hàng
 export const updateOrderStatus = async (orderId, status) => {
 	try {
-		const response = await axios.put(`${API_URL}orders/update-status/${orderId}`, {status});
+		const response = await axios.put(`${API_URL}order/update-status/${orderId}`, {status});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Cập nhật trạng thái đơn hàng thất bại'};
+	}
+};
+
+// Xóa đơn hàng (admin)
+export const deleteOrder = async (orderId) => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axios.delete(`${API_URL}order/delete-order/${orderId}`, {
+			headers: {Authorization: `Bearer ${token}`},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Xoá đơn hàng thất bại'};
 	}
 };

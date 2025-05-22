@@ -1,0 +1,39 @@
+.overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+
+.modal {
+	background: #fff;
+	padding: 30px;
+	border-radius: 10px;
+	text-align: center;
+	width: 90%;
+	max-width: 400px;
+
+	.icons {
+		margin: 0 auto 16px;
+		filter: brightness(0) saturate(100%) invert(52%) sepia(75%) saturate(530%) hue-rotate(88deg) brightness(95%) contrast(92%);
+		/* Màu xanh lá cây: invert + hue-rotate để chuyển đen thành xanh */
+	}
+
+	h2 {
+		margin-bottom: 10px;
+		color: #00b4ff;
+	}
+
+	p {
+		margin-bottom: 20px;
+		color: #333;
+	}
+
+	.actions {
+		display: flex;
+		justify-content: center;
+	}
+}

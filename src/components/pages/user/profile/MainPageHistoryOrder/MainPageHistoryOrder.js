@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import styles from './MainPageHistoryOrder.module.scss';
 import Button from '@/components/common/Button/Button';
-import images from '@/constants/static/images';
 import Image from 'next/image';
+import {getUserOrders, updateOrderStatus, deleteOrder} from '@/services/orderService'; // Thêm hàm deleteOrder
 
 const TABS = [
 	{label: 'Chờ xác nhận', value: 'pending'},
@@ -11,114 +11,80 @@ const TABS = [
 	{label: 'Đơn hàng huỷ', value: 'cancelled'},
 ];
 
-const MOCK_ORDERS = [
-	{
-		id: 'order1',
-		status: 'pending',
-		items: [
-			{
-				name: 'Áo MU Home 2024-2025',
-				image: images.product1,
-				price: 600000,
-				quantity: 2,
-				size: '2XL',
-				color: 'Màu đỏ',
-				total: 1200000,
-			},
-			{
-				name: 'Áo MU Away 2024-2025',
-				image: images.product2,
-				price: 300000,
-				quantity: 1,
-				size: '2XL',
-				color: 'Màu xanh',
-				total: 300000,
-			},
-		],
-		total: 1500000,
-	},
-	{
-		id: 'order2',
-		status: 'shipping',
-		items: [
-			{
-				name: 'Áo MU Third 2024-2025',
-				image: images.product3,
-				price: 700000,
-				quantity: 1,
-				size: 'L',
-				color: 'Trắng',
-				total: 700000,
-			},
-		],
-		total: 700000,
-	},
-	{
-		id: 'order3',
-		status: 'completed',
-		items: [
-			{
-				name: 'Áo MU Goalkeeper 2024-2025',
-				image: images.product4,
-				price: 650000,
-				quantity: 1,
-				size: 'M',
-				color: 'Xanh lá',
-				total: 650000,
-			},
-		],
-		total: 650000,
-	},
-	{
-		id: 'order4',
-		status: 'cancelled',
-		items: [
-			{
-				name: 'Áo MU Training 2024-2025',
-				image: images.product5,
-				price: 400000,
-				quantity: 1,
-				size: 'XL',
-				color: 'Xám',
-				total: 400000,
-			},
-		],
-		total: 400000,
-	},
-];
-
 const formatCurrency = (value) => value.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
 
 const MainPageHistoryOrder = () => {
 	const [activeTab, setActiveTab] = useState('pending');
+	const [allOrders, setAllOrders] = useState([]);
 	const [orders, setOrders] = useState([]);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		const filtered = MOCK_ORDERS.filter((o) => o.status === activeTab);
+		const fetchOrders = async () => {
+			setLoading(true);
+			try {
+				const data = await getUserOrders();
+				setAllOrders(data);
+			} catch (error) {
+				alert(error.message || 'Lỗi khi lấy đơn hàng');
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchOrders();
+	}, []);
+
+	// Lọc đơn hàng theo tab mỗi khi activeTab hoặc allOrders thay đổi
+	useEffect(() => {
+		const filtered = allOrders.filter((o) => o.status === activeTab);
 		setOrders(filtered);
-	}, [activeTab]);
+	}, [activeTab, allOrders]);
 
 	const getTotalQuantity = (items) => items.reduce((sum, item) => sum + item.quantity, 0);
 
-	const handleAction = (orderId) => {
-		let updatedOrders = [...MOCK_ORDERS];
-
+	const handleAction = async (orderId) => {
 		if (activeTab === 'pending') {
+			// Hủy đơn hàng
 			if (window.confirm('Bạn có chắc muốn huỷ đơn hàng này?')) {
-				updatedOrders = updatedOrders.map((order) => (order.id === orderId ? {...order, status: 'cancelled'} : order));
+				try {
+					await updateOrderStatus(orderId, 'cancelled');
+					// Cập nhật local state
+					setAllOrders((prev) => prev.map((order) => (order._id === orderId ? {...order, status: 'cancelled'} : order)));
+				} catch (error) {
+					alert(error.message || 'Huỷ đơn hàng thất bại');
+				}
 			}
 		} else if (activeTab === 'shipping') {
+			// Xác nhận đã nhận hàng
 			if (window.confirm('Xác nhận đã nhận được hàng?')) {
-				updatedOrders = updatedOrders.map((order) => (order.id === orderId ? {...order, status: 'completed'} : order));
+				try {
+					await updateOrderStatus(orderId, 'completed');
+					setAllOrders((prev) => prev.map((order) => (order._id === orderId ? {...order, status: 'completed'} : order)));
+				} catch (error) {
+					alert(error.message || 'Cập nhật trạng thái thất bại');
+				}
 			}
-		} else if (activeTab === 'completed' || activeTab === 'cancelled') {
+		} else if (activeTab === 'cancelled') {
+			// Xóa đơn hàng
 			if (window.confirm('Bạn có chắc muốn xoá đơn hàng này?')) {
-				updatedOrders = updatedOrders.filter((order) => order.id !== orderId);
+				try {
+					await deleteOrder(orderId);
+					setAllOrders((prev) => prev.filter((order) => order._id !== orderId));
+				} catch (error) {
+					alert(error.message || 'Xoá đơn hàng thất bại');
+				}
+			}
+		} else if (activeTab === 'completed') {
+			// Xóa đơn hàng tương tự cancelled
+			if (window.confirm('Bạn có chắc muốn xoá đơn hàng này?')) {
+				try {
+					await deleteOrder(orderId);
+					setAllOrders((prev) => prev.filter((order) => order._id !== orderId));
+				} catch (error) {
+					alert(error.message || 'Xoá đơn hàng thất bại');
+				}
 			}
 		}
-
-		const filtered = updatedOrders.filter((o) => o.status === activeTab);
-		setOrders(filtered);
 	};
 
 	const getButtonLabel = () => {
@@ -131,6 +97,8 @@ const MainPageHistoryOrder = () => {
 				return 'Xoá đơn hàng';
 		}
 	};
+
+	if (loading) return <div>Đang tải đơn hàng...</div>;
 
 	return (
 		<div className={styles.container}>
@@ -151,10 +119,17 @@ const MainPageHistoryOrder = () => {
 			{orders.length === 0 && <div className={styles.empty}>Không có đơn hàng nào.</div>}
 
 			{orders.map((order) => (
-				<div key={order.id} className={styles.orderBox}>
+				<div key={order._id} className={styles.orderBox}>
 					{order.items.map((item, index) => (
 						<div key={index} className={styles.itemBox}>
-							<Image src={item.image} alt={item.name} className={styles.itemImage} />
+							<Image
+								src={`http://localhost:3003/uploads/${item.image}`}
+								alt={item.name}
+								className={styles.itemImage}
+								width={80}
+								height={80}
+							/>
+
 							<div className={styles.itemDetails}>
 								<div className={styles.itemName}>{item.name}</div>
 								<div>Đơn giá: {formatCurrency(item.price)}</div>
@@ -162,27 +137,26 @@ const MainPageHistoryOrder = () => {
 								<div>Kích cỡ: {item.size}</div>
 								<div>Màu sắc: {item.color}</div>
 							</div>
-							<div className={styles.itemTotal}>Thành tiền: {formatCurrency(item.total)}</div>
+							<div className={styles.itemTotal}>Thành tiền: {formatCurrency(item.price * item.quantity)}</div>
 						</div>
 					))}
 
 					<div className={styles.orderFooter}>
 						<div>Tổng số lượng: {getTotalQuantity(order.items)} sản phẩm</div>
-						<div className={styles.total}>Tổng tiền: {formatCurrency(order.total)}</div>
+						<div className={styles.total}>Tổng tiền: {formatCurrency(order.totalAmount)}</div>
 						<div>
-							{activeTab === 'pending' && (
-								<Button className={styles.canceledBtn} onClick={() => handleAction(order.id)}>
-									Huỷ đơn hàng
-								</Button>
-							)}
-							{activeTab === 'shipping' && (
-								<Button className={styles.successBtn} onClick={() => handleAction(order.id)}>
-									Đã nhận được hàng
-								</Button>
-							)}
-							{(activeTab === 'completed' || activeTab === 'cancelled') && (
-								<Button className={styles.deleteBtn} onClick={() => handleAction(order.id)}>
-									Xoá đơn hàng
+							{activeTab !== 'cancelled' && (
+								<Button
+									className={
+										activeTab === 'pending'
+											? styles.canceledBtn
+											: activeTab === 'shipping'
+											? styles.successBtn
+											: styles.deleteBtn
+									}
+									onClick={() => handleAction(order._id)}
+								>
+									{getButtonLabel()}
 								</Button>
 							)}
 						</div>
