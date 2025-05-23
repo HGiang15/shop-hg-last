@@ -32,9 +32,11 @@ export const getUserOrders = async () => {
 };
 
 // Lấy tất cả đơn hàng (admin)
-export const getAllOrders = async () => {
+export const getAllOrders = async (page = 1, limit = 100, status = '') => {
 	try {
-		const response = await axios.get(`${API_URL}order/getAllOrders`);
+		const response = await axios.get(`${API_URL}order/getAllOrders`, {
+			params: {page, limit, status},
+		});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lỗi khi lấy danh sách đơn hàng'};

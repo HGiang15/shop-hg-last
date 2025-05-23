@@ -167,6 +167,12 @@ function Header() {
 									<li>
 										<Link href={ROUTES.Profile}>Thông tin tài khoản</Link>
 									</li>
+									<li>
+										<Link href={ROUTES.HistoryOrder}>Đơn hàng của tôi</Link>
+									</li>
+									<li>
+										<Link href={ROUTES.ChangePassword}>Thay đổi mật khẩu</Link>
+									</li>
 									<li onClick={handleLogout}>Đăng xuất</li>
 								</ul>
 							)}

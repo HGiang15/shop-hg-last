@@ -1,8 +1,7 @@
 import Head from 'next/head';
 import {Fragment} from 'react';
 import LayoutAdmin from '@/components/layouts/LayoutAdmin/LayoutAdmin';
-import MainOrderPendingConfirm from '@/components/pages/admin/order/MainOrderPendingConfirm/MainOrderPendingConfirm';
-import MainOrderCancel from '@/components/pages/admin/order/MainOrderCancel/MainOrderCancel';
+import MainOrderSuccess from '@/components/pages/admin/order/MainOrderSuccess/MainOrderSuccess';
 
 export default function Page() {
 	return (
@@ -14,7 +13,7 @@ export default function Page() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<Fragment>
-				<MainOrderCancel />
+				<MainOrderSuccess />
 			</Fragment>
 		</Fragment>
 	);

@@ -2,12 +2,13 @@ import React, {useEffect, useState} from 'react';
 import styles from './MainPageHistoryOrder.module.scss';
 import Button from '@/components/common/Button/Button';
 import Image from 'next/image';
-import {getUserOrders, updateOrderStatus, deleteOrder} from '@/services/orderService'; // Thêm hàm deleteOrder
+import {getUserOrders, updateOrderStatus} from '@/services/orderService';
+import images from '@/constants/static/images';
 
 const TABS = [
 	{label: 'Chờ xác nhận', value: 'pending'},
 	{label: 'Đang giao hàng', value: 'shipping'},
-	{label: 'Giao thành công', value: 'completed'},
+	{label: 'Giao thành công', value: 'delivered'},
 	{label: 'Đơn hàng huỷ', value: 'cancelled'},
 ];
 
@@ -34,7 +35,6 @@ const MainPageHistoryOrder = () => {
 		fetchOrders();
 	}, []);
 
-	// Lọc đơn hàng theo tab mỗi khi activeTab hoặc allOrders thay đổi
 	useEffect(() => {
 		const filtered = allOrders.filter((o) => o.status === activeTab);
 		setOrders(filtered);
@@ -44,47 +44,25 @@ const MainPageHistoryOrder = () => {
 
 	const handleAction = async (orderId) => {
 		if (activeTab === 'pending') {
-			// Hủy đơn hàng
 			if (window.confirm('Bạn có chắc muốn huỷ đơn hàng này?')) {
 				try {
 					await updateOrderStatus(orderId, 'cancelled');
-					// Cập nhật local state
 					setAllOrders((prev) => prev.map((order) => (order._id === orderId ? {...order, status: 'cancelled'} : order)));
 				} catch (error) {
 					alert(error.message || 'Huỷ đơn hàng thất bại');
 				}
 			}
 		} else if (activeTab === 'shipping') {
-			// Xác nhận đã nhận hàng
 			if (window.confirm('Xác nhận đã nhận được hàng?')) {
 				try {
-					await updateOrderStatus(orderId, 'completed');
-					setAllOrders((prev) => prev.map((order) => (order._id === orderId ? {...order, status: 'completed'} : order)));
+					await updateOrderStatus(orderId, 'delivered');
+					setAllOrders((prev) => prev.map((order) => (order._id === orderId ? {...order, status: 'delivered'} : order)));
 				} catch (error) {
 					alert(error.message || 'Cập nhật trạng thái thất bại');
 				}
 			}
-		} else if (activeTab === 'cancelled') {
-			// Xóa đơn hàng
-			if (window.confirm('Bạn có chắc muốn xoá đơn hàng này?')) {
-				try {
-					await deleteOrder(orderId);
-					setAllOrders((prev) => prev.filter((order) => order._id !== orderId));
-				} catch (error) {
-					alert(error.message || 'Xoá đơn hàng thất bại');
-				}
-			}
-		} else if (activeTab === 'completed') {
-			// Xóa đơn hàng tương tự cancelled
-			if (window.confirm('Bạn có chắc muốn xoá đơn hàng này?')) {
-				try {
-					await deleteOrder(orderId);
-					setAllOrders((prev) => prev.filter((order) => order._id !== orderId));
-				} catch (error) {
-					alert(error.message || 'Xoá đơn hàng thất bại');
-				}
-			}
 		}
+		// Đã bỏ logic xoá cho 'cancelled' và 'delivered'
 	};
 
 	const getButtonLabel = () => {
@@ -94,7 +72,7 @@ const MainPageHistoryOrder = () => {
 			case 'shipping':
 				return 'Đã nhận được hàng';
 			default:
-				return 'Xoá đơn hàng';
+				return ''; // Không hiển thị nút cho các tab khác
 		}
 	};
 
@@ -116,7 +94,12 @@ const MainPageHistoryOrder = () => {
 				))}
 			</div>
 
-			{orders.length === 0 && <div className={styles.empty}>Không có đơn hàng nào.</div>}
+			{orders.length === 0 && (
+				<div className={styles.empty}>
+					<Image src={images.boxEmpty} alt='Không có sản phẩm' width={180} height={180} priority />
+					Hiện tại bạn không có đơn hàng nào.
+				</div>
+			)}
 
 			{orders.map((order) => (
 				<div key={order._id} className={styles.orderBox}>
@@ -144,22 +127,14 @@ const MainPageHistoryOrder = () => {
 					<div className={styles.orderFooter}>
 						<div>Tổng số lượng: {getTotalQuantity(order.items)} sản phẩm</div>
 						<div className={styles.total}>Tổng tiền: {formatCurrency(order.totalAmount)}</div>
-						<div>
-							{activeTab !== 'cancelled' && (
-								<Button
-									className={
-										activeTab === 'pending'
-											? styles.canceledBtn
-											: activeTab === 'shipping'
-											? styles.successBtn
-											: styles.deleteBtn
-									}
-									onClick={() => handleAction(order._id)}
-								>
-									{getButtonLabel()}
-								</Button>
-							)}
-						</div>
+						{(activeTab === 'pending' || activeTab === 'shipping') && (
+							<Button
+								className={activeTab === 'pending' ? styles.canceledBtn : styles.successBtn}
+								onClick={() => handleAction(order._id)}
+							>
+								{getButtonLabel()}
+							</Button>
+						)}
 					</div>
 				</div>
 			))}

@@ -87,6 +87,12 @@
 	font-style: italic;
 }
 
+.empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .canceledBtn {
 	background: transparent;
 	color: #ff0000;
