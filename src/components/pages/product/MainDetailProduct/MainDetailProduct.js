@@ -7,7 +7,6 @@ import Button from '@/components/common/Button/Button';
 import {ROUTES} from '@/constants/config';
 import {getProductById} from '@/services/productService';
 import images from '@/constants/static/images';
-import {getCategoryById} from '@/services/categoryService';
 import {addToCart, getAllCart} from '@/services/cartService';
 import {toast} from 'react-toastify';
 
@@ -77,6 +76,7 @@ const ProductDetailPage = () => {
 
 	const averageRating = reviews.length > 0 ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length : 0;
 
+	// Thêm vào giỏ hàng
 	const handleAddToCart = async () => {
 		if (!selectedSize) {
 			toast.warn('Vui lòng chọn kích thước!');
@@ -92,7 +92,6 @@ const ProductDetailPage = () => {
 		};
 
 		try {
-			// console.log(payload);
 			await addToCart(payload);
 
 			const updatedCart = await getAllCart();
@@ -106,6 +105,28 @@ const ProductDetailPage = () => {
 			console.error(err);
 			toast.error('Không thể thêm vào giỏ hàng.');
 		}
+	};
+
+	// Thanh toán ngay
+	const handleBuyNow = () => {
+		if (!selectedSize) {
+			toast.warn('Vui lòng chọn kích thước!');
+			return;
+		}
+
+		const buyNowItem = {
+			productId: product._id,
+			name: product.name,
+			color: product.colors?.[0]?.name,
+			image: product.images?.[0] ? `${adminBaseUrl}/uploads/${product.images[0]}` : images.noImg,
+			sizeId: selectedSize,
+			sizeName: product.quantityBySize?.find((s) => s.sizeId === selectedSize)?.name,
+			quantity: quantity,
+			price: product.price,
+		};
+
+		localStorage.setItem('buyNow', JSON.stringify([buyNowItem]));
+		router.push(ROUTES.Order);
 	};
 
 	const handleAddReview = (e) => {
@@ -230,29 +251,7 @@ const ProductDetailPage = () => {
 						<Button className={styles.addToCart} onClick={handleAddToCart}>
 							Thêm giỏ hàng
 						</Button>
-						<Button
-							className={styles.buyNow}
-							onClick={() => {
-								if (!selectedSize) {
-									toast.warn('Vui lòng chọn kích thước!');
-									return;
-								}
-
-								const buyNowItem = {
-									productId: product._id,
-									name: product.name,
-									color: product.colors?.[0]?.name || 'Không xác định',
-									image: product.images?.[0] ? `${adminBaseUrl}/uploads/${product.images[0]}` : images.noImg,
-									sizeId: selectedSize,
-									sizeName: product.quantityBySize?.find((s) => s.sizeId === selectedSize)?.name || '',
-									quantity: quantity,
-									price: product.price,
-								};
-
-								localStorage.setItem('buyNow', JSON.stringify([buyNowItem]));
-								router.push(ROUTES.Order); // chuyển sang trang Order
-							}}
-						>
+						<Button className={styles.buyNow} onClick={handleBuyNow}>
 							Thanh toán ngay
 						</Button>
 					</div>

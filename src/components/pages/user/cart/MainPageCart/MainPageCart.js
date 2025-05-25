@@ -5,20 +5,24 @@ import Image from 'next/image';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
 import {ROUTES} from '@/constants/config';
-import {getAllCart, updateCartItem, removeItemFromCart} from '@/services/cartService'; // Giả sử bạn đã tạo các API này
+import {getAllCart, updateCartItem, removeItemFromCart} from '@/services/cartService';
 import images from '@/constants/static/images';
+import {useRouter} from 'next/router';
 
 const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
+	const router = useRouter();
+
 	const [cartItems, setCartItems] = useState([]);
 	const [selectAllChecked, setSelectAllChecked] = useState(false);
 	const [selectedItems, setSelectedItems] = useState([]);
 	const [totalAmount, setTotalAmount] = useState(0);
 
+	// Get all cart
 	useEffect(() => {
 		const fetchCartItems = async () => {
 			try {
 				const data = await getAllCart();
-				setCartItems(data.items); // Giả sử API trả về danh sách sản phẩm trong giỏ hàng dưới thuộc tính `items`
+				setCartItems(data.items);
 			} catch (error) {
 				console.error(error);
 			}
@@ -56,7 +60,7 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const handleQuantityChange = async (itemId, newQuantity) => {
 		if (newQuantity < 1 || isNaN(newQuantity)) return; // Kiểm tra nếu giá trị không hợp lệ (kể cả NaN)
 		try {
-			const response = await updateCartItem(itemId, newQuantity); // Giả sử API updateCartItem trả về dữ liệu đã cập nhật
+			const response = await updateCartItem(itemId, newQuantity);
 			const updatedItem = response.item; // Món hàng đã cập nhật
 			const updatedTotalAmount = response.cartTotal; // Tổng giỏ hàng
 
@@ -82,6 +86,7 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		handleQuantityChange(itemId, newQuantity);
 	};
 
+	// Xóa sản phẩm khỏi giỏ hàng
 	const handleDeleteSelected = async () => {
 		try {
 			await Promise.all(selectedItems.map((itemId) => removeItemFromCart(itemId)));
@@ -93,6 +98,30 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		} catch (error) {
 			console.error('Xóa sản phẩm thất bại:', error);
 		}
+	};
+
+	// Thanh toán ngay
+	const handleBuyNow = () => {
+		const selectedForCheckout = cartItems
+			.filter((item) => selectedItems.includes(item._id))
+			.map((item) => ({
+				productId: item.productId._id,
+				name: item.productId.name,
+				color: item.productId.colors[0]?.name,
+				image: item.productId.images?.[0] ? `http://localhost:3003/uploads/${item.productId.images[0]}` : '',
+				sizeId: item.sizeId._id,
+				sizeName: item.sizeId.name,
+				quantity: item.quantity,
+				price: item.productId.price,
+			}));
+
+		if (selectedForCheckout.length === 0) {
+			toast.warn('Vui lòng chọn sản phẩm để thanh toán');
+			return;
+		}
+
+		localStorage.setItem('buyNow', JSON.stringify(selectedForCheckout));
+		router.push(ROUTES.Order);
 	};
 
 	return (
@@ -130,7 +159,7 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 									/>
 									<div className={styles.productImage}>
 										<Image
-											src={`http://localhost:3003/uploads/${item.productId.images[0]}`} // Đảm bảo đường dẫn tuyệt đối đến server
+											src={`http://localhost:3003/uploads/${item.productId.images[0]}`}
 											alt={item.productId.name}
 											width={84}
 											height={84}
@@ -181,31 +210,7 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 						Tổng thanh toán: <span>{totalAmount ? totalAmount.toLocaleString('vi-VN') : '0'} VNĐ</span>
 					</div>
 
-					<Button
-						className={styles.checkoutButton}
-						onClick={() => {
-							const selectedForCheckout = cartItems
-								.filter((item) => selectedItems.includes(item._id))
-								.map((item) => ({
-									productId: item.productId,
-									name: item.name,
-									color: item.color,
-									image: item.image,
-									sizeId: item.sizeId,
-									sizeName: item.sizeName,
-									quantity: item.quantity,
-									price: item.price,
-								}));
-
-							if (selectedForCheckout.length === 0) {
-								toast.warn('Vui lòng chọn sản phẩm để thanh toán');
-								return;
-							}
-
-							localStorage.setItem('buyNow', JSON.stringify(selectedForCheckout));
-							router.push(ROUTES.Order);
-						}}
-					>
+					<Button className={styles.checkoutButton} onClick={handleBuyNow}>
 						Thanh toán
 					</Button>
 				</div>
