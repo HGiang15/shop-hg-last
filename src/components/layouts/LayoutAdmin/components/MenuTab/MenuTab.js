@@ -10,11 +10,12 @@ import FormatSizeIcon from '@mui/icons-material/FormatSize';
 import CategoryIcon from '@mui/icons-material/Category';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import logo from '../../../../../../public/static/images/logo_small.svg';
 import {ROUTES} from '@/constants/config';
 import {FaTimes} from 'react-icons/fa';
 import {connect} from 'react-redux';
 import {setActiveMenu} from '@/redux/actions/menuTabActions';
+import {StarBorderOutlined} from '@mui/icons-material';
+import images from '@/constants/static/images';
 
 const menuItems = [
 	{label: 'Tổng quan', icon: <DashboardIcon />, path: ROUTES.AdminDashboard},
@@ -24,6 +25,7 @@ const menuItems = [
 	{label: 'Danh mục sản phẩm', icon: <CategoryIcon />, path: ROUTES.AdminCategory},
 	{label: 'Quản lý sản phẩm', icon: <InventoryIcon />, path: ROUTES.AdminProduct},
 	{label: 'Quản lý đơn hàng', icon: <ShoppingCartIcon />, path: ROUTES.AdminOrder},
+	{label: 'Quản lý đánh giá', icon: <StarBorderOutlined />, path: ROUTES.About},
 ];
 
 const MenuTab = ({menuOpen, setMenuOpen, activeMenu}) => {
@@ -41,7 +43,7 @@ const MenuTab = ({menuOpen, setMenuOpen, activeMenu}) => {
 				</div>
 			)}
 			<div className={styles.logo}>
-				<Image src={logo} alt='Logo' width={120} height={50} />
+				<Image src={images.logoSmall} alt='Logo' width={120} height={50} />
 			</div>
 
 			<ul className={styles.menuList}>

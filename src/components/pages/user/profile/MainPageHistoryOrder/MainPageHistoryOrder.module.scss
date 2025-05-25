@@ -2,6 +2,25 @@
 	padding: 24px;
 	background: #ebebf0;
 	border-radius: 4px;
+
+	.scrollArea {
+		max-height: 600px;
+		overflow-y: auto;
+		padding-right: 4px;
+	}
+
+	.scrollArea::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	.scrollArea::-webkit-scrollbar-thumb {
+		background-color: #ccc;
+		border-radius: 3px;
+	}
+
+	.scrollArea::-webkit-scrollbar-track {
+		background: #f5f5f5;
+	}
 }
 
 .title {

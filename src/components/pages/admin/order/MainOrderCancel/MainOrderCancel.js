@@ -11,14 +11,15 @@ import IconCustom from '@/components/common/IconCustom/IconCustom';
 import icons from '@/constants/static/icons';
 import ConfirmDeleteModal from '../../order/ConfirmDeleteModal/ConfirmDeleteModal';
 import {toast} from 'react-toastify';
+import {useRouter} from 'next/router';
 
 const MainOrderCancel = () => {
+	const router = useRouter();
 	const [orders, setOrders] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [ordersPerPage] = useState(5);
+	const [ordersPerPage, setOrdersPerPage] = useState(5);
 	const [totalPages, setTotalPages] = useState(1);
 	const [totalItems, setTotalItems] = useState(0);
-
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedOrder, setSelectedOrder] = useState(null);
 	const [selectedOrderName, setSelectedOrderName] = useState('');
@@ -59,6 +60,11 @@ const MainOrderCancel = () => {
 
 	const handlePageChange = (page) => {
 		setCurrentPage(page);
+	};
+
+	const handleLimitChange = (limit) => {
+		setOrdersPerPage(limit);
+		setCurrentPage(1);
 	};
 
 	return (
@@ -131,8 +137,7 @@ const MainOrderCancel = () => {
 												backgroundColor='#FFF200'
 												tooltip='Xem chi tiết'
 												onClick={() => {
-													setIsModalOpen(true);
-													setSelectedOrder(order._id);
+													router.push(`${ROUTES.AdminOrder}/${order._id}`);
 												}}
 											/>
 										</>
@@ -146,7 +151,7 @@ const MainOrderCancel = () => {
 								totalItems={totalItems}
 								onPageChange={handlePageChange}
 								limit={ordersPerPage}
-								onLimitChange={() => {}}
+								onLimitChange={handleLimitChange}
 							/>
 
 							<ConfirmDeleteModal

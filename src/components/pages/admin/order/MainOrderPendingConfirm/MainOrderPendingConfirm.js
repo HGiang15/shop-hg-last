@@ -10,12 +10,15 @@ import {connect} from 'react-redux';
 import images from '@/constants/static/images';
 import {getAllOrders, updateOrderStatus} from '@/services/orderService';
 import LayoutPages from '@/components/layouts/LayoutPages/LayoutPages';
-import {TickCircle} from 'iconsax-react';
 import {toast} from 'react-toastify';
 import ConfirmShippingModal from '../ConfirmShippingModal/ConfirmShippingModal';
 import ConfirmCancelModal from '../ConfirmCancelModal/ConfirmCancelModal';
+import {useRouter} from 'next/router';
+import {setActiveMenu} from '@/redux/actions/menuTabActions';
 
-const MainOrderPendingConfirm = () => {
+const MainOrderPendingConfirm = ({setActiveMenu}) => {
+	const router = useRouter();
+
 	const [orders, setOrders] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [ordersPerPage, setOrdersPerPage] = useState(5);
@@ -26,6 +29,10 @@ const MainOrderPendingConfirm = () => {
 	const [selectedOrder, setSelectedOrder] = useState(null);
 	const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 	const [selectedCancelOrder, setSelectedCancelOrder] = useState(null);
+
+	useEffect(() => {
+		setActiveMenu(ROUTES.AdminOrder);
+	}, []);
 
 	useEffect(() => {
 		const fetchOrders = async () => {
@@ -41,10 +48,6 @@ const MainOrderPendingConfirm = () => {
 
 		fetchOrders();
 	}, [currentPage, ordersPerPage]);
-
-	const handlePageChange = (page) => {
-		setCurrentPage(page);
-	};
 
 	// Xác nhận đơn hàng
 	const handleConfirmOrder = async (orderId) => {
@@ -77,9 +80,13 @@ const MainOrderPendingConfirm = () => {
 		}
 	};
 
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
+
 	const handleLimitChange = (limit) => {
-		// Nếu bạn muốn cho phép thay đổi số dòng trên trang
-		// setProductsPerPage(limit);
+		setOrdersPerPage(limit);
+		setCurrentPage(1);
 	};
 
 	return (
@@ -91,7 +98,7 @@ const MainOrderPendingConfirm = () => {
 					{title: 'Giao thành công', path: ROUTES.AdminOrderSuccess},
 					{title: 'Đơn hàng hủy', path: ROUTES.AdminOrderCancel},
 				]}
-			></LayoutPages>
+			/>
 			<div className={styles.container}>
 				{orders.length === 0 ? (
 					<div className={styles.noProducts}>
@@ -160,8 +167,7 @@ const MainOrderPendingConfirm = () => {
 											backgroundColor='#FFF200'
 											tooltip='Xem chi tiết'
 											onClick={() => {
-												setIsModalOpen(true);
-												setSelectedOrder(order._id);
+												router.push(`${ROUTES.AdminOrder}/${order._id}`);
 											}}
 										/>
 									</>

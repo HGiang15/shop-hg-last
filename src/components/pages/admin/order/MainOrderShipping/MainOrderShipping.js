@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import styles from './MainOrderDelivery.module.scss';
+import styles from './MainOrderShipping.module.scss';
 import Image from 'next/image';
 import IconCustom from '@/components/common/IconCustom/IconCustom';
 import Table from '@/components/common/Table/Table';
@@ -12,8 +12,11 @@ import {getAllOrders, updateOrderStatus} from '@/services/orderService';
 import {ROUTES} from '@/constants/config';
 import LayoutPages from '@/components/layouts/LayoutPages/LayoutPages';
 import ConfirmDeliveryModal from '../ConfirmDeliveryModal/ConfirmDeliveryModal';
+import {useRouter} from 'next/router';
 
-const MainOrderDelivery = ({setActiveMenu}) => {
+const MainOrderShipping = ({setActiveMenu}) => {
+	const router = useRouter();
+
 	const [orders, setOrders] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [ordersPerPage, setOrdersPerPage] = useState(5);
@@ -46,7 +49,7 @@ const MainOrderDelivery = ({setActiveMenu}) => {
 	// Xác nhận giao hàng thành công
 	const handleConfirmDelivery = async () => {
 		try {
-			await updateOrderStatus(selectedOrder, 'delivered');
+			await updateOrderStatus(selectedOrder, 'success');
 			setIsModalOpen(false);
 			setSelectedOrder(null);
 			const data = await getAllOrders(currentPage, ordersPerPage, 'shipping');
@@ -60,6 +63,11 @@ const MainOrderDelivery = ({setActiveMenu}) => {
 
 	const handlePageChange = (page) => {
 		setCurrentPage(page);
+	};
+
+	const handleLimitChange = (limit) => {
+		setOrdersPerPage(limit);
+		setCurrentPage(1);
 	};
 
 	return (
@@ -131,8 +139,7 @@ const MainOrderDelivery = ({setActiveMenu}) => {
 											backgroundColor='#FFF200'
 											tooltip='Xem chi tiết'
 											onClick={() => {
-												setIsModalOpen(true);
-												setSelectedOrder(order._id);
+												router.push(`${ROUTES.AdminOrder}/${order._id}`);
 											}}
 										/>
 									</>
@@ -146,7 +153,7 @@ const MainOrderDelivery = ({setActiveMenu}) => {
 							totalItems={totalItems}
 							onPageChange={handlePageChange}
 							limit={ordersPerPage}
-							onLimitChange={() => {}}
+							onLimitChange={handleLimitChange}
 						/>
 
 						<ConfirmDeliveryModal
@@ -166,4 +173,4 @@ const mapDispatchToProps = (dispatch) => ({
 	setActiveMenu: (menuPath) => dispatch(setActiveMenu(menuPath)),
 });
 
-export default connect(null, mapDispatchToProps)(MainOrderDelivery);
+export default connect(null, mapDispatchToProps)(MainOrderShipping);

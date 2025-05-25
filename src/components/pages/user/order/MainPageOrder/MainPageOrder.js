@@ -21,6 +21,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 
 	const [userAddresses, setUserAddresses] = useState([]);
 	const [selectedAddress, setSelectedAddress] = useState(null);
+	const [note, setNote] = useState('');
 
 	const fetchAddresses = async () => {
 		try {
@@ -76,6 +77,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 					quantity: item.quantity,
 					price: item.price,
 				})),
+				note,
 			});
 
 			localStorage.removeItem('buyNow');
@@ -158,7 +160,13 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 
 					<div className={styles.note}>
 						<label>Ghi chú đơn hàng</label>
-						<input type='text' placeholder='Nhập ghi chú (nếu có)' className={styles.noteInput} />
+						<input
+							type='text'
+							placeholder='Nhập ghi chú (nếu có)'
+							className={styles.noteInput}
+							value={note}
+							onChange={(e) => setNote(e.target.value)}
+						/>
 					</div>
 				</div>
 			</div>

@@ -8,7 +8,7 @@ import images from '@/constants/static/images';
 const TABS = [
 	{label: 'Chờ xác nhận', value: 'pending'},
 	{label: 'Đang giao hàng', value: 'shipping'},
-	{label: 'Giao thành công', value: 'delivered'},
+	{label: 'Giao thành công', value: 'success'},
 	{label: 'Đơn hàng huỷ', value: 'cancelled'},
 ];
 
@@ -55,14 +55,14 @@ const MainPageHistoryOrder = () => {
 		} else if (activeTab === 'shipping') {
 			if (window.confirm('Xác nhận đã nhận được hàng?')) {
 				try {
-					await updateOrderStatus(orderId, 'delivered');
-					setAllOrders((prev) => prev.map((order) => (order._id === orderId ? {...order, status: 'delivered'} : order)));
+					await updateOrderStatus(orderId, 'success');
+					setAllOrders((prev) => prev.map((order) => (order._id === orderId ? {...order, status: 'success'} : order)));
 				} catch (error) {
 					alert(error.message || 'Cập nhật trạng thái thất bại');
 				}
 			}
 		}
-		// Đã bỏ logic xoá cho 'cancelled' và 'delivered'
+		// Đã bỏ logic xoá cho 'cancelled' và 'success'
 	};
 
 	const getButtonLabel = () => {
@@ -94,50 +94,52 @@ const MainPageHistoryOrder = () => {
 				))}
 			</div>
 
-			{orders.length === 0 && (
-				<div className={styles.empty}>
-					<Image src={images.boxEmpty} alt='Không có sản phẩm' width={180} height={180} priority />
-					Hiện tại bạn không có đơn hàng nào.
-				</div>
-			)}
-
-			{orders.map((order) => (
-				<div key={order._id} className={styles.orderBox}>
-					{order.items.map((item, index) => (
-						<div key={index} className={styles.itemBox}>
-							<Image
-								src={`http://localhost:3003/uploads/${item.image}`}
-								alt={item.name}
-								className={styles.itemImage}
-								width={80}
-								height={80}
-							/>
-
-							<div className={styles.itemDetails}>
-								<div className={styles.itemName}>{item.name}</div>
-								<div>Đơn giá: {formatCurrency(item.price)}</div>
-								<div>Số lượng: {String(item.quantity).padStart(2, '0')}</div>
-								<div>Kích cỡ: {item.size}</div>
-								<div>Màu sắc: {item.color}</div>
-							</div>
-							<div className={styles.itemTotal}>Thành tiền: {formatCurrency(item.price * item.quantity)}</div>
-						</div>
-					))}
-
-					<div className={styles.orderFooter}>
-						<div>Tổng số lượng: {getTotalQuantity(order.items)} sản phẩm</div>
-						<div className={styles.total}>Tổng tiền: {formatCurrency(order.totalAmount)}</div>
-						{(activeTab === 'pending' || activeTab === 'shipping') && (
-							<Button
-								className={activeTab === 'pending' ? styles.canceledBtn : styles.successBtn}
-								onClick={() => handleAction(order._id)}
-							>
-								{getButtonLabel()}
-							</Button>
-						)}
+			<div className={styles.scrollArea}>
+				{orders.length === 0 && (
+					<div className={styles.empty}>
+						<Image src={images.boxEmpty} alt='Không có sản phẩm' width={180} height={180} priority />
+						Hiện tại bạn không có đơn hàng nào.
 					</div>
-				</div>
-			))}
+				)}
+
+				{orders.map((order) => (
+					<div key={order._id} className={styles.orderBox}>
+						{order.items.map((item, index) => (
+							<div key={index} className={styles.itemBox}>
+								<Image
+									src={`http://localhost:3003/uploads/${item.image}`}
+									alt={item.name}
+									className={styles.itemImage}
+									width={80}
+									height={80}
+								/>
+
+								<div className={styles.itemDetails}>
+									<div className={styles.itemName}>{item.name}</div>
+									<div>Đơn giá: {formatCurrency(item.price)}</div>
+									<div>Số lượng: {String(item.quantity).padStart(2, '0')}</div>
+									<div>Kích cỡ: {item.size}</div>
+									<div>Màu sắc: {item.color}</div>
+								</div>
+								<div className={styles.itemTotal}>Thành tiền: {formatCurrency(item.price * item.quantity)}</div>
+							</div>
+						))}
+
+						<div className={styles.orderFooter}>
+							<div>Tổng số lượng: {getTotalQuantity(order.items)} sản phẩm</div>
+							<div className={styles.total}>Tổng tiền: {formatCurrency(order.totalAmount)}</div>
+							{(activeTab === 'pending' || activeTab === 'shipping') && (
+								<Button
+									className={activeTab === 'pending' ? styles.canceledBtn : styles.successBtn}
+									onClick={() => handleAction(order._id)}
+								>
+									{getButtonLabel()}
+								</Button>
+							)}
+						</div>
+					</div>
+				))}
+			</div>
 		</div>
 	);
 };

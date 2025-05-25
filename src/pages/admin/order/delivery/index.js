@@ -3,7 +3,7 @@ import {Fragment} from 'react';
 import LayoutAdmin from '@/components/layouts/LayoutAdmin/LayoutAdmin';
 import MainOrderPendingConfirm from '@/components/pages/admin/order/MainOrderPendingConfirm/MainOrderPendingConfirm';
 import MainOrderCancel from '@/components/pages/admin/order/MainOrderCancel/MainOrderCancel';
-import MainOrderDelivery from '@/components/pages/admin/order/MainOrderDelivery/MainOrderDelivery';
+import MainOrderShipping from '@/components/pages/admin/order/MainOrderShipping/MainOrderShipping';
 
 export default function Page() {
 	return (
@@ -15,7 +15,7 @@ export default function Page() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<Fragment>
-				<MainOrderDelivery />
+				<MainOrderShipping />
 			</Fragment>
 		</Fragment>
 	);

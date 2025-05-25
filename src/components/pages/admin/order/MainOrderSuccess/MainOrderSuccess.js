@@ -11,14 +11,15 @@ import IconCustom from '@/components/common/IconCustom/IconCustom';
 import icons from '@/constants/static/icons';
 import ConfirmDeleteModal from '../../order/ConfirmDeleteModal/ConfirmDeleteModal';
 import {toast} from 'react-toastify';
+import {useRouter} from 'next/router';
 
 const MainOrderSuccess = () => {
+	const router = useRouter();
 	const [orders, setOrders] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [ordersPerPage] = useState(5);
+	const [ordersPerPage, setOrdersPerPage] = useState(5);
 	const [totalPages, setTotalPages] = useState(1);
 	const [totalItems, setTotalItems] = useState(0);
-
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedOrderId, setSelectedOrderId] = useState(null);
 	const [selectedOrderCode, setSelectedOrderCode] = useState('');
@@ -26,7 +27,7 @@ const MainOrderSuccess = () => {
 	useEffect(() => {
 		const fetchOrders = async () => {
 			try {
-				const data = await getAllOrders(currentPage, ordersPerPage, 'delivered');
+				const data = await getAllOrders(currentPage, ordersPerPage, 'success');
 				setOrders(data.orders);
 				setTotalPages(data.totalPages);
 				setTotalItems(data.totalItems);
@@ -46,7 +47,7 @@ const MainOrderSuccess = () => {
 			setSelectedOrderId(null);
 
 			// Gọi lại API lấy danh sách đơn hàng mới nhất
-			const data = await getAllOrders(currentPage, ordersPerPage, 'delivered');
+			const data = await getAllOrders(currentPage, ordersPerPage, 'success');
 			setOrders(data.orders);
 			setTotalPages(data.totalPages);
 			setTotalItems(data.totalItems);
@@ -60,6 +61,11 @@ const MainOrderSuccess = () => {
 
 	const handlePageChange = (page) => {
 		setCurrentPage(page);
+	};
+
+	const handleLimitChange = (limit) => {
+		setOrdersPerPage(limit);
+		setCurrentPage(1);
 	};
 
 	return (
@@ -131,8 +137,7 @@ const MainOrderSuccess = () => {
 												backgroundColor='#FFF200'
 												tooltip='Xem chi tiết'
 												onClick={() => {
-													setIsModalOpen(true);
-													setSelectedOrder(order._id);
+													router.push(`${ROUTES.AdminOrder}/${order._id}`);
 												}}
 											/>
 										</>
@@ -146,7 +151,7 @@ const MainOrderSuccess = () => {
 								totalItems={totalItems}
 								onPageChange={handlePageChange}
 								limit={ordersPerPage}
-								onLimitChange={() => {}}
+								onLimitChange={handleLimitChange}
 							/>
 
 							<ConfirmDeleteModal

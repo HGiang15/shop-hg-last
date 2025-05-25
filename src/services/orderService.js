@@ -31,6 +31,16 @@ export const getUserOrders = async () => {
 	}
 };
 
+// Lấy chi tiết đơn hàng theo ID
+export const getOrderById = async (id) => {
+	try {
+		const response = await axios.get(`${API_URL}order/getOrderById/${id}`);
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Không thể lấy chi tiết đơn hàng'};
+	}
+};
+
 // Lấy tất cả đơn hàng (admin)
 export const getAllOrders = async (page = 1, limit = 100, status = '') => {
 	try {
