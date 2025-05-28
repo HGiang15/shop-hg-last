@@ -8,6 +8,7 @@ import {ROUTES} from '@/constants/config';
 import {getAllCart, updateCartItem, removeItemFromCart} from '@/services/cartService';
 import images from '@/constants/static/images';
 import {useRouter} from 'next/router';
+import {toast} from 'react-toastify';
 
 const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const router = useRouter();

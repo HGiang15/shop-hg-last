@@ -3,7 +3,7 @@ import styles from './MainPageOrder.module.scss';
 import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 import Button from '@/components/common/Button/Button';
 import FormUpdateAddress from '../FormUpdateAddress/FormUpdateAddress';
-import {createOrder} from '@/services/orderService';
+import {createOrder, createVNPayUrl} from '@/services/orderService';
 import {useRouter} from 'next/router';
 import {getUserAddresses} from '@/services/userAddressService';
 import {toast} from 'react-toastify';
@@ -66,7 +66,8 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		setIsPlacingOrder(true);
 
 		try {
-			await createOrder({
+			// B1: Gọi API tạo đơn hàng
+			const order = await createOrder({
 				shippingAddress: addressId,
 				items: orderList.map((item) => ({
 					productId: item.productId,
@@ -80,12 +81,21 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 				note,
 			});
 
+			// B2: Gọi API tạo URL thanh toán VNPay
+			const paymentRes = await createVNPayUrl({
+				amount: totalAmount,
+				orderId: order._id, // giả sử backend trả về order._id
+			});
+
+			// B3: Clear localStorage và redirect tới VNPay
 			localStorage.removeItem('buyNow');
-			toast.success('Đặt hàng thành công');
-			setShowSuccessModal(true);
+
+			console.log(paymentRes);
+
+			window.location.href = paymentRes;
 		} catch (err) {
 			console.error(err);
-			toast.error('Tạo đơn hàng thất bại');
+			toast.error(err.message || 'Tạo đơn hàng/thanh toán thất bại');
 		} finally {
 			setIsPlacingOrder(false);
 		}

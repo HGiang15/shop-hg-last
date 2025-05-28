@@ -1,6 +1,24 @@
 import {API_URL} from '@/constants/config';
 import axios from 'axios';
 
+export const createVNPayUrl = async ({amount, orderId}) => {
+	try {
+		const token = localStorage.getItem('token');
+		const res = await axios.post(
+			`${API_URL}order/create-payment-url`,
+			{amount, orderId},
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
+		return res.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Tạo link thanh toán thất bại'};
+	}
+};
+
 // Tạo đơn hàng
 export const createOrder = async (orderData) => {
 	try {
