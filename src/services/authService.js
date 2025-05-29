@@ -1,6 +1,8 @@
 import axios from 'axios';
 import {API_URL} from '@/constants/config';
 
+// https://shop-hg-last-be.vercel.app/api/
+
 // Đăng nhập thủ công
 export const loginUser = async (email, password) => {
 	try {
@@ -14,7 +16,7 @@ export const loginUser = async (email, password) => {
 // Đăng nhập bằng Google
 export const loginWithGoogle = async (token) => {
 	try {
-		const response = await axios.post(`${API_URL}google-login`, {token});
+		const response = await axios.post(`${API_URL}user/google-login`, {token});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Đăng nhập Google thất bại'};
