@@ -34,7 +34,7 @@ export const ROUTES = {
 	ResetPassword: '/auth/reset-password',
 };
 
-export const API_URL = 'http://localhost:3003/api/';
-export const API_URL_IMG = 'http://localhost:3003/';
+export const API_URL = process.env.NODE_ENV == 'development' ? 'http://localhost:3003/api/' : 'https://shop-hg-last-be.vercel.app/api/';
+export const API_URL_IMG = process.env.NODE_ENV == 'development' ? 'http://localhost:3003/' : 'http://localhost:3003/';
 
 export const SET_ACTIVE_MENU = 'SET_ACTIVE_MENU';

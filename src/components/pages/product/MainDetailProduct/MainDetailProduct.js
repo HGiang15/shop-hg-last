@@ -9,10 +9,15 @@ import {getProductById} from '@/services/productService';
 import images from '@/constants/static/images';
 import {addToCart, getAllCart} from '@/services/cartService';
 import {toast} from 'react-toastify';
+import {createReview, deleteReview, getReviewsByProductId} from '@/services/reviewService';
+import {getCurrentUserIdFromToken} from '@/utils/auth';
+import ConfirmDeleteReview from '../ConfirmDeleteReview/ConfirmDeleteReview';
+import FormUpdateReview from '../FormUpdateReview/FormUpdateReview';
 
 const ProductDetailPage = () => {
 	const router = useRouter();
 	const {id} = router.query;
+	const [currentUserId, setCurrentUserId] = useState(null);
 	const [product, setProduct] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -24,13 +29,22 @@ const ProductDetailPage = () => {
 	const [selectedColor, setSelectedColor] = useState('');
 	const [colors, setColors] = useState([]);
 	const [sizes, setSizes] = useState([]);
-
-	// State cho đánh giá
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [reviewToDelete, setReviewToDelete] = useState(null);
+	const [editingReview, setEditingReview] = useState(null);
 	const [reviews, setReviews] = useState([]);
-	const [newReview, setNewReview] = useState({name: '', rating: 5, comment: ''});
+	const [newReview, setNewReview] = useState({rating: 5, comment: ''});
 
 	const adminBaseUrl = 'http://localhost:3003';
 
+	useEffect(() => {
+		const idFromToken = getCurrentUserIdFromToken();
+		setCurrentUserId(idFromToken);
+	}, []);
+
+	// Detail Product
 	useEffect(() => {
 		if (id) {
 			const fetchProductDetails = async () => {
@@ -66,13 +80,21 @@ const ProductDetailPage = () => {
 		}
 	}, [id]);
 
-	const handleSizeChange = (sizeId) => {
-		setSelectedSize(sizeId);
-	};
-
-	const handleQuantityChange = (type) => {
-		setQuantity((prev) => (type === 'increase' ? Math.min(prev + 1, 10) : Math.max(prev - 1, 1)));
-	};
+	// All Review ProductId
+	useEffect(() => {
+		if (product?._id) {
+			const fetchReviews = async () => {
+				try {
+					const {reviews, totalPages} = await getReviewsByProductId(product._id, currentPage);
+					setReviews(reviews);
+					setTotalPages(totalPages);
+				} catch (err) {
+					console.error('Lỗi khi tải đánh giá:', err);
+				}
+			};
+			fetchReviews();
+		}
+	}, [product?._id, currentPage]);
 
 	const averageRating = reviews.length > 0 ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length : 0;
 
@@ -129,9 +151,74 @@ const ProductDetailPage = () => {
 		router.push(ROUTES.Order);
 	};
 
-	const handleAddReview = (e) => {
+	// Thêm Review
+	const handleAddReview = async (e) => {
 		e.preventDefault();
-		// Gọi API để thêm đánh giá
+
+		const token = localStorage.getItem('token');
+		if (!token) {
+			toast.warning('Vui lòng đăng nhập để gửi đánh giá.');
+			return;
+		}
+
+		const reviewPayload = {
+			productId: product._id,
+			rating: newReview.rating,
+			comment: newReview.comment,
+		};
+
+		try {
+			await createReview(reviewPayload);
+			toast.success('Cảm ơn bạn đã đánh giá. Chúc bạn một ngày mới tốt lành!');
+			setCurrentPage(1);
+			const {reviews, totalPages} = await getReviewsByProductId(product._id, 1);
+			setReviews(reviews);
+			setTotalPages(totalPages);
+			setNewReview({rating: 5, comment: ''});
+		} catch (err) {
+			toast.error(err.response?.data?.message || 'Không thể gửi đánh giá.');
+		}
+	};
+
+	const handleSizeChange = (sizeId) => {
+		setSelectedSize(sizeId);
+	};
+
+	const handleQuantityChange = (type) => {
+		setQuantity((prev) => (type === 'increase' ? Math.min(prev + 1, 10) : Math.max(prev - 1, 1)));
+	};
+
+	const handleDeleteClick = (reviewId) => {
+		setReviewToDelete(reviewId);
+		setIsDeleteModalOpen(true);
+	};
+
+	const handleCloseModal = () => {
+		setIsDeleteModalOpen(false);
+		setReviewToDelete(null);
+	};
+
+	const handleEdit = (review) => {
+		setEditingReview(review);
+	};
+
+	const handleCancelEdit = () => {
+		setEditingReview(null);
+	};
+
+	// Xóa review
+	const handleConfirmDelete = async () => {
+		try {
+			await deleteReview(reviewToDelete);
+			toast.success('Xóa đánh giá thành công!');
+			const {reviews, totalPages} = await getReviewsByProductId(product._id, currentPage);
+			setReviews(reviews);
+			setTotalPages(totalPages);
+		} catch (error) {
+			toast.error(error.message || 'Không thể xóa đánh giá.');
+		} finally {
+			handleCloseModal();
+		}
 	};
 
 	if (loading) {
@@ -287,22 +374,22 @@ const ProductDetailPage = () => {
 							</p>
 							<p className={styles.reviewRating}>⭐ {review.rating} / 5</p>
 							<p className={styles.reviewComment}>{review.comment}</p>
+							{currentUserId === review.userId && (
+								<div className={styles.reviewActions}>
+									<span className={styles.actionEdit} onClick={() => handleEdit(review)}>
+										Sửa
+									</span>
+									<span className={styles.actionDelete} onClick={() => handleDeleteClick(review._id)}>
+										Xóa
+									</span>
+								</div>
+							)}
 						</div>
 					))}
 				</div>
 
 				<form className={styles.reviewForm} onSubmit={handleAddReview}>
-					<input
-						type='text'
-						placeholder='Tên của bạn'
-						// value={newReview.name}
-						// onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
-						required
-					/>
-					<select
-					// value={newReview.rating}
-					// onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}
-					>
+					<select value={newReview.rating} onChange={(e) => setNewReview({...newReview, rating: Number(e.target.value)})}>
 						<option value='5'>⭐ 5 - Rất tốt</option>
 						<option value='4'>⭐ 4 - Tốt</option>
 						<option value='3'>⭐ 3 - Bình thường</option>
@@ -310,14 +397,37 @@ const ProductDetailPage = () => {
 						<option value='1'>⭐ 1 - Tệ</option>
 					</select>
 					<textarea
-						placeholder='Nhận xét của bạn'
-						// value={newReview.comment}
-						// onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+						placeholder='Đánh giá của bạn'
+						value={newReview.comment}
+						onChange={(e) => setNewReview({...newReview, comment: e.target.value})}
 						required
 					/>
-					<button type='submit'>Gửi đánh giá</button>
+					<Button type='submit'>Gửi đánh giá</Button>
 				</form>
 			</div>
+
+			{/* <div className={styles.pagination}>
+				{Array.from({length: totalPages}, (_, i) => (
+					<button key={i} className={i + 1 === currentPage ? styles.activePage : ''} onClick={() => setCurrentPage(i + 1)}>
+						{i + 1}
+					</button>
+				))}
+			</div> */}
+
+			{editingReview && (
+				<FormUpdateReview
+					review={editingReview}
+					productId={product._id}
+					onCancel={handleCancelEdit}
+					onUpdated={(newReviews, totalPages) => {
+						setReviews(newReviews);
+						setTotalPages(totalPages);
+						setCurrentPage(1);
+					}}
+				/>
+			)}
+
+			<ConfirmDeleteReview isOpen={isDeleteModalOpen} onClose={handleCloseModal} onConfirm={handleConfirmDelete} />
 		</div>
 	);
 };
