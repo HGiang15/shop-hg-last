@@ -20,9 +20,6 @@ export default function Home() {
 			</Head>
 
 			<Fragment>
-				{
-					//<HeroSlider />
-				}	
 				<HeroSection />
 				<CategoryHome />
 				<AboutHome />

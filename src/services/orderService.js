@@ -1,11 +1,10 @@
-import {API_URL} from '@/constants/config';
-import axios from 'axios';
+import axiosClient from '.';
 
 export const createVNPayUrl = async ({amount, orderId}) => {
 	try {
 		const token = localStorage.getItem('token');
-		const res = await axios.post(
-			`${API_URL}order/create-payment-url`,
+		const res = await axiosClient.post(
+			`/api/order/create-payment-url`,
 			{amount, orderId},
 			{
 				headers: {
@@ -23,7 +22,7 @@ export const createVNPayUrl = async ({amount, orderId}) => {
 export const createOrder = async (orderData) => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axios.post(`${API_URL}order/create-order`, orderData, {
+		const response = await axiosClient.post(`/api/order/create-order`, orderData, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -38,7 +37,7 @@ export const createOrder = async (orderData) => {
 export const getUserOrders = async () => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axios.get(`${API_URL}order/my-order`, {
+		const response = await axiosClient.get(`/api/order/my-order`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -52,7 +51,7 @@ export const getUserOrders = async () => {
 // Lấy chi tiết đơn hàng theo ID
 export const getOrderById = async (id) => {
 	try {
-		const response = await axios.get(`${API_URL}order/getOrderById/${id}`);
+		const response = await axiosClient.get(`/api/order/getOrderById/${id}`);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Không thể lấy chi tiết đơn hàng'};
@@ -62,7 +61,7 @@ export const getOrderById = async (id) => {
 // Lấy tất cả đơn hàng (admin)
 export const getAllOrders = async (page = 1, limit = 100, status = '') => {
 	try {
-		const response = await axios.get(`${API_URL}order/getAllOrders`, {
+		const response = await axiosClient.get(`/api/order/getAllOrders`, {
 			params: {page, limit, status},
 		});
 		return response.data;
@@ -74,7 +73,7 @@ export const getAllOrders = async (page = 1, limit = 100, status = '') => {
 // Cập nhật trạng thái đơn hàng
 export const updateOrderStatus = async (orderId, status) => {
 	try {
-		const response = await axios.put(`${API_URL}order/update-status/${orderId}`, {status});
+		const response = await axiosClient.put(`/api/order/update-status/${orderId}`, {status});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Cập nhật trạng thái đơn hàng thất bại'};
@@ -85,7 +84,7 @@ export const updateOrderStatus = async (orderId, status) => {
 export const deleteOrder = async (orderId) => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axios.delete(`${API_URL}order/delete-order/${orderId}`, {
+		const response = await axiosClient.delete(`/api/order/delete-order/${orderId}`, {
 			headers: {Authorization: `Bearer ${token}`},
 		});
 		return response.data;

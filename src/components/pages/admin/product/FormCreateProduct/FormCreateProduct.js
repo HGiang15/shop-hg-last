@@ -15,6 +15,7 @@ import {createProduct} from '@/services/productService';
 import {getAllColors} from '@/services/colorService';
 import {getAllSizes} from '@/services/sizeService';
 import {getAllCategories} from '@/services/categoryService';
+import {uploadMultiple} from '@/services/uploadService';
 
 const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 
@@ -76,7 +77,12 @@ const FormCreateProduct = ({setActiveMenu}) => {
 	};
 
 	const handleSubmitForm = async () => {
-		const formData = new FormData();
+		const formCreate = new FormData();
+		const formUpload = new FormData();
+
+		selectedImages.forEach((file) => formUpload.append('files', file));
+
+		const {data: imagesPath} = await uploadMultiple(formUpload);
 
 		const quantityBySize = sizes
 			.map((size) => ({
@@ -86,9 +92,9 @@ const FormCreateProduct = ({setActiveMenu}) => {
 			}))
 			.filter((item) => item.quantity > 0);
 
-		formData.append('code', form.code);
-		formData.append('name', form.name);
-		formData.append(
+		formCreate.append('code', form.code);
+		formCreate.append('name', form.name);
+		formCreate.append(
 			'quantityBySize',
 			JSON.stringify(
 				quantityBySize.map((item) => ({
@@ -100,7 +106,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		);
 
 		const category = JSON.parse(form.category || '{}');
-		formData.append(
+		formCreate.append(
 			'category',
 			JSON.stringify({
 				categoryId: category.categoryId || '',
@@ -109,19 +115,16 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		);
 
 		const colors = JSON.parse(form.colors || '[]');
-		formData.append('colors', JSON.stringify(colors));
-		formData.append('price', form.price);
-		formData.append('description', form.description);
-		formData.append('detailDescription', detailDescription);
-		formData.append('isFeatured', form.isFeatured);
-		formData.append('status', form.status);
-
-		selectedImages.forEach((file) => {
-			formData.append('images', file);
-		});
+		formCreate.append('colors', JSON.stringify(colors));
+		formCreate.append('price', form.price);
+		formCreate.append('description', form.description);
+		formCreate.append('detailDescription', detailDescription);
+		formCreate.append('isFeatured', form.isFeatured);
+		formCreate.append('status', form.status);
+		formCreate.append('images', JSON.stringify(imagesPath));
 
 		try {
-			const response = await createProduct(formData);
+			const response = await createProduct(formCreate);
 			if (response.message === 'Tạo sản phẩm thành công') {
 				toast.success('Sản phẩm đã được tạo thành công!', {
 					position: 'top-right',

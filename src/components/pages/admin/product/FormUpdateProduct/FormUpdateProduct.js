@@ -8,23 +8,23 @@ import {useRouter} from 'next/router';
 import {connect} from 'react-redux';
 import {setActiveMenu} from '@/redux/actions/menuTabActions';
 import dynamic from 'next/dynamic';
-import {ROUTES, API_URL_IMG} from '@/constants/config';
+import {ROUTES} from '@/constants/config';
 import {getProductById, updateProduct} from '@/services/productService';
 import {toast} from 'react-toastify';
 import Select from 'react-select';
 import {getAllColors} from '@/services/colorService';
 import {getAllSizes} from '@/services/sizeService';
 import {getAllCategories} from '@/services/categoryService';
+import {uploadMultiple} from '@/services/uploadService';
+
 const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 
-const FormUpdateProduct = ({setActiveMenu, productId}) => {
+const FormUpdateProduct = ({setActiveMenu}) => {
 	const router = useRouter();
 	const {_id: productIdFromRouter} = router.query;
 
-	const [selectedImages, setSelectedImages] = useState([]);
-	const [selectedFiles, setSelectedFiles] = useState([]);
+	const [imagesSelected, setImagesSelected] = useState([]);
 	const [detailDescription, setDetailDesc] = useState('');
-	const [oldImageFilenames, setOldImageFilenames] = useState([]);
 	const [colorOptions, setColorOptions] = useState([]);
 	const [categoryOptions, setCategoryOptions] = useState([]);
 	const [sizes, setSizes] = useState([]);
@@ -83,11 +83,13 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 
 					setSizeQuantities(initialQuantities);
 
-					const oldFilenames = productData.images || [];
-					setOldImageFilenames(oldFilenames); // Cập nhật tên ảnh cũ
-					const oldImageUrls = oldFilenames.map((filename) => `${API_URL_IMG}uploads/${filename}`);
-
-					setSelectedImages(oldImageUrls);
+					setImagesSelected(
+						productData?.images?.map((img) => ({
+							path: img,
+							file: null,
+							url: '',
+						}))
+					);
 				} catch (err) {
 					toast.error(err.message || 'Lỗi khi tải dữ liệu sản phẩm!');
 					router.back();
@@ -99,34 +101,26 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 	const handleImageChange = (event) => {
 		const files = event.target.files;
 		if (!files?.length) return;
-		const newFiles = Array.from(files).slice(0, MAX_IMAGES - selectedImages.length);
-		const newImageUrls = newFiles.map((file) => URL.createObjectURL(file));
 
-		setSelectedFiles((prev) => [...prev, ...newFiles]);
-		setSelectedImages((prev) => [...prev, ...newImageUrls]);
+		const newImages = [];
+		for (let i = 0; i < files.length; i++) {
+			const file = files[i];
+			const url = URL.createObjectURL(file);
+			newImages.push({
+				file: file,
+				url: url,
+				path: '',
+			});
+		}
+
+		setImagesSelected((prev) => [...prev, ...newImages]);
 	};
 
-	const handleRemoveImage = (index) => {
-		const totalOld = oldImageFilenames.length;
-
-		// Nếu là ảnh cũ
-		if (index < totalOld) {
-			const updatedOldImages = [...oldImageFilenames];
-			updatedOldImages.splice(index, 1);
-			setOldImageFilenames(updatedOldImages);
-		}
-
-		// Xử lý selectedImages và selectedFiles
-		const updatedSelectedImages = [...selectedImages];
-		updatedSelectedImages.splice(index, 1);
-		setSelectedImages(updatedSelectedImages);
-
-		if (index >= totalOld) {
-			const fileIndex = index - totalOld;
-			const updatedSelectedFiles = [...selectedFiles];
-			updatedSelectedFiles.splice(fileIndex, 1);
-			setSelectedFiles(updatedSelectedFiles);
-		}
+	const handleDelete = (index) => {
+		setImagesSelected((prev) => {
+			URL.revokeObjectURL(prev[index].url);
+			return [...prev.slice(0, index), ...prev.slice(index + 1)];
+		});
 	};
 
 	const handleDetailDescChange = (content) => {
@@ -236,64 +230,79 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 	const handleUpdateProduct = async () => {
 		if (!productIdFromRouter) return toast.error('Không có ID sản phẩm để cập nhật!');
 
-		try {
-			const formData = new FormData();
+		const formUpdate = new FormData();
+		const formUpload = new FormData();
 
-			const quantityBySize = sizes
-				.map((size) => ({
-					sizeId: size._id,
-					name: size.name,
-					quantity: sizeQuantities[size.name] || 0,
+		const files = imagesSelected?.filter((v) => !!v.file && !v.path)?.map((m) => m.file);
+
+		if (files.length == 0) {
+			const paths = imagesSelected?.filter((v) => !!v.path && !v.file)?.map((m) => m.path);
+			formUpdate.append('images', JSON.stringify(paths));
+		}
+
+		if (files.length > 0) {
+			const paths = imagesSelected?.filter((v) => !!v.path && !v.file)?.map((m) => m.path);
+
+			files.forEach((file) => formUpload.append('files', file));
+			const {data: imagesPath} = await uploadMultiple(formUpload);
+			formUpdate.append('images', JSON.stringify([...paths, ...imagesPath]));
+		}
+
+		const quantityBySize = sizes
+			.map((size) => ({
+				sizeId: size._id,
+				name: size.name,
+				quantity: sizeQuantities[size.name] || 0,
+			}))
+			.filter((item) => item.quantity > 0);
+
+		formUpdate.append('code', form.code);
+		formUpdate.append('name', form.name);
+		formUpdate.append(
+			'quantityBySize',
+			JSON.stringify(
+				quantityBySize.map((item) => ({
+					sizeId: item.sizeId.toString(),
+					name: item.name,
+					quantity: item.quantity,
 				}))
-				.filter((item) => item.quantity > 0);
+			)
+		);
 
-			formData.append('code', form.code);
-			formData.append('name', form.name);
-			formData.append(
-				'quantityBySize',
-				JSON.stringify(
-					quantityBySize.map((item) => ({
-						sizeId: item.sizeId.toString(),
-						name: item.name,
-						quantity: item.quantity,
-					}))
-				)
-			);
+		const category = JSON.parse(form.category || '{}');
+		formUpdate.append(
+			'category',
+			JSON.stringify({
+				categoryId: category.categoryId || '',
+				name: category.name || '',
+			})
+		);
 
-			// Lấy category từ form.category
-			const category = JSON.parse(form.category || '{}');
-			formData.append(
-				'category',
-				JSON.stringify({
-					categoryId: category.categoryId || '',
-					name: category.name || '',
-				})
-			);
+		const colors = JSON.parse(form.colors || '[]');
+		formUpdate.append('colors', JSON.stringify(colors));
+		formUpdate.append('price', form.price);
+		formUpdate.append('description', form.description);
+		formUpdate.append('detailDescription', detailDescription);
+		formUpdate.append('isFeatured', form.isFeatured);
+		formUpdate.append('status', form.status);
 
-			// Lấy colors từ form.colors
-			const colors = JSON.parse(form.colors || '[]');
-			formData.append('colors', JSON.stringify(colors));
-
-			formData.append('price', form.price);
-			formData.append('description', form.description);
-			formData.append('detailDescription', detailDescription);
-			formData.append('isFeatured', form.isFeatured);
-
-			// Thêm tên ảnh cũ để server có thể xử lý (nếu cần xóa)
-			formData.append('oldImages', JSON.stringify(oldImageFilenames));
-
-			// Thêm ảnh mới
-			selectedFiles.forEach((file) => formData.append('images', file));
-
-			const response = await updateProduct(productIdFromRouter, formData, {
-				headers: {'Content-Type': 'multipart/form-data'},
-			});
-
-			toast.success(response.message || 'Cập nhật sản phẩm thành công!');
-			router.push(ROUTES.AdminProduct);
-		} catch (err) {
-			console.error('Lỗi khi cập nhật sản phẩm:', err);
-			toast.error(err.message || 'Chỉnh sửa sản phẩm thất bại!');
+		try {
+			const response = await updateProduct(productIdFromRouter, formUpdate);
+			if (response.message === 'Cập nhật sản phẩm thành công') {
+				toast.success('Cập nhật sản phẩm thành công!', {
+					position: 'top-right',
+				});
+				router.push(ROUTES.AdminProduct);
+			}
+		} catch (error) {
+			if (error.response && error.response.data?.errors) {
+				setErrors(error.response.data.errors);
+			} else {
+				toast.error(error.message || 'Vui lòng điền đầy đủ thông tin sản phẩm', {
+					position: 'top-right',
+				});
+			}
+			console.error('Lỗi tạo sản phẩm:', error);
 		}
 	};
 
@@ -467,16 +476,16 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 					</label>
 					<div className={styles.imageUpload}>
 						<div className={styles.imagePreviewContainer}>
-							{selectedImages.map((imageUrl, index) => (
+							{imagesSelected.map((image, index) => (
 								<div key={index} className={styles.imagePreview}>
 									<Image
-										src={imageUrl}
+										src={image?.url || image?.path}
 										alt={`Ảnh ${index + 1}`}
 										width={80}
 										height={80}
 										onError={() => console.error('Lỗi tải ảnh:', imageUrl)}
 									/>
-									<button type='button' className={styles.removeImageButton} onClick={() => handleRemoveImage(index)}>
+									<button type='button' className={styles.removeImageButton} onClick={() => handleDelete(index)}>
 										<svg
 											xmlns='http://www.w3.org/2000/svg'
 											viewBox='0 0 20 20'
@@ -492,7 +501,7 @@ const FormUpdateProduct = ({setActiveMenu, productId}) => {
 									</button>
 								</div>
 							))}
-							{selectedImages.length < MAX_IMAGES && (
+							{imagesSelected.length < MAX_IMAGES && (
 								<label htmlFor='chonAnh' className={styles.imagePlaceholderLabel}>
 									<Image
 										src={images.defaultBg}

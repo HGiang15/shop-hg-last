@@ -6,6 +6,7 @@ import icons from '@/constants/static/icons';
 import {createCategory} from '@/services/categoryService';
 import {toast} from 'react-toastify';
 import images from '@/constants/static/images';
+import {uploadSingle} from '@/services/uploadService';
 
 const FormCreateCategory = ({onCancel, onSuccess}) => {
 	const fileInputRef = useRef(null);
@@ -54,11 +55,18 @@ const FormCreateCategory = ({onCancel, onSuccess}) => {
 		setError('');
 		try {
 			setLoading(true);
-			const form = new FormData();
-			form.append('name', formData.name);
-			form.append('image', formData.image);
 
-			await createCategory(form);
+			const formCreate = new FormData();
+			const formUpload = new FormData();
+			formUpload.append('file', formData.image);
+
+			// Xử lý upload ảnh
+			const {data: image} = await uploadSingle(formUpload);
+
+			formCreate.append('name', formData.name);
+			formCreate.append('image', image);
+
+			await createCategory(formCreate);
 			toast.success('Thêm danh mục thành công!');
 			onSuccess?.();
 			onCancel?.();

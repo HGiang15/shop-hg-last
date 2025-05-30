@@ -34,14 +34,6 @@ const AddToCartModal = ({product, show, onClose}) => {
 
 	if (!show) return null;
 
-	const adminBaseUrl = 'http://localhost:3003';
-
-	const selectedImage = product.images?.[0]
-		? product.images[0].startsWith('http')
-			? product.images[0]
-			: `${adminBaseUrl}/uploads/${product.images[0]}`
-		: images.noImg;
-
 	const handleConfirm = async () => {
 		if (!sizeId || quantity < 1) {
 			toast.warn('Vui lòng chọn đầy đủ thông tin!');
@@ -55,7 +47,7 @@ const AddToCartModal = ({product, show, onClose}) => {
 				colorId: product.colors?.[0] || 'Không xác định',
 				sizeId,
 				quantity,
-				image: selectedImage,
+				image: product.images?.[0],
 			});
 
 			// ✅ Nếu có cartToken mới, lưu lại

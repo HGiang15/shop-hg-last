@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import styles from './MainDetailProduct.module.scss';
 import Image from 'next/image';
-import images from '@/constants/static/images';
 import {toast} from 'react-toastify';
 import {useRouter} from 'next/router';
 import {deleteProduct, getProductById} from '@/services/productService';
 import ConfirmDeleteModal from '@/components/pages/product/ConfirmDeleteModal/ConfirmDeleteModal';
-import {API_URL_IMG, ROUTES} from '@/constants/config';
+import {ROUTES} from '@/constants/config';
 import Button from '@/components/common/Button/Button';
 
 const MainDetailProduct = () => {
@@ -116,11 +115,11 @@ const MainDetailProduct = () => {
 							{product.images?.map((img, idx) => (
 								<Image
 									key={idx}
-									src={`${API_URL_IMG}uploads/${img}`}
+									src={img}
 									alt={`Product image ${idx}`}
 									width={150}
 									height={150}
-									onClick={() => setSelectedImage(`${API_URL_IMG}uploads/${img}`)}
+									onClick={() => setSelectedImage(img)}
 									className={styles.thumbnail}
 								/>
 							))}

@@ -1,9 +1,8 @@
-import {API_URL} from '@/constants/config';
-import axios from 'axios';
+import axiosClient from '.';
 
 export const createProduct = async (productData) => {
 	try {
-		const response = await axios.post(`${API_URL}product/createProduct`, productData);
+		const response = await axiosClient.post(`/api/product/createProduct`, productData);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Thêm sản phẩm thất bại'};
@@ -12,7 +11,7 @@ export const createProduct = async (productData) => {
 
 export const updateProduct = async (productId, productData) => {
 	try {
-		const response = await axios.put(`${API_URL}product/updateProduct/${productId}`, productData);
+		const response = await axiosClient.put(`/api/product/updateProduct/${productId}`, productData);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Chỉnh sửa sản phẩm thất bại'};
@@ -21,7 +20,7 @@ export const updateProduct = async (productId, productData) => {
 
 export const getAllProducts = async (page = 1, limit = 5) => {
 	try {
-		const response = await axios.get(`${API_URL}product/getAllProducts`, {
+		const response = await axiosClient.get(`/api/product/getAllProducts`, {
 			params: {page, limit},
 		});
 		return response.data;
@@ -32,7 +31,7 @@ export const getAllProducts = async (page = 1, limit = 5) => {
 
 export const deleteProduct = async (productId) => {
 	try {
-		const response = await axios.delete(`${API_URL}product/deleteProduct/${productId}`);
+		const response = await axiosClient.delete(`/api/product/deleteProduct/${productId}`);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Xóa sản phẩm thất bại'};
@@ -41,7 +40,7 @@ export const deleteProduct = async (productId) => {
 
 export const getProductById = async (productId) => {
 	try {
-		const response = await axios.get(`${API_URL}product/getProductById/${productId}`);
+		const response = await axiosClient.get(`/api/product/getProductById/${productId}`);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy thông tin sản phẩm thất bại'};
@@ -50,7 +49,7 @@ export const getProductById = async (productId) => {
 
 export const getFeaturedProducts = async () => {
 	try {
-		const response = await axios.get(`${API_URL}product/featuredProducts`);
+		const response = await axiosClient.get(`/api/product/featuredProducts`);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy sản phẩm nổi bật thất bại'};
@@ -59,7 +58,7 @@ export const getFeaturedProducts = async () => {
 
 export const filterProducts = async (filters) => {
 	try {
-		const response = await axios.get(`${API_URL}product/filterProducts`, {params: filters});
+		const response = await axiosClient.get(`/api/product/filterProducts`, {params: filters});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lọc sản phẩm thất bại'};

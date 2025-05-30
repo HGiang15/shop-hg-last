@@ -1,9 +1,8 @@
-import {API_URL} from '@/constants/config';
-import axios from 'axios';
+import axiosClient from '.';
 
 export const getAllCart = async () => {
 	try {
-		const response = await axios.get(`${API_URL}cart/getAllCart`, {
+		const response = await axiosClient.get(`/api/cart/getAllCart`, {
 			withCredentials: true,
 		});
 		return response.data;
@@ -14,7 +13,7 @@ export const getAllCart = async () => {
 
 export const removeItemFromCart = async (itemId) => {
 	try {
-		const response = await axios.delete(`${API_URL}cart/removeItem/${itemId}`, {
+		const response = await axiosClient.delete(`/api/cart/removeItem/${itemId}`, {
 			withCredentials: true,
 		});
 		return response.data;
@@ -28,7 +27,7 @@ export const addToCart = async (productData) => {
 		const token = localStorage.getItem('token');
 		const headers = token ? {Authorization: `Bearer ${token}`} : {};
 
-		const response = await axios.post(`${API_URL}cart/addToCart`, productData, {
+		const response = await axiosClient.post(`/api/cart/addToCart`, productData, {
 			headers,
 			withCredentials: true,
 		});
@@ -41,8 +40,8 @@ export const addToCart = async (productData) => {
 
 export const updateCartItem = async (itemId, quantity) => {
 	try {
-		const response = await axios.put(
-			`${API_URL}cart/updateItem`,
+		const response = await axiosClient.put(
+			`/api/cart/updateItem`,
 			{itemId, quantity},
 			{
 				withCredentials: true,
@@ -64,8 +63,8 @@ export const mergeCart = async (localItems) => {
 			Authorization: `Bearer ${token}`, // Thêm token vào header để xác thực
 		};
 
-		const response = await axios.post(
-			`${API_URL}cart/mergeCart`, // Địa chỉ endpoint của BE
+		const response = await axiosClient.post(
+			`/api/cart/mergeCart`, // Địa chỉ endpoint của BE
 			{localItems}, // Gửi giỏ hàng của khách từ frontend
 			{
 				headers, // Đính kèm header Authorization

@@ -159,12 +159,7 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 										onChange={() => handleCheckboxChange(item._id)}
 									/>
 									<div className={styles.productImage}>
-										<Image
-											src={`http://localhost:3003/uploads/${item.productId.images[0]}`}
-											alt={item.productId.name}
-											width={84}
-											height={84}
-										/>
+										<Image src={item.productId.images[0]} alt={item.productId.name} width={84} height={84} />
 									</div>
 									<div className={styles.productInfo}>{item.productId.name}</div>
 								</div>

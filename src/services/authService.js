@@ -1,12 +1,9 @@
-import axios from 'axios';
-import {API_URL} from '@/constants/config';
-
-// https://shop-hg-last-be.vercel.app/api/
+import axiosClient from '.';
 
 // Đăng nhập thủ công
 export const loginUser = async (email, password) => {
 	try {
-		const response = await axios.post(`${API_URL}user/login`, {email, password});
+		const response = await axiosClient.post(`/api/user/login`, {email, password});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Đăng nhập thất bại'};
@@ -16,7 +13,7 @@ export const loginUser = async (email, password) => {
 // Đăng nhập bằng Google
 export const loginWithGoogle = async (token) => {
 	try {
-		const response = await axios.post(`${API_URL}user/google-login`, {token});
+		const response = await axiosClient.post(`/api/user/google-login`, {token});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Đăng nhập Google thất bại'};
@@ -26,7 +23,7 @@ export const loginWithGoogle = async (token) => {
 // Đăng ký
 export const registerUser = async (userData) => {
 	try {
-		const response = await axios.post(`${API_URL}user/register`, userData);
+		const response = await axiosClient.post(`/api/user/register`, userData);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data?.message || 'Đăng ký thất bại';
@@ -36,7 +33,7 @@ export const registerUser = async (userData) => {
 // Quên mật khẩu
 export const forgotPassword = async (email) => {
 	try {
-		const response = await axios.post(`${API_URL}user/forgotPassword`, {email});
+		const response = await axiosClient.post(`/api/user/forgotPassword`, {email});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data?.message || 'Gửi yêu cầu quên mật khẩu thất bại';
@@ -46,7 +43,7 @@ export const forgotPassword = async (email) => {
 // Đặt lại mật khẩu
 export const resetPassword = async (email, otp, newPassword) => {
 	try {
-		const response = await axios.post(`${API_URL}user/resetPassword`, {
+		const response = await axiosClient.post(`/api/user/resetPassword`, {
 			email,
 			otp,
 			newPassword,
@@ -60,7 +57,7 @@ export const resetPassword = async (email, otp, newPassword) => {
 // Xác thực OTP
 export const verifyOTP = async (userId, otp) => {
 	try {
-		const response = await axios.post(`${API_URL}user/verifyOTP`, {userId, otp});
+		const response = await axiosClient.post(`/api/user/verifyOTP`, {userId, otp});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data?.message || 'Xác thực OTP thất bại';
@@ -70,7 +67,7 @@ export const verifyOTP = async (userId, otp) => {
 // Lấy danh sách người dùng
 export const getListUser = async (page = 1, limit = 5) => {
 	try {
-		const response = await axios.get(`${API_URL}user/getListUser`, {
+		const response = await axiosClient.get(`/api/user/getListUser`, {
 			params: {page, limit},
 		});
 		return response.data;
@@ -82,7 +79,7 @@ export const getListUser = async (page = 1, limit = 5) => {
 // Get user by id
 export const getUserById = async (id) => {
 	try {
-		const response = await axios.get(`${API_URL}user/getUserById/${id}`);
+		const response = await axiosClient.get(`/api/user/getUserById/${id}`);
 		return response.data.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lỗi lấy thông tin người dùng'};
@@ -92,7 +89,7 @@ export const getUserById = async (id) => {
 // Update user
 export const updateUser = async (id, updatedData) => {
 	try {
-		const response = await axios.put(`${API_URL}user/editUser/${id}`, updatedData);
+		const response = await axiosClient.put(`/api/user/editUser/${id}`, updatedData);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Cập nhật người dùng thất bại'};
@@ -102,7 +99,7 @@ export const updateUser = async (id, updatedData) => {
 // Cập nhật trạng thái người dùng
 export const updateUserStatus = async (id, status) => {
 	try {
-		const response = await axios.put(`${API_URL}user/status/${id}`, {status});
+		const response = await axiosClient.put(`/api/user/status/${id}`, {status});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Cập nhật trạng thái người dùng thất bại'};
@@ -112,7 +109,7 @@ export const updateUserStatus = async (id, status) => {
 // Cập nhật vai trò người dùng
 export const updateUserRole = async (id, role) => {
 	try {
-		const response = await axios.put(`${API_URL}user/role/${id}`, {role});
+		const response = await axiosClient.put(`/api/user/role/${id}`, {role});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Cập nhật vai trò người dùng thất bại'};

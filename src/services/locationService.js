@@ -1,10 +1,9 @@
-import {API_URL} from '@/constants/config';
-import axios from 'axios';
+import axiosClient from '.';
 
 // Lấy danh sách tỉnh/thành
 export const getProvinces = async () => {
 	try {
-		const response = await axios.get(`${API_URL}locations/provinces`);
+		const response = await axiosClient.get(`/api/locations/provinces`);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy danh sách tỉnh/thành thất bại'};
@@ -14,7 +13,7 @@ export const getProvinces = async () => {
 // Lấy danh sách quận/huyện theo provinceId
 export const getDistricts = async (provinceId) => {
 	try {
-		const response = await axios.get(`${API_URL}locations/districts/${provinceId}`);
+		const response = await axiosClient.get(`/api/locations/districts/${provinceId}`);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy danh sách quận/huyện thất bại'};
@@ -24,7 +23,7 @@ export const getDistricts = async (provinceId) => {
 // Lấy danh sách phường/xã theo districtId
 export const getWards = async (districtId) => {
 	try {
-		const response = await axios.get(`${API_URL}locations/wards/${districtId}`);
+		const response = await axiosClient.get(`/api/locations/wards/${districtId}`);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy danh sách phường/xã thất bại'};

@@ -36,8 +36,7 @@ const ProductDetailPage = () => {
 	const [editingReview, setEditingReview] = useState(null);
 	const [reviews, setReviews] = useState([]);
 	const [newReview, setNewReview] = useState({rating: 5, comment: ''});
-
-	const adminBaseUrl = 'http://localhost:3003';
+	const [idxActiveImage, setIdxActiveImage] = useState(0);
 
 	useEffect(() => {
 		const idFromToken = getCurrentUserIdFromToken();
@@ -53,7 +52,7 @@ const ProductDetailPage = () => {
 				try {
 					const data = await getProductById(id);
 					setProduct(data);
-					setMainImage(data?.images?.[0] ? `${adminBaseUrl}/uploads/${data.images[0]}` : images.placeholder);
+					setMainImage(data?.images?.[0]);
 
 					if (data.category && data.category.length > 0) {
 						setCategoryName(data.category[0].name);
@@ -108,7 +107,7 @@ const ProductDetailPage = () => {
 		const payload = {
 			productId: product._id,
 			color: product.colors?.[0] || 'Không xác định',
-			image: product.images?.[0] ? `${adminBaseUrl}/uploads/${product.images[0]}` : images.noImg,
+			image: product.images?.[0],
 			sizeId: selectedSize,
 			quantity: quantity,
 		};
@@ -140,7 +139,7 @@ const ProductDetailPage = () => {
 			productId: product._id,
 			name: product.name,
 			color: product.colors?.[0]?.name,
-			image: product.images?.[0] ? `${adminBaseUrl}/uploads/${product.images[0]}` : images.noImg,
+			image: product.images?.[0],
 			sizeId: selectedSize,
 			sizeName: product.quantityBySize?.find((s) => s.sizeId === selectedSize)?.name,
 			quantity: quantity,
@@ -245,7 +244,7 @@ const ProductDetailPage = () => {
 			<div className={styles.main}>
 				<div className={styles.imageGallery}>
 					<Image
-						src={mainImage || images.placeholder}
+						src={mainImage}
 						alt={product.name}
 						width={600}
 						height={600}
@@ -262,12 +261,15 @@ const ProductDetailPage = () => {
 							{product.images.map((img, index) => (
 								<Image
 									key={index}
-									src={`${adminBaseUrl}/uploads/${img}`}
+									src={img}
 									alt={`Thumbnail ${index + 1}`}
 									width={80}
 									height={80}
-									className={`${styles.thumbnail} ${mainImage === `${adminBaseUrl}/uploads/${img}` ? styles.active : ''}`}
-									onClick={() => setMainImage(`${adminBaseUrl}/uploads/${img}`)}
+									className={`${styles.thumbnail} ${index === idxActiveImage ? styles.active : ''}`}
+									onClick={() => {
+										setIdxActiveImage(index);
+										setMainImage(img);
+									}}
 									onError={(e) => {
 										e.target.onerror = null;
 										e.target.src = images.placeholder;
@@ -280,13 +282,7 @@ const ProductDetailPage = () => {
 					{isModalOpen && (
 						<div className={styles.modal} onClick={() => setIsModalOpen(false)}>
 							<div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-								<Image
-									src={mainImage || images.placeholder}
-									alt='Zoomed Image'
-									width={650}
-									height={650}
-									className={styles.zoomedImage}
-								/>
+								<Image src={mainImage} alt='Zoomed Image' width={650} height={650} className={styles.zoomedImage} />
 							</div>
 						</div>
 					)}

@@ -106,13 +106,7 @@ const MainPageHistoryOrder = () => {
 					<div key={order._id} className={styles.orderBox}>
 						{order.items.map((item, index) => (
 							<div key={index} className={styles.itemBox}>
-								<Image
-									src={`http://localhost:3003/uploads/${item.image}`}
-									alt={item.name}
-									className={styles.itemImage}
-									width={80}
-									height={80}
-								/>
+								<Image src={item?.image} alt={item.name} className={styles.itemImage} width={80} height={80} />
 
 								<div className={styles.itemDetails}>
 									<div className={styles.itemName}>{item.name}</div>

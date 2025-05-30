@@ -1,9 +1,8 @@
-import {API_URL} from '@/constants/config';
-import axios from 'axios';
+import axiosClient from '.';
 
 export const getAllColors = async (page = 1, limit = 10) => {
 	try {
-		const response = await axios.get(`${API_URL}color/getAllColors`, {
+		const response = await axiosClient.get(`/api/color/getAllColors`, {
 			params: {page, limit},
 		});
 		return response.data;
@@ -14,7 +13,7 @@ export const getAllColors = async (page = 1, limit = 10) => {
 
 export const createColor = async (colorData) => {
 	try {
-		const response = await axios.post(`${API_URL}color/createColor`, colorData);
+		const response = await axiosClient.post(`/api/color/createColor`, colorData);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Thêm màu thất bại'};
@@ -23,7 +22,7 @@ export const createColor = async (colorData) => {
 
 export const getColorById = async (id) => {
 	try {
-		const response = await axios.get(`${API_URL}color/getColorById/${id}`);
+		const response = await axiosClient.get(`/api/color/getColorById/${id}`);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy màu theo ID thất bại'};
@@ -32,7 +31,7 @@ export const getColorById = async (id) => {
 
 export const updateColor = async (id, colorData) => {
 	try {
-		const response = await axios.put(`${API_URL}color/updateColor/${id}`, colorData);
+		const response = await axiosClient.put(`/api/color/updateColor/${id}`, colorData);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Cập nhật màu thất bại'};
@@ -41,7 +40,7 @@ export const updateColor = async (id, colorData) => {
 
 export const deleteColor = async (id) => {
 	try {
-		const response = await axios.delete(`${API_URL}color/deleteColor/${id}`);
+		const response = await axiosClient.delete(`/api/color/deleteColor/${id}`);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Xóa màu thất bại'};

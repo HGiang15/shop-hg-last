@@ -85,8 +85,6 @@ const ShoppingCart = ({onClose, onUpdateCartCount}) => {
 		}
 	};
 
-	const adminBaseUrl = 'http://localhost:3003';
-
 	// Tính tổng giá trị giỏ hàng
 	const total = cartItems.reduce((sum, item) => sum + item.quantity * (item?.productId?.price || 0), 0);
 
@@ -110,20 +108,7 @@ const ShoppingCart = ({onClose, onUpdateCartCount}) => {
 					) : (
 						cartItems.map((item, index) => (
 							<div key={index} className={styles.cartItem}>
-								<Image
-									src={
-										item.productId?.images?.[0]
-											? `${adminBaseUrl}/uploads/${item.productId.images[0]}`
-											: item.image
-											? item.image.startsWith('http')
-												? item.image
-												: `${adminBaseUrl}/uploads/${item.image}`
-											: '/default-product.jpg'
-									}
-									alt={item.productId?.name || 'Sản phẩm'}
-									width={100}
-									height={100}
-								/>
+								<Image src={item.productId.images[0]} alt={item.productId?.name || 'Sản phẩm'} width={100} height={100} />
 
 								<div className={styles.details}>
 									<div className={styles.wrapper}>

@@ -1,10 +1,9 @@
-import {API_URL} from '@/constants/config';
-import axios from 'axios';
+import axiosClient from '.';
 
 // Lấy tất cả đánh giá theo productId
 export const getReviewsByProductId = async (productId, page = 1, limit = 100) => {
 	try {
-		const response = await axios.get(`${API_URL}review/get-reviews-by-product-id/${productId}`, {
+		const response = await axiosClient.get(`/api/review/get-reviews-by-product-id/${productId}`, {
 			params: {page, limit},
 		});
 		return response.data;
@@ -17,7 +16,7 @@ export const getReviewsByProductId = async (productId, page = 1, limit = 100) =>
 export const createReview = async (reviewData) => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axios.post(`${API_URL}review/add-review`, reviewData, {
+		const response = await axiosClient.post(`/api/review/add-review`, reviewData, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -32,7 +31,7 @@ export const createReview = async (reviewData) => {
 export const getReviewById = async (id) => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axios.get(`${API_URL}review/get-review/${id}`, {
+		const response = await axiosClient.get(`/api/review/get-review/${id}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -47,7 +46,7 @@ export const getReviewById = async (id) => {
 export const updateReview = async (id, updatedData) => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axios.put(`${API_URL}review/update-review/${id}`, updatedData, {
+		const response = await axiosClient.put(`/api/review/update-review/${id}`, updatedData, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -62,7 +61,7 @@ export const updateReview = async (id, updatedData) => {
 export const deleteReview = async (id) => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axios.delete(`${API_URL}review/delete-review/${id}`, {
+		const response = await axiosClient.delete(`/api/review/delete-review/${id}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},

@@ -1,11 +1,10 @@
-import {API_URL} from '@/constants/config';
-import axios from 'axios';
+import axiosClient from '.';
 
 // Lấy địa chỉ của người dùng
 export const getUserAddresses = async () => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axios.get(`${API_URL}user-addresses/getUserAddresses`, {
+		const response = await axiosClient.get(`/api/user-addresses/getUserAddresses`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -20,7 +19,7 @@ export const getUserAddresses = async () => {
 export const createAddress = async (addressData) => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axios.post(`${API_URL}user-addresses/createAddress`, addressData, {
+		const response = await axiosClient.post(`/api/user-addresses/createAddress`, addressData, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -34,7 +33,7 @@ export const createAddress = async (addressData) => {
 // Cập nhật địa chỉ
 export const updateAddress = async (addressId, addressData) => {
 	try {
-		const response = await axios.put(`${API_URL}user-addresses/updateAddress/${addressId}`, addressData);
+		const response = await axiosClient.put(`/api/user-addresses/updateAddress/${addressId}`, addressData);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Cập nhật địa chỉ thất bại'};
@@ -45,7 +44,7 @@ export const updateAddress = async (addressId, addressData) => {
 export const setDefaultAddress = async (addressId) => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axios.put(`${API_URL}user-addresses/setDefaultAddress/${addressId}`, null, {
+		const response = await axiosClient.put(`/api/user-addresses/setDefaultAddress/${addressId}`, null, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -60,7 +59,7 @@ export const setDefaultAddress = async (addressId) => {
 export const deleteAddress = async (addressId) => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axios.delete(`${API_URL}user-addresses/deleteAddress/${addressId}`, {
+		const response = await axiosClient.delete(`/api/user-addresses/deleteAddress/${addressId}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},

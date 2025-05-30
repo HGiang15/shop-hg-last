@@ -5,6 +5,7 @@ import Image from 'next/image';
 import icons from '@/constants/static/icons';
 import {toast} from 'react-toastify';
 import {getCategoryById, updateCategory} from '@/services/categoryService';
+import {uploadSingle} from '@/services/uploadService';
 
 const FormUpdateCategory = ({categoryId, onCancel, onSuccess}) => {
 	const [formData, setFormData] = useState({name: '', image: null});
@@ -38,23 +39,33 @@ const FormUpdateCategory = ({categoryId, onCancel, onSuccess}) => {
 	};
 
 	const handleSubmit = async () => {
-		if (!formData.name) {
-			setError('Tên danh mục là bắt buộc');
+		if (!formData.name.trim()) {
+			setError('Tên danh mục là bắt buộc.');
 			return;
 		}
-		setLoading(true);
-
-		const payload = new FormData();
-		payload.append('name', formData.name);
-		if (formData.image) payload.append('image', formData.image);
-
+		setError('');
 		try {
-			await updateCategory(categoryId, payload);
-			toast.success('Cập nhật danh mục thành công');
+			setLoading(true);
+
+			const formUpdate = new FormData();
+
+			if (!!formData.image) {
+				const formUpload = new FormData();
+
+				formUpload.append('file', formData.image);
+				const {data: image} = await uploadSingle(formUpload);
+				formUpdate.append('image', image);
+			} else {
+				formUpdate.append('image', previewImage);
+			}
+			formUpdate.append('name', formData.name);
+			await updateCategory(categoryId, formUpdate);
+
+			toast.success('Chỉnh sửa danh mục thành công!');
 			onSuccess?.();
 			onCancel?.();
-		} catch (error) {
-			toast.error(error.message || 'Cập nhật thất bại');
+		} catch (err) {
+			setError(err.message || 'Chỉnh sửa danh mục thất bại');
 		} finally {
 			setLoading(false);
 		}
