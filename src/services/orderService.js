@@ -92,3 +92,63 @@ export const deleteOrder = async (orderId) => {
 		throw error.response?.data || {message: 'Xoá đơn hàng thất bại'};
 	}
 };
+
+// Thống kê
+export const getDashboardStats = async () => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.get('/api/order/dashboard-stats', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lấy thống kê thất bại'};
+	}
+};
+
+// Lấy dữ liệu biểu đồ doanh thu
+export const getRevenueChart = async () => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.get('/api/order/revenue-chart', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lấy dữ liệu biểu đồ thất bại'};
+	}
+};
+
+// Biểu đồ doanh thu theo ngày
+export const getRevenueByDay = async () => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.get('/api/order/revenue-by-day', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lấy doanh thu theo ngày thất bại'};
+	}
+};
+
+// Biểu đồ doanh thu theo năm
+export const getRevenueByYear = async () => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.get('/api/order/revenue-by-year', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lấy doanh thu theo năm thất bại'};
+	}
+};
