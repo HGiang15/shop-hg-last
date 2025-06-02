@@ -15,6 +15,8 @@ import {toast} from 'react-toastify';
 import FormCreateCategory from '../FormCreateCategory/FormCreateCategory';
 import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
 import FormUpdateCategory from '../FormUpdateCategory/FormUpdateCategory';
+import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
+import useDebounce from '@/hooks/useDebounce';
 
 const MainPageCategory = () => {
 	const router = useRouter();
@@ -28,10 +30,13 @@ const MainPageCategory = () => {
 	const [limit, setLimit] = useState(5);
 	const [totalPages, setTotalPages] = useState(1);
 	const [totalItems, setTotalItems] = useState(0);
+	const [sortOption, setSortOption] = useState('newest');
+	const [searchTerm, setSearchTerm] = useState('');
+	const debounce = useDebounce(searchTerm, 600);
 
-	const fetchCategories = async (page = currentPage, customLimit = limit) => {
+	const fetchCategories = async (page = currentPage, customLimit = limit, sort = sortOption, search = debounce) => {
 		try {
-			const data = await getAllCategories(page, customLimit);
+			const data = await getAllCategories(page, customLimit, sort, search);
 			setCategories(data.categories);
 			setCurrentPage(data.currentPage);
 			setTotalPages(data.totalPages);
@@ -43,7 +48,7 @@ const MainPageCategory = () => {
 
 	useEffect(() => {
 		fetchCategories();
-	}, []);
+	}, [currentPage, limit, sortOption, debounce]);
 
 	const handleEditCategory = (id) => {
 		setEditCategoryId(id);
@@ -53,6 +58,19 @@ const MainPageCategory = () => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
+				<FilterAdmin
+					searchTerm={searchTerm}
+					setSearchTerm={setSearchTerm}
+					sortOption={sortOption}
+					setSortOption={setSortOption}
+					setCurrentPage={setCurrentPage}
+					sortOptions={[
+						{value: 'newest', label: 'Mới nhất'},
+						{value: 'oldest', label: 'Cũ nhất'},
+						{value: 'name_asc', label: 'Tên A-Z'},
+						{value: 'name_desc', label: 'Tên Z-A'},
+					]}
+				/>
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
 					Thêm mới danh mục
 				</Button>

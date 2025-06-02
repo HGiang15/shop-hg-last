@@ -1,0 +1,18 @@
+.filterWrapper {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.searchInput {
+	padding: 6px 10px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	width: 240px;
+}
+
+.sortSelect {
+	padding: 6px 10px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+}

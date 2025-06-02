@@ -9,10 +9,10 @@ export const createCategory = async (categoryData) => {
 	}
 };
 
-export const getAllCategories = async (page = 1, limit = 20) => {
+export const getAllCategories = async (page = 1, limit = 20, sort = 'newest', search = '') => {
 	try {
 		const response = await axiosClient.get(`/api/category/getAllCategories`, {
-			params: {page, limit},
+			params: {page, limit, sort, search},
 		});
 		return response.data;
 	} catch (error) {

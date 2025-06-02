@@ -11,6 +11,10 @@ import ConfirmModalStatus from '../ConfirmModalStatus/ConfirmModalStatus';
 import ConfirmModalRole from '../ConfirmModalRole/ConfirmModalRole';
 import FormUpdateUser from '../FormUpdateUser/FormUpdateUser';
 import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
+import images from '@/constants/static/images';
+import useDebounce from '@/hooks/useDebounce';
+import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
+import Button from '@/components/common/Button/Button';
 
 const MainPageUser = () => {
 	const [users, setUsers] = useState([]);
@@ -29,10 +33,16 @@ const MainPageUser = () => {
 	const [showUpdateForm, setShowUpdateForm] = useState(false); // Update
 	const [editUserId, setEditUserId] = useState(null); // Update
 
+	const [searchTerm, setSearchTerm] = useState('');
+	const [sortOption, setSortOption] = useState('newest');
+	const [filterRole, setFilterRole] = useState('');
+	const [filterStatus, setFilterStatus] = useState('');
+	const debounce = useDebounce(searchTerm, 600);
+
 	// Fetch Users
 	const fetchUsers = async (page = currentPage, customLimit = limit) => {
 		try {
-			const res = await getListUser(page, customLimit);
+			const res = await getListUser(page, customLimit, debounce, sortOption, filterRole, filterStatus);
 			setUsers(res.data);
 			setTotalPages(res.pagination.totalPages);
 			setTotalItems(res.pagination.totalItems);
@@ -43,8 +53,8 @@ const MainPageUser = () => {
 	};
 
 	useEffect(() => {
-		fetchUsers();
-	}, []);
+		fetchUsers(1, limit); // Reset về trang 1 khi filter đổi
+	}, [debounce, sortOption, filterRole, filterStatus]);
 
 	// Handle Pagination
 	const handlePageChange = (pageNumber) => {
@@ -129,56 +139,102 @@ const MainPageUser = () => {
 				<p style={{color: 'red'}}>{error}</p>
 			) : (
 				<>
-					<div className={styles.tableWrapper}>
-						<Table
-							users={users.map((user, index) => ({
-								...user,
-								index: (currentPage - 1) * limit + index + 1,
-								roleLabel: getRoleLabel(user.role),
-							}))}
-							headers={[
-								{key: 'index', label: 'STT'},
-								{key: 'name', label: 'Họ tên'},
-								{key: 'phone', label: 'Số điện thoại'},
-								{key: 'email', label: 'Email'},
-								{key: 'role', label: 'Quyền'},
-								{key: 'status', label: 'Trạng thái'},
+					<div className={styles.header}>
+						<FilterAdmin
+							searchTerm={searchTerm}
+							setSearchTerm={setSearchTerm}
+							sortOption={sortOption}
+							setSortOption={setSortOption}
+							setCurrentPage={setCurrentPage}
+							sortOptions={[
+								{value: 'newest', label: 'Mới nhất'},
+								{value: 'oldest', label: 'Cũ nhất'},
+								{value: 'name_asc', label: 'Tên A-Z'},
+								{value: 'name_desc', label: 'Tên Z-A'},
 							]}
-							renderActions={(user) => (
-								<>
-									<IconCustom
-										icon={<Image src={icons.edit} alt='Edit' width={20} height={20} />}
-										iconFilter='invert(38%) sepia(93%) saturate(1382%) hue-rotate(189deg) brightness(89%) contrast(105%)'
-										backgroundColor='#dce7ff'
-										tooltip='Chỉnh sửa người dùng'
-										onClick={() => handleEditClick(user.id)}
-									/>
-									<IconCustom
-										icon={
-											<Image
-												src={user.status === 'Đang hoạt động' ? icons.lock : icons.unlock}
-												alt='Lock/Unlock'
-												width={20}
-												height={20}
-											/>
-										}
-										iconFilter='invert(66%) sepia(35%) saturate(5412%) hue-rotate(338deg) brightness(98%) contrast(90%)'
-										backgroundColor='#ffe4e4'
-										tooltip={user.status === 'Đang hoạt động' ? 'Khóa người dùng' : 'Mở khóa người dùng'}
-										onClick={() => handleLockUnlockClick(user)}
-									/>
-									<IconCustom
-										icon={<Image src={icons.changeRole} alt='Change Role' width={20} height={20} />}
-										iconFilter='invert(24%) sepia(87%) saturate(2360%) hue-rotate(270deg) brightness(85%) contrast(96%)'
-										backgroundColor='linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(255, 255, 255, 0.5))'
-										tooltip='Thay đổi quyền người dùng'
-										onClick={() => handleChangeRoleClick(user)}
-									/>
-								</>
-							)}
-							roleStyle={{background: '#ffe4e6', color: '#ff2d2d', padding: '5px 10px', borderRadius: '4px'}}
-							statusStyle={{background: '#e4ffe5', color: '#19cd21', padding: '5px 10px', borderRadius: '4px'}}
+							filters={[
+								{
+									name: 'role',
+									value: filterRole,
+									onChange: setFilterRole,
+									options: [
+										{value: '', label: 'Tất cả quyền'},
+										{value: '0', label: 'Quản trị viên'},
+										{value: '1', label: 'Người dùng'},
+									],
+								},
+								{
+									name: 'status',
+									value: filterStatus,
+									onChange: setFilterStatus,
+									options: [
+										{value: '', label: 'Tất cả trạng thái'},
+										{value: '1', label: 'Đang hoạt động'},
+										{value: '0', label: 'Không hoạt động'},
+									],
+								},
+							]}
 						/>
+					</div>
+
+					<div className={styles.tableWrapper}>
+						{users.length === 0 ? (
+							<div className={styles.noProducts}>
+								<Image src={images.boxEmpty} alt='Không có người dùng' width={180} height={180} priority />
+								<h4>DỮ LIỆU TRỐNG</h4>
+								<p>Hiện tại không có người dùng nào phù hợp!</p>
+							</div>
+						) : (
+							<Table
+								users={users.map((user, index) => ({
+									...user,
+									index: (currentPage - 1) * limit + index + 1,
+									roleLabel: getRoleLabel(user.role),
+								}))}
+								headers={[
+									{key: 'index', label: 'STT'},
+									{key: 'name', label: 'Họ tên'},
+									{key: 'phone', label: 'Số điện thoại'},
+									{key: 'email', label: 'Email'},
+									{key: 'role', label: 'Quyền'},
+									{key: 'status', label: 'Trạng thái'},
+								]}
+								renderActions={(user) => (
+									<>
+										{/* <IconCustom
+											icon={<Image src={icons.edit} alt='Edit' width={20} height={20} />}
+											iconFilter='invert(38%) sepia(93%) saturate(1382%) hue-rotate(189deg) brightness(89%) contrast(105%)'
+											backgroundColor='#dce7ff'
+											tooltip='Chỉnh sửa người dùng'
+											onClick={() => handleEditClick(user.id)}
+										/> */}
+										<IconCustom
+											icon={
+												<Image
+													src={user.status === 'Đang hoạt động' ? icons.lock : icons.unlock}
+													alt='Lock/Unlock'
+													width={20}
+													height={20}
+												/>
+											}
+											iconFilter='invert(66%) sepia(35%) saturate(5412%) hue-rotate(338deg) brightness(98%) contrast(90%)'
+											backgroundColor='#ffe4e4'
+											tooltip={user.status === 'Đang hoạt động' ? 'Khóa người dùng' : 'Mở khóa người dùng'}
+											onClick={() => handleLockUnlockClick(user)}
+										/>
+										<IconCustom
+											icon={<Image src={icons.changeRole} alt='Change Role' width={20} height={20} />}
+											iconFilter='invert(24%) sepia(87%) saturate(2360%) hue-rotate(270deg) brightness(85%) contrast(96%)'
+											backgroundColor='linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(255, 255, 255, 0.5))'
+											tooltip='Thay đổi quyền người dùng'
+											onClick={() => handleChangeRoleClick(user)}
+										/>
+									</>
+								)}
+								roleStyle={{background: '#ffe4e6', color: '#ff2d2d', padding: '5px 10px', borderRadius: '4px'}}
+								statusStyle={{background: '#e4ffe5', color: '#19cd21', padding: '5px 10px', borderRadius: '4px'}}
+							/>
+						)}
 					</div>
 
 					<Pagination

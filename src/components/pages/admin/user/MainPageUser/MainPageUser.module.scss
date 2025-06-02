@@ -5,6 +5,19 @@
 	min-height: 80vh;
 }
 
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+
+	.addButton {
+		background: var(--gradient-blue-red);
+		color: #fff;
+		padding: 10px 15px;
+	}
+}
+
 .actionButton {
 	margin: 0 5px;
 }
@@ -27,4 +40,23 @@
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
+}
+
+.noProducts {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	gap: 8px;
+
+	h4 {
+		font-size: 24px;
+	}
+
+	p {
+		font-size: 14px;
+	}
+
+	.btnNoProduct {
+		background: #1da7df;
+	}
 }

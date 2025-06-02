@@ -13,6 +13,8 @@ import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
 import FormCreateColor from '../FormCreateColor/FormCreateColor';
 import FormUpdateColor from '../FormUpdateColor/FormUpdateColor';
 import images from '@/constants/static/images';
+import useDebounce from '@/hooks/useDebounce';
+import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 
 const MainPageColor = () => {
 	const [currentPage, setCurrentPage] = useState(1);
@@ -25,11 +27,14 @@ const MainPageColor = () => {
 	const [limit, setLimit] = useState(5); // Default limit
 	const [totalItems, setTotalItems] = useState(0);
 	const [totalPages, setTotalPages] = useState(1);
+	const [sortOption, setSortOption] = useState('newest');
+	const [searchTerm, setSearchTerm] = useState('');
+	const debounce = useDebounce(searchTerm, 600);
 
 	// Get all colors with pagination
 	const fetchColors = async () => {
 		try {
-			const data = await getAllColors(currentPage, limit);
+			const data = await getAllColors(currentPage, limit, sortOption, debounce);
 			setColors(data.colors || []);
 			setTotalItems(data.totalItems || 0);
 			setTotalPages(data.totalPages || 1);
@@ -40,7 +45,7 @@ const MainPageColor = () => {
 
 	useEffect(() => {
 		fetchColors();
-	}, [currentPage, limit]);
+	}, [currentPage, limit, sortOption, debounce]);
 
 	const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
@@ -59,6 +64,19 @@ const MainPageColor = () => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
+				<FilterAdmin
+					searchTerm={searchTerm}
+					setSearchTerm={setSearchTerm}
+					sortOption={sortOption}
+					setSortOption={setSortOption}
+					setCurrentPage={setCurrentPage}
+					sortOptions={[
+						{value: 'newest', label: 'Mới nhất'},
+						{value: 'oldest', label: 'Cũ nhất'},
+						{value: 'name_asc', label: 'Tên A-Z'},
+						{value: 'name_desc', label: 'Tên Z-A'},
+					]}
+				/>
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
 					Thêm mới màu sắc
 				</Button>
@@ -78,7 +96,7 @@ const MainPageColor = () => {
 					<div className={styles.tableWrapper}>
 						<Table
 							users={colors.map((color, index) => ({
-								index: (currentPage - 1) * limit + index + 1, 
+								index: (currentPage - 1) * limit + index + 1,
 								_id: color._id,
 								code: color.code,
 								name: color.name,
@@ -86,7 +104,7 @@ const MainPageColor = () => {
 								createdAt: color.createdAt,
 							}))}
 							headers={[
-								{key: 'index', label: 'STT'}, 
+								{key: 'index', label: 'STT'},
 								{
 									key: 'code',
 									label: 'Mã màu',

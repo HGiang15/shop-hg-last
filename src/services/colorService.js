@@ -1,9 +1,9 @@
 import axiosClient from '.';
 
-export const getAllColors = async (page = 1, limit = 10) => {
+export const getAllColors = async (page = 1, limit = 10, sort = 'newest', search = '') => {
 	try {
 		const response = await axiosClient.get(`/api/color/getAllColors`, {
-			params: {page, limit},
+			params: {page, limit, sort, search},
 		});
 		return response.data;
 	} catch (error) {

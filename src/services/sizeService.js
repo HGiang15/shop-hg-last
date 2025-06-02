@@ -1,9 +1,9 @@
 import axiosClient from '.';
 
-export const getAllSizes = async (page = 1, limit = 1000) => {
+export const getAllSizes = async (page = 1, limit = 1000, sort = 'newest', search = '') => {
 	try {
 		const response = await axiosClient.get(`/api/size/getAllSizes`, {
-			params: {page, limit},
+			params: {page, limit, sort, search},
 		});
 		return response.data;
 	} catch (error) {

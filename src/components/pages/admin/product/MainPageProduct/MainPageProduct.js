@@ -14,6 +14,8 @@ import {getAllProducts, deleteProduct} from '@/services/productService';
 import images from '@/constants/static/images';
 import {toast} from 'react-toastify';
 import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
+import useDebounce from '@/hooks/useDebounce';
+import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 
 const MainPageProduct = ({setActiveMenu}) => {
 	const router = useRouter();
@@ -24,21 +26,33 @@ const MainPageProduct = ({setActiveMenu}) => {
 	const [productsPerPage, setProductsPerPage] = useState(5);
 	const [isModalOpen, setIsModalOpen] = useState(false); // Delete
 	const [selectedProductId, setSelectedProductId] = useState(null); // Delete
+	const [searchTerm, setSearchTerm] = useState('');
+	const [sortOption, setSortOption] = useState('newest'); // mặc định 'mới nhất'
+	const debounce = useDebounce(searchTerm, 600);
+
+	// const productSortOptions = [
+	// 	{value: 'newest', label: 'Mới nhất'},
+	// 	{value: 'oldest', label: 'Cũ nhất'},
+	// 	{value: 'name_asc', label: 'Tên A-Z'},
+	// 	{value: 'name_desc', label: 'Tên Z-A'},
+	// 	{value: 'price_asc', label: 'Giá thấp đến cao'},
+	// 	{value: 'price_desc', label: 'Giá cao đến thấp'},
+	// ];
+
+	const fetchProducts = async () => {
+		try {
+			const data = await getAllProducts(currentPage, productsPerPage, sortOption, debounce);
+			setProducts(data.products);
+			setTotalItems(data.totalItems);
+			setTotalPages(data.totalPages);
+		} catch (error) {
+			console.error('Lỗi khi gọi API:', error);
+		}
+	};
 
 	useEffect(() => {
-		const fetchProducts = async () => {
-			try {
-				const data = await getAllProducts(currentPage, productsPerPage);
-				setProducts(data.products);
-				setTotalItems(data.totalItems);
-				setTotalPages(data.totalPages);
-			} catch (error) {
-				console.error('Lỗi khi gọi API:', error);
-			}
-		};
-
 		fetchProducts();
-	}, [currentPage, productsPerPage]);
+	}, [currentPage, productsPerPage, sortOption, debounce]);
 
 	const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
@@ -57,6 +71,21 @@ const MainPageProduct = ({setActiveMenu}) => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
+				<FilterAdmin
+					searchTerm={searchTerm}
+					setSearchTerm={setSearchTerm}
+					sortOption={sortOption}
+					setSortOption={setSortOption}
+					setCurrentPage={setCurrentPage}
+					sortOptions={[
+						{value: 'newest', label: 'Mới nhất'},
+						{value: 'oldest', label: 'Cũ nhất'},
+						{value: 'name_asc', label: 'Tên A-Z'},
+						{value: 'name_desc', label: 'Tên Z-A'},
+						{value: 'price_asc', label: 'Giá thấp đến cao'},
+						{value: 'price_desc', label: 'Giá cao đến thấp'},
+					]}
+				/>
 				<Button className={styles.addButton} onClick={handleFormCreateProductClick}>
 					Thêm mới sản phẩm
 				</Button>

@@ -18,10 +18,10 @@ export const updateProduct = async (productId, productData) => {
 	}
 };
 
-export const getAllProducts = async (page = 1, limit = 5) => {
+export const getAllProducts = async (page = 1, limit = 5, sort = 'newest', search = '') => {
 	try {
 		const response = await axiosClient.get(`/api/product/getAllProducts`, {
-			params: {page, limit},
+			params: {page, limit, sort, search},
 		});
 		return response.data;
 	} catch (error) {

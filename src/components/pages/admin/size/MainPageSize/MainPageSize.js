@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styles from './MainPageSize.module.scss';
 import Table from '@/components/common/Table/Table';
 import Pagination from '@/components/common/Pagination/Pagination';
@@ -13,23 +13,27 @@ import {getAllSizes, deleteSize} from '@/services/sizeService';
 import {toast} from 'react-toastify';
 import FormUpdateSize from '../FormUpdateSize/FormUpdateSize';
 import images from '@/constants/static/images';
+import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
+import useDebounce from '@/hooks/useDebounce';
 
 const MainPageSize = () => {
 	const [sizes, setSizes] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [showForm, setShowForm] = useState(false); // Create
-	const [showUpdateForm, setShowUpdateForm] = useState(false); // Update
-	const [editSizeId, setEditSizeId] = useState(null); // Update
-	const [selectedSizeId, setSelectedSizeId] = useState(null); // Delete
-	const [isModalOpen, setIsModalOpen] = useState(false); // Delete
+	const [showForm, setShowForm] = useState(false);
+	const [showUpdateForm, setShowUpdateForm] = useState(false);
+	const [editSizeId, setEditSizeId] = useState(null);
+	const [selectedSizeId, setSelectedSizeId] = useState(null);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [limit, setLimit] = useState(5);
 	const [totalPages, setTotalPages] = useState(1);
 	const [totalItems, setTotalItems] = useState(0);
-	const [limit, setLimit] = useState(5);
+	const [sortOption, setSortOption] = useState('newest');
+	const [searchTerm, setSearchTerm] = useState('');
+	const debounce = useDebounce(searchTerm, 600);
 
-	// Get all sizes
-	const fetchSizes = async (page = currentPage, customLimit = limit) => {
+	const fetchSizes = async (page = currentPage, customLimit = limit, sort = sortOption, search = debounce) => {
 		try {
-			const data = await getAllSizes(page, customLimit);
+			const data = await getAllSizes(page, customLimit, sort, search);
 			setSizes(data.sizes);
 			setCurrentPage(data.currentPage);
 			setTotalPages(data.totalPages);
@@ -41,21 +45,20 @@ const MainPageSize = () => {
 
 	useEffect(() => {
 		fetchSizes();
-	}, []);
+	}, [currentPage, limit, sortOption, debounce]);
 
 	const handleEditSize = (id) => {
 		setEditSizeId(id);
 		setShowUpdateForm(true);
 	};
 
-	// Delete Size
 	const handleDelete = async () => {
 		try {
 			await deleteSize(selectedSizeId);
 			toast.success('Xóa kích cỡ thành công');
 			fetchSizes();
 		} catch (error) {
-			toast.error('Xóa thất bại');
+			toast.error(error.message || 'Xóa thất bại');
 		} finally {
 			setIsModalOpen(false);
 		}
@@ -64,6 +67,19 @@ const MainPageSize = () => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
+				<FilterAdmin
+					searchTerm={searchTerm}
+					setSearchTerm={setSearchTerm}
+					sortOption={sortOption}
+					setSortOption={setSortOption}
+					setCurrentPage={setCurrentPage}
+					sortOptions={[
+						{value: 'newest', label: 'Mới nhất'},
+						{value: 'oldest', label: 'Cũ nhất'},
+						{value: 'name_asc', label: 'Tên A-Z'},
+						{value: 'name_desc', label: 'Tên Z-A'},
+					]}
+				/>
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
 					Thêm mới kích cỡ
 				</Button>
