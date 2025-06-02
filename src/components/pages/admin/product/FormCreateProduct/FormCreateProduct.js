@@ -156,6 +156,16 @@ const FormCreateProduct = ({setActiveMenu}) => {
 						name: selectedCategory.name,
 					}),
 				}));
+
+				// ✅ Gán sizes từ category
+				setSizes(selectedCategory.sizes || []);
+
+				// ✅ Reset sizeQuantities theo size mới
+				const newQuantities = {};
+				(selectedCategory.sizes || []).forEach((size) => {
+					newQuantities[size.name] = 0;
+				});
+				setSizeQuantities(newQuantities);
 			}
 		} else if (name === 'colors') {
 			const selectedColor = colorOptions.find((color) => color._id === value);
@@ -229,28 +239,28 @@ const FormCreateProduct = ({setActiveMenu}) => {
 	}, []);
 
 	// Get all sizes
-	useEffect(() => {
-		const fetchSizes = async () => {
-			try {
-				const res = await getAllSizes();
-				if (res && res.sizes) {
-					setSizes(res.sizes);
-					const initialQuantities = {};
-					res.sizes.forEach((size) => {
-						initialQuantities[size.name] = 0;
-					});
-					setSizeQuantities(initialQuantities);
-				} else {
-					console.error('Lỗi khi tải danh sách size: Dữ liệu trả về không hợp lệ', res);
-					toast.error('Lỗi khi tải danh sách size.', {position: 'top-right'});
-				}
-			} catch (err) {
-				console.error('Lỗi khi tải danh sách size:', err.message);
-				toast.error('Lỗi kết nối khi tải danh sách size.', {position: 'top-right'});
-			}
-		};
-		fetchSizes();
-	}, []);
+	// useEffect(() => {
+	// 	const fetchSizes = async () => {
+	// 		try {
+	// 			const res = await getAllSizes();
+	// 			if (res && res.sizes) {
+	// 				setSizes(res.sizes);
+	// 				const initialQuantities = {};
+	// 				res.sizes.forEach((size) => {
+	// 					initialQuantities[size.name] = 0;
+	// 				});
+	// 				setSizeQuantities(initialQuantities);
+	// 			} else {
+	// 				console.error('Lỗi khi tải danh sách size: Dữ liệu trả về không hợp lệ', res);
+	// 				toast.error('Lỗi khi tải danh sách size.', {position: 'top-right'});
+	// 			}
+	// 		} catch (err) {
+	// 			console.error('Lỗi khi tải danh sách size:', err.message);
+	// 			toast.error('Lỗi kết nối khi tải danh sách size.', {position: 'top-right'});
+	// 		}
+	// 	};
+	// 	fetchSizes();
+	// }, []);
 
 	// Get all category
 	useEffect(() => {

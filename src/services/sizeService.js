@@ -1,6 +1,6 @@
 import axiosClient from '.';
 
-export const getAllSizes = async (page = 1, limit = 5) => {
+export const getAllSizes = async (page = 1, limit = 1000) => {
 	try {
 		const response = await axiosClient.get(`/api/size/getAllSizes`, {
 			params: {page, limit},
@@ -17,6 +17,16 @@ export const createSize = async (sizeData) => {
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Thêm kích cỡ thất bại'};
+	}
+};
+
+// Lấy danh sách size theo categoryId
+export const getSizesByCategoryId = async (categoryId) => {
+	try {
+		const response = await axiosClient.get(`/api/size/by-category/${categoryId}`);
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lấy kích cỡ theo danh mục thất bại'};
 	}
 };
 

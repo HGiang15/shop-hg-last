@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import styles from './FormCreateCategory.module.scss';
 import Button from '@/components/common/Button/Button';
 import Image from 'next/image';
@@ -7,6 +7,8 @@ import {createCategory} from '@/services/categoryService';
 import {toast} from 'react-toastify';
 import images from '@/constants/static/images';
 import {uploadSingle} from '@/services/uploadService';
+import {getAllSizes} from '@/services/sizeService';
+import Select from 'react-select';
 
 const FormCreateCategory = ({onCancel, onSuccess}) => {
 	const fileInputRef = useRef(null);
@@ -14,9 +16,29 @@ const FormCreateCategory = ({onCancel, onSuccess}) => {
 		name: '',
 		image: null,
 	});
+	const [sizes, setSizes] = useState([]);
+	const [selectedSizes, setSelectedSizes] = useState([]);
 	const [imagePreview, setImagePreview] = useState(null);
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
+
+	// Get all sizes
+	useEffect(() => {
+		const fetchSizes = async () => {
+			try {
+				const res = await getAllSizes();
+				setSizes(res.sizes || []);
+			} catch (err) {
+				console.error('Lỗi khi lấy danh sách size:', err);
+			}
+		};
+		fetchSizes();
+	}, []);
+
+	const options = sizes.map((size) => ({
+		value: size._id,
+		label: size.name,
+	}));
 
 	const handleChange = (e) => {
 		setFormData((prev) => ({...prev, name: e.target.value}));
@@ -42,12 +64,18 @@ const FormCreateCategory = ({onCancel, onSuccess}) => {
 		}
 	};
 
-	// Create
+	// Create category
 	const handleSubmit = async () => {
 		if (!formData.name.trim()) {
 			setError('Tên danh mục là bắt buộc.');
 			return;
 		}
+
+		if (selectedSizes.length === 0) {
+			setError('Vui lòng chọn ít nhất một kích cỡ cho danh mục.');
+			return;
+		}
+
 		if (!formData.image) {
 			setError('Vui lòng chọn ảnh hợp lệ.');
 			return;
@@ -64,6 +92,9 @@ const FormCreateCategory = ({onCancel, onSuccess}) => {
 			const {data: image} = await uploadSingle(formUpload);
 
 			formCreate.append('name', formData.name);
+			const sizeIds = selectedSizes.map((s) => s.value);
+			formCreate.append('sizes', JSON.stringify(sizeIds));
+
 			formCreate.append('image', image);
 
 			await createCategory(formCreate);
@@ -91,6 +122,15 @@ const FormCreateCategory = ({onCancel, onSuccess}) => {
 					Tên danh mục <span className={styles.required}>*</span>
 				</label>
 				<input type='text' name='name' placeholder='Tên danh mục' value={formData.name} onChange={handleChange} />
+			</div>
+
+			<div className={styles.formGroup}>
+				<label>
+					Kích cỡ <span className={styles.required}>*</span>
+				</label>
+				<div style={{flex: 1}}>
+					<Select isMulti options={options} value={selectedSizes} onChange={setSelectedSizes} placeholder='Chọn kích cỡ...' />
+				</div>
 			</div>
 
 			<div className={styles.imageUploadContainer}>

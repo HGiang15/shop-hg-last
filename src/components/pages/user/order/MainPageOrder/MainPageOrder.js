@@ -150,7 +150,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 							Đổi địa chỉ
 						</span>
 					</div>
-					{/* TODO: lấy thông tin địa chỉ theo addressId */}
+					{/* lấy thông tin địa chỉ theo addressId */}
 					<div className={styles.deliveryDetails}>
 						{selectedAddress ? (
 							<>

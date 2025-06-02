@@ -44,7 +44,7 @@ export const updateAddress = async (addressId, addressData) => {
 export const setDefaultAddress = async (addressId) => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axiosClient.put(`/api/user-addresses/setDefaultAddress/${addressId}`, null, {
+		const response = await axiosClient.put(`/api/user-addresses/setDefaultAddress/${addressId}`, undefined, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},

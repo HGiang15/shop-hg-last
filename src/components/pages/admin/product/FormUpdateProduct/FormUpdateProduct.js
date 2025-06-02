@@ -13,7 +13,7 @@ import {getProductById, updateProduct} from '@/services/productService';
 import {toast} from 'react-toastify';
 import Select from 'react-select';
 import {getAllColors} from '@/services/colorService';
-import {getAllSizes} from '@/services/sizeService';
+import {getSizesByCategoryId} from '@/services/sizeService';
 import {getAllCategories} from '@/services/categoryService';
 import {uploadMultiple} from '@/services/uploadService';
 
@@ -45,58 +45,68 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 
 	// Detail Product
 	useEffect(() => {
-		setActiveMenu(ROUTES.AdminProduct);
-		if (productIdFromRouter) {
-			(async () => {
-				try {
-					const productData = await getProductById(productIdFromRouter);
-					if (!productData) throw new Error('Không tìm thấy sản phẩm với ID này!');
+		if (!productIdFromRouter) return;
 
-					// Cập nhật dữ liệu form từ API
-					setForm({
-						name: productData.name || '',
-						code: productData.code || '',
-						id: productData._id || '',
-						category: JSON.stringify({
-							categoryId: productData.category[0]?.categoryId || '',
-							name: productData.category[0]?.name || '',
-						}),
-						colors: JSON.stringify(
-							productData.colors.map((color) => ({
-								colorId: color.colorId || '',
-								name: color.name || '',
-							}))
-						),
-						price: productData.price || '',
-						description: productData.description || '',
-						detailDescription: productData.detailDescription || '',
-						isFeatured: productData.isFeatured || false,
-					});
+		const fetchProductAndSizes = async () => {
+			try {
+				const productData = await getProductById(productIdFromRouter);
+				if (!productData) throw new Error('Không tìm thấy sản phẩm với ID này!');
 
-					setDetailDesc(productData.detailDescription || '');
-
-					const initialQuantities = {};
-					sizes.forEach((size) => {
-						const productSize = productData.quantityBySize.find((item) => item.name === size.name);
-						initialQuantities[size.name] = productSize ? productSize.quantity : ''; // Gán '' nếu không có
-					});
-
-					setSizeQuantities(initialQuantities);
-
-					setImagesSelected(
-						productData?.images?.map((img) => ({
-							path: img,
-							file: null,
-							url: '',
+				// Lưu lại form sản phẩm
+				setForm({
+					name: productData.name || '',
+					code: productData.code || '',
+					id: productData._id || '',
+					category: JSON.stringify({
+						categoryId: productData.category[0]?.categoryId || '',
+						name: productData.category[0]?.name || '',
+					}),
+					colors: JSON.stringify(
+						productData.colors.map((color) => ({
+							colorId: color.colorId || '',
+							name: color.name || '',
 						}))
-					);
-				} catch (err) {
-					toast.error(err.message || 'Lỗi khi tải dữ liệu sản phẩm!');
-					router.back();
+					),
+					price: productData.price || '',
+					description: productData.description || '',
+					detailDescription: productData.detailDescription || '',
+					isFeatured: productData.isFeatured || false,
+				});
+
+				setDetailDesc(productData.detailDescription || '');
+
+				// Gọi API size theo category của product
+				const categoryId = productData.category[0]?.categoryId;
+				if (categoryId) {
+					const res = await getSizesByCategoryId(categoryId);
+					const fetchedSizes = res?.sizes || [];
+					setSizes(fetchedSizes);
+
+					// Gán số lượng theo size
+					const initialQuantities = {};
+					fetchedSizes.forEach((size) => {
+						const match = productData.quantityBySize.find((item) => item.name === size.name);
+						initialQuantities[size.name] = match ? match.quantity : '';
+					});
+					setSizeQuantities(initialQuantities);
 				}
-			})();
-		}
-	}, [setActiveMenu, productIdFromRouter, router, sizes]);
+
+				// Gán ảnh
+				setImagesSelected(
+					productData?.images?.map((img) => ({
+						path: img,
+						file: null,
+						url: '',
+					}))
+				);
+			} catch (err) {
+				toast.error(err.message || 'Lỗi khi tải dữ liệu sản phẩm!');
+				router.back();
+			}
+		};
+
+		fetchProductAndSizes();
+	}, [productIdFromRouter]);
 
 	const handleImageChange = (event) => {
 		const files = event.target.files;
@@ -136,7 +146,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 		router.back();
 	};
 
-	const handleInputChange = (e) => {
+	const handleInputChange = async (e) => {
 		const {name, value} = e.target;
 
 		if (name === 'category') {
@@ -149,6 +159,19 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 						name: selectedCategory.name,
 					}),
 				}));
+
+				try {
+					const res = await getSizesByCategoryId(selectedCategory._id);
+					setSizes(res?.sizes || []);
+
+					const newQuantities = {};
+					(res?.sizes || []).forEach((size) => {
+						newQuantities[size.name] = '';
+					});
+					setSizeQuantities(newQuantities);
+				} catch (err) {
+					toast.error('Lỗi khi tải size theo danh mục');
+				}
 			}
 		} else {
 			setForm((prev) => ({
@@ -191,23 +214,6 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 			}
 		};
 		fetchColors();
-	}, []);
-
-	// Get all sizes
-	useEffect(() => {
-		const fetchSizes = async () => {
-			try {
-				const res = await getAllSizes();
-				if (res?.sizes) {
-					setSizes(res.sizes);
-				} else {
-					toast.error('Lỗi khi tải danh sách size.');
-				}
-			} catch (error) {
-				toast.error('Không thể kết nối để lấy size.');
-			}
-		};
-		fetchSizes();
 	}, []);
 
 	// Get all categories
@@ -398,7 +404,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 					>
 						<option value=''>Chọn loại sản phẩm</option>
 						{categoryOptions.map((category) => (
-							<option key={category._id} value={category.categoryId}>
+							<option key={category._id} value={category._id}>
 								{category.name}
 							</option>
 						))}
