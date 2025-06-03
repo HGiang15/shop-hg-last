@@ -1,12 +1,12 @@
 import {useEffect, useState} from 'react';
-import styles from './FormUpdateAddress.module.scss';
+import styles from './FormChangeAddress.module.scss';
 import Button from '@/components/common/Button/Button';
 import FormCreateAddress from '../../profile/FormCreateAddress/FormCreateAddress';
 import {getUserAddresses, deleteAddress, setDefaultAddress} from '@/services/userAddressService';
 import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
 import {toast} from 'react-toastify';
 
-const FormUpdateAddress = ({onClose, onAddressSelected, currentAddressId, onReloadAddresses}) => {
+const FormChangeAddress = ({onClose, onAddressSelected, currentAddressId, onReloadAddresses}) => {
 	const [showCreateForm, setShowCreateForm] = useState(false);
 	const [addresses, setAddresses] = useState([]);
 	const [selectedAddressId, setSelectedAddressId] = useState(null);
@@ -44,8 +44,9 @@ const FormUpdateAddress = ({onClose, onAddressSelected, currentAddressId, onRelo
 			await setDefaultAddress(id);
 			await reloadAddresses();
 			onReloadAddresses?.();
+			toast.success('Đã đặt địa chỉ mặc định!');
 		} catch (err) {
-			alert('Không thể đặt địa chỉ mặc định');
+			toast.error('Không thể đặt địa chỉ mặc định');
 		}
 	};
 
@@ -63,7 +64,7 @@ const FormUpdateAddress = ({onClose, onAddressSelected, currentAddressId, onRelo
 			setShowDeleteModal(false);
 			toast.success('Xóa địa chỉ thành công!');
 		} catch (err) {
-			alert(err.message || 'Xóa địa chỉ thất bại');
+			toast.error(err.message || 'Xóa địa chỉ thất bại');
 		}
 	};
 
@@ -123,4 +124,4 @@ const FormUpdateAddress = ({onClose, onAddressSelected, currentAddressId, onRelo
 	);
 };
 
-export default FormUpdateAddress;
+export default FormChangeAddress;

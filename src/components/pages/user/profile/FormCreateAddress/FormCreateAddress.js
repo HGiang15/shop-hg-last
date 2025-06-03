@@ -46,6 +46,7 @@ const FormCreateAddress = ({onClose, onAddressCreated}) => {
 		}
 	}, []);
 
+	// Province
 	useEffect(() => {
 		const fetchProvinces = async () => {
 			try {
@@ -58,6 +59,7 @@ const FormCreateAddress = ({onClose, onAddressCreated}) => {
 		fetchProvinces();
 	}, []);
 
+	// Districts
 	useEffect(() => {
 		const fetchDistricts = async () => {
 			if (selectedProvince) {
@@ -80,6 +82,7 @@ const FormCreateAddress = ({onClose, onAddressCreated}) => {
 		fetchDistricts();
 	}, [selectedProvince]);
 
+	// Ward
 	useEffect(() => {
 		const fetchWards = async () => {
 			if (selectedDistrict) {
@@ -109,6 +112,7 @@ const FormCreateAddress = ({onClose, onAddressCreated}) => {
 		return Object.keys(newErrors).length === 0;
 	};
 
+	// Create address
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 

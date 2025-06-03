@@ -7,29 +7,53 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {ROUTES} from '@/constants/config';
 import {useRouter} from 'next/router';
+import {getCurrentUser} from '@/services/authService';
 
 const SidebarProfile = ({isOpen, onClose}) => {
 	const router = useRouter();
 	const [activeLink, setActiveLink] = useState(ROUTES.Profile);
 	const sidebarRef = useRef(null);
 	const [isClient, setIsClient] = useState(false);
+	const [user, setUser] = useState({
+		name: '',
+		gender: '',
+		dateOfBirth: '',
+		avatar: '',
+	});
 
 	useEffect(() => {
 		setIsClient(true);
 		setActiveLink(router.asPath);
 	}, [router.asPath]);
 
+	useEffect(() => {
+		const fetchUser = async () => {
+			try {
+				const currentUser = await getCurrentUser();
+				setUser({
+					name: currentUser.name || '',
+					gender: currentUser.gender || '',
+					dateOfBirth: currentUser.dateOfBirth ? currentUser.dateOfBirth.slice(0, 10) : '',
+					avatar: currentUser.avatar || '',
+				});
+			} catch (error) {
+				console.error('Lỗi khi lấy thông tin người dùng:', error.message || error);
+			}
+		};
+		fetchUser();
+	}, []);
+
 	const handleLinkClick = (route) => {
 		setActiveLink(route);
 		if (isClient && window.innerWidth < 768) {
-			onClose(); // Đóng sidebar khi chọn link
+			onClose();
 		}
 	};
 
 	useEffect(() => {
 		const handleClickOutside = (event) => {
 			if (sidebarRef.current && !sidebarRef.current.contains(event.target) && isClient && window.innerWidth < 768 && isOpen) {
-				onClose(); // Đóng sidebar khi click ra ngoài
+				onClose();
 			}
 		};
 
@@ -41,6 +65,24 @@ const SidebarProfile = ({isOpen, onClose}) => {
 		}
 	}, [isOpen, isClient, onClose]);
 
+	// Hiển thị avatar: nếu có URL thì dùng URL, không thì dùng ảnh mặc định
+	const avatarSrc = user.avatar ? user.avatar : images.defaultAvatar;
+
+	// Hiển thị giới tính tiếng Việt (nếu backend trả về English)
+	const genderDisplay =
+		{
+			Male: 'Nam',
+			Female: 'Nữ',
+			Other: 'Khác',
+		}[user.gender] || '';
+
+	// Định dạng ngày sinh dạng dd/mm/yyyy
+	const formatDate = (dateStr) => {
+		if (!dateStr) return '';
+		const d = new Date(dateStr);
+		return d.toLocaleDateString('vi-VN');
+	};
+
 	return (
 		<div ref={sidebarRef} className={`${styles.container} ${isOpen ? styles.open : styles.closed}`}>
 			{isClient && window.innerWidth < 768 && isOpen && (
@@ -48,12 +90,15 @@ const SidebarProfile = ({isOpen, onClose}) => {
 					<FaTimes />
 				</div>
 			)}
+
 			<div className={styles.profileHeader}>
-				<Image src={images.user} alt='Avatar' width={60} height={60} className={styles.avatar} />
+				<Image src={avatarSrc} alt='Avatar' width={80} height={80} className={styles.avatar} />
 				<div className={styles.profileInfo}>
-					<h2 className={styles.name}>Nguyễn Đăng Hoàng Giang</h2>
-					<span className={styles.details}>Nam - </span>
-					<span className={styles.details}>15/05/2003</span>
+					<h2 className={styles.name}>{user.name || 'Tên người dùng'}</h2>
+					<span className={styles.details}>
+						{genderDisplay} {genderDisplay && user.dateOfBirth ? ' - ' : ''}
+					</span>
+					<span className={styles.details}>{formatDate(user.dateOfBirth)}</span>
 				</div>
 			</div>
 

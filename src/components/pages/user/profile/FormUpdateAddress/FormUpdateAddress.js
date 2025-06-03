@@ -5,8 +5,11 @@ import icons from '@/constants/static/icons';
 import useFormValidation from '@/hooks/useFormValidation';
 import Select from 'react-select';
 import Image from 'next/image';
+import {getProvinces, getDistricts, getWards} from '@/services/locationService';
+import {toast} from 'react-toastify';
+import {updateAddress} from '@/services/userAddressService';
 
-const FormUpdateAddress = ({onClose, existingData}) => {
+const FormUpdateAddress = ({onClose, existingData, onAddressUpdated}) => {
 	const validationRules = useMemo(
 		() => ({
 			name: {required: true},
@@ -15,11 +18,13 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 				custom: (value) => /^(0|\+84)[0-9]{9,10}$/.test(value),
 				message: 'Số điện thoại không hợp lệ.',
 			},
-			detail: {required: true},
+			address: {required: true},
 		}),
 		[]
 	);
-	const {formData, handleChange, isFormValid} = useFormValidation({name: '', phone: '', detail: ''}, validationRules);
+
+	const {formData, handleChange, isFormValid} = useFormValidation({name: '', phone: '', address: ''}, validationRules);
+	const [loading, setLoading] = useState(false);
 
 	const [nameError, setNameError] = useState('');
 	const [phoneError, setPhoneError] = useState('');
@@ -35,37 +40,85 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 
 	const [selectErrors, setSelectErrors] = useState({});
 
+	// Lấy danh sách tỉnh
 	useEffect(() => {
-		fetch('https://provinces.open-api.vn/api/?depth=1')
-			.then((res) => res.json())
-			.then((data) => setProvinces(data.map((item) => ({value: item.code, label: item.name}))));
-	}, []);
+		const fetchProvinces = async () => {
+			try {
+				const data = await getProvinces();
+				const options = data.map((item) => ({value: item._id, label: item.name}));
+				setProvinces(options);
 
+				if (existingData) {
+					const provinceOption = options.find((p) => p.label === existingData.province.name);
+					if (provinceOption) setSelectedProvince(provinceOption);
+				}
+			} catch (error) {
+				toast.error('Không thể tải danh sách tỉnh/thành');
+			}
+		};
+		fetchProvinces();
+	}, [existingData]);
+
+	// Lấy quận huyện khi chọn tỉnh
 	useEffect(() => {
-		if (selectedProvince) {
-			fetch(`https://provinces.open-api.vn/api/p/${selectedProvince.value}?depth=2`)
-				.then((res) => res.json())
-				.then((data) => setDistricts(data.districts.map((d) => ({value: d.code, label: d.name}))));
-			setSelectedDistrict(null);
-			setSelectedWard(null);
-			setWards([]);
-		}
+		const fetchDistricts = async () => {
+			if (selectedProvince) {
+				try {
+					const data = await getDistricts(selectedProvince.value);
+					const options = data.map((item) => ({value: item._id, label: item.name}));
+					setDistricts(options);
+
+					if (existingData && existingData.district) {
+						const districtOption = options.find((d) => d.label === existingData.district.name);
+						if (districtOption) setSelectedDistrict(districtOption);
+					} else {
+						setSelectedDistrict(null);
+					}
+					setWards([]);
+					setSelectedWard(null);
+				} catch (error) {
+					toast.error('Không thể tải danh sách quận/huyện');
+				}
+			}
+		};
+		fetchDistricts();
 	}, [selectedProvince]);
 
+	// Lấy phường xã khi chọn quận
 	useEffect(() => {
-		if (selectedDistrict) {
-			fetch(`https://provinces.open-api.vn/api/d/${selectedDistrict.value}?depth=2`)
-				.then((res) => res.json())
-				.then((data) => setWards(data.wards.map((w) => ({value: w.code, label: w.name}))));
-			setSelectedWard(null);
-		}
+		const fetchWards = async () => {
+			if (selectedDistrict) {
+				try {
+					const data = await getWards(selectedDistrict.value);
+					const options = data.map((item) => ({value: item._id, label: item.name}));
+					setWards(options);
+
+					if (existingData && existingData.ward) {
+						const wardOption = options.find((w) => w.label === existingData.ward.name);
+						if (wardOption) setSelectedWard(wardOption);
+					} else {
+						setSelectedWard(null);
+					}
+				} catch (error) {
+					toast.error('Không thể tải danh sách phường/xã');
+				}
+			}
+		};
+		fetchWards();
 	}, [selectedDistrict]);
+
+	// Set form dữ liệu ban đầu
+	useEffect(() => {
+		if (existingData) {
+			handleChange({target: {name: 'name', value: existingData.name}});
+			handleChange({target: {name: 'phone', value: existingData.phone}});
+			handleChange({target: {name: 'address', value: existingData.address}});
+		}
+	}, [existingData]);
 
 	const handleInputChange = (e, setError) => {
 		handleChange(e);
-		if (e.target.value) {
-			setError('');
-		}
+		if (e.target.value) setError('');
 	};
 
 	const handleBlur = (e, setError) => {
@@ -86,7 +139,7 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 		return Object.keys(newErrors).length === 0;
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		let valid = true;
@@ -101,25 +154,47 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 			setPhoneError(validationRules.phone.message);
 			valid = false;
 		}
-		if (!formData.detail) {
+		if (!formData.address) {
 			setDetailError('Vui lòng nhập địa chỉ chi tiết');
 			valid = false;
 		}
 
 		const selectsValid = validateSelects();
-		if (valid && selectsValid) {
-			const fullAddress = {
-				...formData,
-				province: selectedProvince.label,
-				district: selectedDistrict.label,
-				ward: selectedWard.label,
-			};
-			console.log('✅ Submitted:', fullAddress);
+
+		if (!(valid && selectsValid)) return;
+
+		setLoading(true);
+
+		const fullAddress = {
+			...formData,
+			province: {
+				provinceId: selectedProvince.value,
+				name: selectedProvince.label,
+			},
+			district: {
+				districtId: selectedDistrict.value,
+				name: selectedDistrict.label,
+			},
+			ward: {
+				wardId: selectedWard.value,
+				name: selectedWard.label,
+			},
+		};
+
+		try {
+			const updatedAddress = await updateAddress(existingData._id, fullAddress); // lấy response trả về địa chỉ mới
+			toast.success('Cập nhật địa chỉ thành công!');
+			onAddressUpdated?.(updatedAddress);
 			onClose();
+		} catch (error) {
+			toast.error(error.message || 'Cập nhật địa chỉ thất bại!');
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	const isSubmitDisabled = !isFormValid || !selectedProvince || !selectedDistrict || !selectedWard;
+
 	return (
 		<div className={styles.overlay}>
 			<form className={styles.form} onSubmit={handleSubmit}>
@@ -130,6 +205,7 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 					</button>
 				</div>
 
+				{/* Input Tên */}
 				<div className={styles.formGroup}>
 					<label className={styles.label}>
 						Tên người nhận <span style={{color: 'red'}}>*</span>
@@ -146,6 +222,7 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 					{nameError && <p className={styles.error}>{nameError}</p>}
 				</div>
 
+				{/* Input SĐT */}
 				<div className={styles.formGroup}>
 					<label className={styles.label}>
 						Số điện thoại <span style={{color: 'red'}}>*</span>
@@ -162,6 +239,7 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 					{phoneError && <p className={styles.error}>{phoneError}</p>}
 				</div>
 
+				{/* Chọn tỉnh */}
 				<div className={styles.formGroup}>
 					<label className={styles.label}>
 						Tỉnh / Thành phố <span style={{color: 'red'}}>*</span>
@@ -176,6 +254,7 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 					{selectErrors.province && <p className={styles.error}>{selectErrors.province}</p>}
 				</div>
 
+				{/* Chọn quận */}
 				<div className={styles.formGroup}>
 					<label className={styles.label}>
 						Quận / Huyện <span style={{color: 'red'}}>*</span>
@@ -185,12 +264,13 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 						options={districts}
 						value={selectedDistrict}
 						onChange={setSelectedDistrict}
-						placeholder='Tìm quận / huyện...'
 						isDisabled={!selectedProvince}
+						placeholder='Tìm quận / huyện...'
 					/>
 					{selectErrors.district && <p className={styles.error}>{selectErrors.district}</p>}
 				</div>
 
+				{/* Chọn xã */}
 				<div className={styles.formGroup}>
 					<label className={styles.label}>
 						Xã / Phường <span style={{color: 'red'}}>*</span>
@@ -200,20 +280,21 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 						options={wards}
 						value={selectedWard}
 						onChange={setSelectedWard}
-						placeholder='Tìm xã / phường...'
 						isDisabled={!selectedDistrict}
+						placeholder='Tìm xã / phường...'
 					/>
 					{selectErrors.ward && <p className={styles.error}>{selectErrors.ward}</p>}
 				</div>
 
+				{/* Địa chỉ chi tiết */}
 				<div className={styles.formGroup}>
 					<label className={styles.label}>
 						Địa chỉ chi tiết <span style={{color: 'red'}}>*</span>
 					</label>
 					<input
 						type='text'
-						name='detail'
-						value={formData.detail}
+						name='address'
+						value={formData.address}
 						onChange={(e) => handleInputChange(e, setDetailError)}
 						onBlur={(e) => handleBlur(e, setDetailError)}
 						placeholder='Nhập địa chỉ chi tiết'
@@ -222,15 +303,16 @@ const FormUpdateAddress = ({onClose, existingData}) => {
 					{detailError && <p className={styles.error}>{detailError}</p>}
 				</div>
 
+				{/* Nút hành động */}
 				<div className={styles.actions}>
 					<Button className={styles.cancelButton} onClick={onClose}>
 						Hủy bỏ
 					</Button>
 					<Button
 						type='submit'
-						leftIcon={<Image src={icons.folderOpen.src} alt='Thêm' width={20} height={20} className={styles.icon} />}
+						leftIcon={<Image src={icons.folderOpen.src} alt='Cập nhật' width={20} height={20} className={styles.icon} />}
 						className={styles.submitButton}
-						disabled={isSubmitDisabled}
+						disabled={isSubmitDisabled || loading}
 					>
 						Cập nhật
 					</Button>

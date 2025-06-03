@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import styles from './MainPageOrder.module.scss';
 import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 import Button from '@/components/common/Button/Button';
-import FormUpdateAddress from '../FormUpdateAddress/FormUpdateAddress';
+import FormChangeAddress from '../FormChangeAddress/FormChangeAddress';
 import {createOrder, createVNPayUrl} from '@/services/orderService';
 import {useRouter} from 'next/router';
 import {getUserAddresses} from '@/services/userAddressService';
@@ -60,6 +60,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		setTotalAmount(sum);
 	}, [orderList]);
 
+	// Create order and create URL VNPay
 	const handlePlaceOrder = async () => {
 		if (!policyChecked || isPlacingOrder) return;
 
@@ -182,7 +183,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 			</div>
 
 			{showUpdateAddress && (
-				<FormUpdateAddress
+				<FormChangeAddress
 					onClose={() => setShowUpdateAddress(false)}
 					currentAddressId={addressId}
 					onAddressSelected={(address) => {

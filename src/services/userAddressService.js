@@ -33,10 +33,30 @@ export const createAddress = async (addressData) => {
 // Cập nhật địa chỉ
 export const updateAddress = async (addressId, addressData) => {
 	try {
-		const response = await axiosClient.put(`/api/user-addresses/updateAddress/${addressId}`, addressData);
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.put(`/api/user-addresses/updateAddress/${addressId}`, addressData, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Cập nhật địa chỉ thất bại'};
+	}
+};
+
+// Lấy chi tiết địa chỉ theo ID
+export const getUserAddressDetail = async (addressId) => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.get(`/api/user-addresses/getUserAddressDetail/${addressId}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lấy chi tiết địa chỉ thất bại'};
 	}
 };
 

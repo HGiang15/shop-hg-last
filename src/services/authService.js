@@ -54,6 +54,25 @@ export const resetPassword = async (email, otp, newPassword) => {
 	}
 };
 
+// Đổi mật khẩu người dùng
+export const changePassword = async (currentPassword, newPassword) => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.post(
+			'/api/user/change-password',
+			{currentPassword, newPassword},
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Đổi mật khẩu thất bại'};
+	}
+};
+
 // Xác thực OTP
 export const verifyOTP = async (userId, otp) => {
 	try {
@@ -73,6 +92,20 @@ export const getListUser = async (page = 1, limit = 5, search = '', sort = 'newe
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lỗi lấy danh sách người dùng'};
+	}
+};
+
+export const getCurrentUser = async () => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.get('/api/user/me', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lấy thông tin người dùng thất bại'};
 	}
 };
 

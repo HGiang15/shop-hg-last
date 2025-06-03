@@ -11,8 +11,7 @@ import Loading from '@/components/common/Loading/Loading';
 import Button from '@/components/common/Button/Button';
 import {toast, ToastContainer} from 'react-toastify';
 import {GoogleLogin} from '@react-oauth/google';
-import jwt_decode from 'jwt-decode';
-import {addToCart, getAllCart, mergeCart} from '@/services/cartService';
+import {getAllCart, mergeCart} from '@/services/cartService';
 import useCart from '@/hooks/useCart';
 
 const MainLogin = () => {

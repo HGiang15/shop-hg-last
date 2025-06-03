@@ -4,8 +4,14 @@ import icons from '@/constants/static/icons';
 import Image from 'next/image';
 import Button from '@/components/common/Button/Button';
 import useFormValidation from '@/hooks/useFormValidation';
+import {changePassword} from '@/services/authService';
+import {toast} from 'react-toastify';
+import {ROUTES} from '@/constants/config';
+import {useRouter} from 'next/router';
 
 const MainPageChangePassword = () => {
+	const router = useRouter();
+
 	const validationRules = useMemo(
 		() => ({
 			oldPassword: {required: true},
@@ -24,12 +30,20 @@ const MainPageChangePassword = () => {
 	const [showNewPassword, setShowNewPassword] = useState(false);
 	const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
 
-	const handleSubmit = () => {
-		if (isFormValid) {
-			console.log('Submitting form:', formData);
-		} else {
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+
+		if (!isFormValid) {
 			console.log('Form is invalid');
-			// Xử lý trường hợp form không hợp lệ (ví dụ: hiển thị thông báo lỗi)
+			return;
+		}
+
+		try {
+			const res = await changePassword(formData.oldPassword, formData.newPassword);
+			router.push(ROUTES.Profile);
+			toast.success(res.message || 'Đổi mật khẩu thành công!');
+		} catch (error) {
+			toast.error(error.message || 'Đổi mật khẩu thất bại!');
 		}
 	};
 

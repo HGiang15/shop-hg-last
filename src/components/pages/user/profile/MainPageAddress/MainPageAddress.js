@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styles from './MainPageAddress.module.scss';
 import Image from 'next/image';
 import icons from '@/constants/static/icons';
@@ -6,32 +6,47 @@ import Button from '@/components/common/Button/Button';
 import FormCreateAddress from '../FormCreateAddress/FormCreateAddress';
 import FormUpdateAddress from '../FormUpdateAddress/FormUpdateAddress';
 import FormDeleteAddress from '../FormDeleteAddress/FormDeleteAddress';
-
-const mockAddresses = [
-	{
-		id: 1,
-		name: 'Nguyễn Đăng Hoàng Giang',
-		phone: '0398162589',
-		address: 'Tổ 30, phường Thượng Thanh, quận Long Biên, thành phố Hà Nội',
-	},
-	{
-		id: 2,
-		name: 'Nguyễn Đăng Hoàng Giang',
-		phone: '0398162589',
-		address: 'Tổ 30, phường Thượng Thanh, quận Long Biên, thành phố Hà Nội',
-	},
-];
+import {getUserAddresses, deleteAddress, setDefaultAddress} from '@/services/userAddressService';
+import {toast} from 'react-toastify';
 
 const MainPageAddress = () => {
+	const [addresses, setAddresses] = useState([]);
+	const [defaultAddressId, setDefaultAddressId] = useState(null);
 	const [showCreateForm, setShowCreateForm] = useState(false);
 	const [showUpdateForm, setShowUpdateForm] = useState(false);
 	const [selectedAddress, setSelectedAddress] = useState(null);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [addressToDelete, setAddressToDelete] = useState(null);
-	const [defaultAddressId, setDefaultAddressId] = useState(mockAddresses[0].id);
 
-	const handleSetDefault = (id) => {
-		setDefaultAddressId(id);
+	// callback cập nhật địa chỉ trong state
+	const handleUpdateAddressInList = (updatedAddress) => {
+		setAddresses((prev) => prev.map((addr) => (addr._id === updatedAddress._id ? updatedAddress : addr)));
+	};
+
+	// Lấy danh sách địa chỉ từ server
+	const fetchAddresses = async () => {
+		try {
+			const res = await getUserAddresses();
+			setAddresses(res || []);
+			const defaultAddr = res.find((a) => a.isDefault);
+			setDefaultAddressId(defaultAddr?._id || null);
+		} catch (err) {
+			console.error('Lỗi khi lấy danh sách địa chỉ:', err);
+		}
+	};
+
+	useEffect(() => {
+		fetchAddresses();
+	}, []);
+
+	const handleSetDefault = async (id) => {
+		try {
+			await setDefaultAddress(id);
+			await fetchAddresses();
+			toast.success('Đã đặt địa chỉ mặc định!');
+		} catch (err) {
+			toast.error('Không thể đặt mặc định!');
+		}
 	};
 
 	const handleUpdate = (address) => {
@@ -44,8 +59,16 @@ const MainPageAddress = () => {
 		setShowDeleteModal(true);
 	};
 
-	const handleConfirmDelete = () => {
-		console.log('Xoá địa chỉ:', addressToDelete);
+	// Xóa địa chỉ
+	const handleConfirmDelete = async () => {
+		if (!addressToDelete) return;
+		try {
+			await deleteAddress(addressToDelete._id);
+			await fetchAddresses();
+			toast.success('Xóa địa chỉ thành công!');
+		} catch (err) {
+			toast.error(err.message || 'Xóa địa chỉ thất bại');
+		}
 		setShowDeleteModal(false);
 		setAddressToDelete(null);
 	};
@@ -62,19 +85,21 @@ const MainPageAddress = () => {
 				Thêm địa chỉ mới
 			</Button>
 
-			{mockAddresses.map((item) => (
-				<div key={item.id} className={styles.addressCard}>
+			{addresses.map((item) => (
+				<div key={item._id} className={styles.addressCard}>
 					<div className={styles.addressInfo}>
 						<div className={styles.name}>{item.name}</div>
-						<div className={styles.phone}>Số điện thoại: {item.phone}</div>
-						<div className={styles.address}>Địa chỉ: {item.address}</div>
+						<div className={styles.phone}>SĐT: {item.phone}</div>
+						<div className={styles.address}>
+							Địa chỉ: {item.address}, {item.ward?.name}, {item.district?.name}, {item.province?.name}
+						</div>
 					</div>
 
 					<div className={styles.addressActions}>
-						{defaultAddressId === item.id ? (
-							<span className={styles.defaultTag}></span>
+						{item.isDefault ? (
+							<span className={styles.defaultTag}>Mặc định</span>
 						) : (
-							<Button className={styles.defaultButton} onClick={() => handleSetDefault(item.id)}>
+							<Button className={styles.defaultButton} onClick={() => handleSetDefault(item._id)}>
 								Đặt mặc định
 							</Button>
 						)}
@@ -89,8 +114,22 @@ const MainPageAddress = () => {
 				</div>
 			))}
 
-			{showCreateForm && <FormCreateAddress onClose={() => setShowCreateForm(false)} />}
-			{showUpdateForm && <FormUpdateAddress onClose={() => setShowUpdateForm(false)} defaultData={selectedAddress} />}
+			{showCreateForm && (
+				<FormCreateAddress
+					onClose={() => {
+						setShowCreateForm(false);
+						fetchAddresses();
+					}}
+				/>
+			)}
+			{showUpdateForm && (
+				<FormUpdateAddress
+					onClose={() => setShowUpdateForm(false)}
+					existingData={selectedAddress}
+					addressId={selectedAddress?._id}
+					onAddressUpdated={handleUpdateAddressInList}
+				/>
+			)}
 			{showDeleteModal && <FormDeleteAddress onClose={() => setShowDeleteModal(false)} onConfirm={handleConfirmDelete} />}
 		</div>
 	);

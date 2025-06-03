@@ -12,6 +12,7 @@ import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
 import ShoppingCart from '@/components/pages/user/cart/ShoppingCart/ShoppingCart';
 import useCart from '@/hooks/useCart';
+import {getCurrentUser} from '@/services/authService';
 
 function Header() {
 	const router = useRouter();
@@ -25,22 +26,29 @@ function Header() {
 	const [showCart, setShowCart] = useState(false);
 
 	useEffect(() => {
-		const token = localStorage.getItem('token');
-		const name = localStorage.getItem('name');
-		const cart = localStorage.getItem('cart');
-		const avatar = localStorage.getItem('avatar') || '';
+		const fetchUser = async () => {
+			const token = localStorage.getItem('token');
+			if (!token) return;
 
-		if (token) {
 			try {
 				const decoded = jwtDecode(token);
-				setUser({...decoded, name, avatar});
+				const currentUser = await getCurrentUser();
+				setUser({
+					...decoded,
+					name: currentUser.name || '',
+					avatar: currentUser.avatar || '',
+				});
 			} catch (error) {
-				console.error('Token không hợp lệ', error);
+				console.error('Lỗi khi lấy thông tin người dùng:', error.message || error);
 				localStorage.removeItem('token');
+				setUser(null);
 			}
-		}
+		};
 
-		// Update cart item count from local storage
+		fetchUser();
+
+		// Cập nhật số lượng giỏ hàng từ localStorage
+		const cart = localStorage.getItem('cart');
 		if (cart) {
 			try {
 				const cartItems = JSON.parse(cart);
@@ -73,7 +81,7 @@ function Header() {
 		localStorage.removeItem('avatar');
 		localStorage.removeItem('cartToken');
 
-		// ✅ Xoá giỏ hàng trong context
+		// Xoá giỏ hàng trong context
 		dispatch({type: 'CLEAR_CART'});
 
 		setUser(null);

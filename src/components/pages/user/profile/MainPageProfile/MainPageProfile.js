@@ -1,69 +1,125 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useEffect} from 'react';
 import styles from './MainPageProfile.module.scss';
 import Image from 'next/image';
 import icons from '@/constants/static/icons';
 import images from '@/constants/static/images';
 import useFormValidation from '@/hooks/useFormValidation';
 import Button from '@/components/common/Button/Button';
+import {getCurrentUser, updateUser} from '@/services/authService';
+import {toast} from 'react-toastify';
+import {uploadSingle} from '@/services/uploadService';
 
 function MainPageProfile() {
 	const validationRules = useMemo(
 		() => ({
 			name: {required: true},
-			email: {required: true},
 			phone: {required: true},
-			dob: {required: true},
+			dateOfBirth: {required: true},
 		}),
 		[]
 	);
 
 	const {formData, handleChange, isFormValid, setFormData} = useFormValidation(
-		{name: '', email: '', phone: '', dob: ''},
+		{name: '', email: '', phone: '', dateOfBirth: ''},
 		validationRules
 	);
 
-	const [gender, setGender] = useState('Nam');
-	const [avatar, setAvatar] = useState(null);
+	const [userId, setUserId] = useState(null);
+	const [gender, setGender] = useState('Other');
+	const [avatar, setAvatar] = useState(null); // preview URL
+	const [avatarFile, setAvatarFile] = useState(null); // actual File
 
 	const [nameError, setNameError] = useState('');
 	const [emailError, setEmailError] = useState('');
 	const [phoneError, setPhoneError] = useState('');
 	const [dobError, setDobError] = useState('');
 
+	useEffect(() => {
+		const fetchUserData = async () => {
+			try {
+				const user = await getCurrentUser();
+				setUserId(user.id);
+				setFormData({
+					name: user.name || '',
+					email: user.email || '',
+					phone: user.phone || '',
+					dateOfBirth: user.dateOfBirth ? user.dateOfBirth.slice(0, 10) : '',
+				});
+				setGender(user.gender || 'Other');
+				setAvatar(user.avatar || null);
+			} catch (error) {
+				console.error('Lỗi khi lấy thông tin người dùng:', error.message);
+			}
+		};
+		fetchUserData();
+	}, [setFormData]);
+
 	const handleAvatarChange = (e) => {
 		if (e.target.files && e.target.files[0]) {
-			setAvatar(URL.createObjectURL(e.target.files[0]));
+			const file = e.target.files[0];
+			setAvatarFile(file);
+			setAvatar(URL.createObjectURL(file));
 		}
 	};
 
 	const handleInputChange = (e, setInputError) => {
 		handleChange(e);
-		if (e.target.value) {
-			setInputError('');
-		}
+		if (e.target.value) setInputError('');
 	};
 
 	const handleBlur = (e, setInputError) => {
-		if (!e.target.value) {
-			setInputError('Vui lòng nhập trường này');
-		}
+		if (!e.target.value) setInputError('Vui lòng nhập trường này');
 	};
 
 	const handleClearInput = (inputName) => {
 		setFormData({...formData, [inputName]: ''});
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (isFormValid) {
-			console.log({...formData, gender, avatar});
-			// Gọi API cập nhật thông tin cá nhân ở đây
-		} else {
-			console.log('Form không hợp lệ');
+
+		if (!isFormValid) {
 			if (!formData.name) setNameError('Vui lòng nhập họ và tên');
 			if (!formData.email) setEmailError('Vui lòng nhập email');
 			if (!formData.phone) setPhoneError('Vui lòng nhập số điện thoại');
-			if (!formData.dob) setDobError('Vui lòng nhập ngày sinh');
+			if (!formData.dateOfBirth) setDobError('Vui lòng nhập ngày sinh');
+			return;
+		}
+
+		try {
+			let avatarUrl = null;
+
+			// Nếu người dùng upload ảnh mới
+			if (avatarFile) {
+				const formUpload = new FormData();
+				formUpload.append('file', avatarFile);
+
+				const upload = await uploadSingle(formUpload);
+
+				if (upload?.data) {
+					const realUrl = upload.data;
+					avatarUrl = realUrl;
+					setAvatar(realUrl); // Cập nhật preview thành ảnh thật
+				} else {
+					throw new Error('Upload ảnh thất bại');
+				}
+			} else {
+				avatarUrl = avatar; // ảnh cũ (URL đã có từ trước)
+			}
+
+			await updateUser(userId, {
+				name: formData.name,
+				email: formData.email,
+				phone: formData.phone,
+				dateOfBirth: formData.dateOfBirth,
+				gender,
+				avatar: avatarUrl,
+			});
+
+			toast.success('Cập nhật thành công');
+		} catch (error) {
+			console.error('Lỗi khi cập nhật:', error);
+			toast.error('Cập nhật thất bại');
 		}
 	};
 
@@ -92,7 +148,7 @@ function MainPageProfile() {
 				</div>
 			</div>
 
-			<form onSubmit={handleSubmit} className={styles.formGrid}>
+			<form onSubmit={handleSubmit} className={styles.formGrid} noValidate>
 				<div className={styles.formGroup}>
 					<label htmlFor='name'>
 						Họ và tên <span style={{color: 'red'}}>*</span>
@@ -115,6 +171,7 @@ function MainPageProfile() {
 									width={20}
 									height={20}
 									onClick={() => handleClearInput('name')}
+									style={{cursor: 'pointer'}}
 								/>
 								<Image src={icons.check} alt='Check' width={20} height={20} />
 							</>
@@ -133,22 +190,9 @@ function MainPageProfile() {
 						onChange={(e) => handleInputChange(e, setEmailError)}
 						name='email'
 						onBlur={(e) => handleBlur(e, setEmailError)}
+						disabled
 					/>
 					{emailError && <p className={styles.error}>{emailError}</p>}
-					<span className={styles.validationIcon}>
-						{formData.email && (
-							<>
-								<Image
-									src={icons.timesCircle}
-									alt='Times Circle'
-									width={20}
-									height={20}
-									onClick={() => handleClearInput('email')}
-								/>
-								<Image src={icons.check} alt='Check' width={20} height={20} />
-							</>
-						)}
-					</span>
 				</div>
 
 				<div className={styles.formGroup}>
@@ -173,6 +217,7 @@ function MainPageProfile() {
 									width={20}
 									height={20}
 									onClick={() => handleClearInput('phone')}
+									style={{cursor: 'pointer'}}
 								/>
 								<Image src={icons.check} alt='Check' width={20} height={20} />
 							</>
@@ -181,15 +226,15 @@ function MainPageProfile() {
 				</div>
 
 				<div className={styles.formGroup}>
-					<label htmlFor='dob'>
+					<label htmlFor='dateOfBirth'>
 						Ngày sinh <span style={{color: 'red'}}>*</span>
 					</label>
 					<input
 						type='date'
-						id='dob'
-						value={formData.dob}
+						id='dateOfBirth'
+						value={formData.dateOfBirth}
 						onChange={handleChange}
-						name='dob'
+						name='dateOfBirth'
 						onBlur={(e) => handleBlur(e, setDobError)}
 					/>
 					{dobError && <p className={styles.error}>{dobError}</p>}
@@ -201,22 +246,22 @@ function MainPageProfile() {
 					</label>
 					<div className={styles.radioGroup}>
 						<label>
-							<input type='radio' value='Nam' checked={gender === 'Nam'} onChange={() => setGender('Nam')} />
+							<input type='radio' value='Male' checked={gender === 'Male'} onChange={() => setGender('Male')} />
 							Nam
 						</label>
 						<label>
-							<input type='radio' value='Nữ' checked={gender === 'Nữ'} onChange={() => setGender('Nữ')} />
+							<input type='radio' value='Female' checked={gender === 'Female'} onChange={() => setGender('Female')} />
 							Nữ
 						</label>
 						<label>
-							<input type='radio' value='Khác' checked={gender === 'Khác'} onChange={() => setGender('Khác')} />
+							<input type='radio' value='Other' checked={gender === 'Other'} onChange={() => setGender('Other')} />
 							Khác
 						</label>
 					</div>
 				</div>
 
 				<div className={styles.submitButtonContainer}>
-					<Button type='submit' className={styles.submitButton} onClick={handleSubmit} disabled={!isFormValid}>
+					<Button type='submit' className={styles.submitButton} disabled={!isFormValid}>
 						Cập nhật thông tin cá nhân
 					</Button>
 				</div>
