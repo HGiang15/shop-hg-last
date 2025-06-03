@@ -16,6 +16,7 @@ export const ROUTES = {
 	AdminColor: '/admin/color',
 	AdminSize: '/admin/size',
 	AdminCategory: '/admin/category',
+	AdminReview: '/admin/review',
 
 	AdminProduct: '/admin/product',
 	AdminProductCreate: '/admin/product/create',

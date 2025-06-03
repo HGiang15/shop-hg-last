@@ -1,0 +1,62 @@
+.container {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	min-height: 80vh;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+
+	.addButton {
+		background: var(--gradient-blue-red);
+		color: #fff;
+		padding: 10px 15px;
+	}
+}
+
+.actionButton {
+	margin: 0 5px;
+}
+
+.role {
+	background: #ffe4e6;
+	color: #ff2d2d;
+	padding: 5px 10px;
+	border-radius: 4px;
+}
+
+.status {
+	background: #e4ffe5;
+	color: #19cd21;
+	padding: 5px 10px;
+	border-radius: 4px;
+}
+
+.tableWrapper {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.noProducts {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	gap: 8px;
+
+	h4 {
+		font-size: 24px;
+	}
+
+	p {
+		font-size: 14px;
+	}
+
+	.btnNoProduct {
+		background: #1da7df;
+	}
+}

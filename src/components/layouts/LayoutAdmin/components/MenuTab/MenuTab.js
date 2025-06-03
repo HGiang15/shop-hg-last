@@ -25,7 +25,7 @@ const menuItems = [
 	{label: 'Danh mục sản phẩm', icon: <CategoryIcon />, path: ROUTES.AdminCategory},
 	{label: 'Quản lý sản phẩm', icon: <InventoryIcon />, path: ROUTES.AdminProduct},
 	{label: 'Quản lý đơn hàng', icon: <ShoppingCartIcon />, path: ROUTES.AdminOrder},
-	{label: 'Quản lý đánh giá', icon: <StarBorderOutlined />, path: ROUTES.About},
+	{label: 'Quản lý đánh giá', icon: <StarBorderOutlined />, path: ROUTES.AdminReview},
 ];
 
 const MenuTab = ({menuOpen, setMenuOpen, activeMenu}) => {

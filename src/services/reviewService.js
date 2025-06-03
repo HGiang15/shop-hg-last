@@ -31,7 +31,7 @@ export const createReview = async (reviewData) => {
 export const getReviewById = async (id) => {
 	try {
 		const token = localStorage.getItem('token');
-		const response = await axiosClient.get(`/api/review/get-review/${id}`, {
+		const response = await axiosClient.get(`/api/review/get-review-by-id/${id}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -39,6 +39,28 @@ export const getReviewById = async (id) => {
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Không thể tải chi tiết đánh giá.'};
+	}
+};
+
+// Lấy tất cả đánh giá cho admin (có phân trang, tìm kiếm)
+export const getAllReviewsForAdmin = async (page = 1, limit = 10, search = '', rating = '', sort = '') => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.get('/api/review/get-all-reviews-for-admin', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				page,
+				limit,
+				search: search,
+				rating: rating,
+				sort: sort,
+			},
+		});
+		return response.data; // { reviews, page, totalPages, total }
+	} catch (error) {
+		throw error.response?.data || {message: 'Không thể tải danh sách đánh giá.'};
 	}
 };
 

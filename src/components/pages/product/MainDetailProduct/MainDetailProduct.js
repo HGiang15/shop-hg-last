@@ -365,12 +365,23 @@ const ProductDetailPage = () => {
 				<div className={styles.reviewList}>
 					{reviews.map((review) => (
 						<div key={review.id} className={styles.reviewItem}>
-							<p className={styles.reviewName}>
-								<strong>{review.name}</strong>
-							</p>
-							<p className={styles.reviewRating}>⭐ {review.rating} / 5</p>
+							<div className={styles.reviewHeader}>
+								<Image
+									src={review.userId?.avatar || '/default-avatar.png'} // ← avatar
+									alt={review.userId?.name}
+									className={styles.reviewAvatar}
+									width={40}
+									height={40}
+								/>
+								<div>
+									<p className={styles.reviewName}>
+										<strong>{review.userId?.name}</strong>
+									</p>
+									<p className={styles.reviewRating}>⭐ {review.rating} / 5</p>
+								</div>
+							</div>
 							<p className={styles.reviewComment}>{review.comment}</p>
-							{currentUserId === review.userId && (
+							{currentUserId === review.userId?._id && (
 								<div className={styles.reviewActions}>
 									<span className={styles.actionEdit} onClick={() => handleEdit(review)}>
 										Sửa

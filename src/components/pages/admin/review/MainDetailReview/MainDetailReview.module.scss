@@ -1,0 +1,76 @@
+.container {
+	max-width: 100%;
+	margin: 0 auto;
+	padding: 20px;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 16px;
+}
+
+.label {
+	font-weight: 600;
+	margin-bottom: 6px;
+	color: #333;
+}
+
+.select,
+.textarea {
+	padding: 8px 12px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	font-size: 14px;
+	outline: none;
+}
+
+.select:focus,
+.textarea:focus {
+	border-color: #0070f3;
+}
+
+.textarea {
+	resize: vertical;
+	min-height: 100px;
+}
+
+.buttonGroup {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+}
+
+.button {
+	padding: 8px 16px;
+}
+
+.saveButton {
+	background: #0070f3;
+	color: #fff;
+}
+
+.cancelButton {
+	background: #e0e0e0;
+	color: #333;
+}
+
+.error {
+	color: red;
+	font-size: 13px;
+	margin-bottom: 12px;
+}
+
+.infoBox {
+	background-color: #f8f9fa;
+	padding: 12px 16px;
+	border-radius: 8px;
+	margin-bottom: 20px;
+	font-size: 14px;
+	color: #333;
+	line-height: 1.6;
+	border-left: 4px solid #0070f3;
+}
