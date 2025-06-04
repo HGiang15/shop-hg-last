@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
-import {useRouter} from 'next/router';
 import styles from './ProductCard.module.scss';
 import Link from 'next/link';
 import {filterProducts} from '@/services/productService';
@@ -10,8 +9,9 @@ import Button from '@/components/common/Button/Button';
 import icons from '@/constants/static/icons';
 import {Tooltip} from 'react-tippy';
 import 'react-tippy/dist/tippy.css';
-import {addToCart} from '@/services/cartService';
 import AddToCartModal from '../AddToCartModal/AddToCartModal';
+import useDebounce from '@/hooks/useDebounce';
+import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 
 const ProductCard = ({selectedCategories, selectedColors}) => {
 	const [products, setProducts] = useState([]);
@@ -23,8 +23,12 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 	const [sortBy, setSortBy] = useState('createdAt');
 	const [sortOrder, setSortOrder] = useState('desc');
 	const [limit, setLimit] = useState(8);
+	const [isFeatured, setIsFeatured] = useState(null);
 	const [showModal, setShowModal] = useState(false);
+	const [searchTerm, setSearchTerm] = useState('');
+	const [sortOption, setSortOption] = useState('newest');
 	const [selectedProduct, setSelectedProduct] = useState(null);
+	const debounce = useDebounce(searchTerm, 600);
 
 	const openModal = (product) => {
 		setSelectedProduct(product);
@@ -45,8 +49,10 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 					colors: selectedColors,
 					page,
 					limit,
+					isFeatured,
 					sortBy,
 					sortOrder,
+					keyword: debounce,
 				};
 				const data = await filterProducts(filters);
 				setProducts(data.products || []);
@@ -59,31 +65,39 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 		};
 
 		fetchProducts();
-	}, [selectedCategories, selectedColors, page, sortBy, sortOrder, limit]);
+	}, [selectedCategories, selectedColors, page, sortBy, sortOrder, limit, debounce]);
 
-	const handleSortChange = (e) => {
-		const value = e.target.value;
-		switch (value) {
-			case 'createdAt-desc':
+	useEffect(() => {
+		switch (sortOption) {
+			case 'newest':
 				setSortBy('createdAt');
 				setSortOrder('desc');
+				setIsFeatured(null);
 				break;
-			case 'createdAt-asc':
+			case 'oldest':
 				setSortBy('createdAt');
 				setSortOrder('asc');
+				setIsFeatured(null);
 				break;
-			case 'price-asc':
+			case 'price_asc':
 				setSortBy('price');
 				setSortOrder('asc');
+				setIsFeatured(null);
 				break;
-			case 'price-desc':
+			case 'price_desc':
 				setSortBy('price');
 				setSortOrder('desc');
+				setIsFeatured(null);
+				break;
+			case 'featured':
+				setSortBy(null);
+				setSortOrder(null);
+				setIsFeatured(true);
 				break;
 			default:
 				break;
 		}
-	};
+	}, [sortOption]);
 
 	if (loading) return <div>Đang tải sản phẩm...</div>;
 	if (error) return <div>Lỗi: {error}</div>;
@@ -91,19 +105,28 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 	return (
 		<div className={styles.wrapper}>
 			<div className={styles.sortBar}>
-				<label>Sắp xếp: </label>
-				<select onChange={handleSortChange} value={`${sortBy}-${sortOrder}`}>
-					<option value='createdAt-desc'>Mới nhất</option>
-					<option value='createdAt-asc'>Cũ nhất</option>
-					<option value='price-asc'>Giá tăng dần</option>
-					<option value='price-desc'>Giá giảm dần</option>
-				</select>
+				<FilterAdmin
+					searchTerm={searchTerm}
+					setSearchTerm={setSearchTerm}
+					sortOption={sortOption}
+					setSortOption={setSortOption}
+					setCurrentPage={setPage}
+					sortOptions={[
+						{value: 'newest', label: 'Mới nhất'},
+						{value: 'oldest', label: 'Cũ nhất'},
+						{value: 'price_asc', label: 'Giá tăng dần'},
+						{value: 'price_desc', label: 'Giá giảm dần'},
+						{value: 'featured', label: 'Sản phẩm nổi bật'},
+					]}
+				/>
 			</div>
 
 			<div className={styles.gridContainer}>
 				{products.length > 0 ? (
 					products.map((product) => (
 						<Link href={`/products/${product._id}`} key={product._id} className={styles.card}>
+							{product.isFeatured && <div className={styles.featuredLabel}>Nổi bật</div>}
+
 							{product.images && product.images[0] ? (
 								<Image
 									src={product.images[0]}
@@ -119,21 +142,27 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 							<div className={styles.info}>
 								<p className={styles.productCode}>Mã: {product.code}</p>
 								<h3 className={styles.productName}>{product.name}</h3>
+								{/* <div className={product.status === 'inactive' ? styles.statusBadgeInactive : styles.statusBadgeActive}>
+									{product.status === 'inactive' ? 'Ngừng bán' : 'Đang bán'}
+								</div> */}
+
 								<p className={styles.productPrice}>
 									{product.price?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})}
 								</p>
 
 								<div className={styles.cartWrapper}>
-									<Tooltip title='Thêm vào giỏ hàng' position='top' trigger='mouseenter' arrow={true} duration={200}>
-										<Button
-											className={styles.addToCartBtn}
-											onClick={(e) => {
-												e.preventDefault();
-												openModal(product);
-											}}
-											centerIcon={<Image src={icons.cart} alt='Icon' width={20} height={20} />}
-										/>
-									</Tooltip>
+									{product.status === 'active' && product.quantityBySize?.length > 0 && (
+										<Tooltip title='Thêm vào giỏ hàng' position='top' trigger='mouseenter' arrow={true} duration={200}>
+											<Button
+												className={styles.addToCartBtn}
+												onClick={(e) => {
+													e.preventDefault();
+													openModal(product);
+												}}
+												centerIcon={<Image src={icons.cart} alt='Icon' width={20} height={20} />}
+											/>
+										</Tooltip>
+									)}
 								</div>
 							</div>
 						</Link>

@@ -64,7 +64,6 @@ const Header = ({title, setMenuOpen, menuOpen}) => {
 				</div>
 				<h1 className={styles.title}>{title}</h1>
 			</div>
-
 			<div className={styles.right}>
 				<Tippy
 					interactive
@@ -92,18 +91,10 @@ const Header = ({title, setMenuOpen, menuOpen}) => {
 				>
 					<div className={styles.userInfo} onClick={handleClick}>
 						{user?.name && <span className={styles.userName}>{user.name}</span>}
-						<Image
-							//  src={user?.avatar  || images.defaultAvatar}
-							src={user?.avatar || images.defaultAvatar}
-							alt='Avatar'
-							className={styles.avatar}
-							width={40}
-							height={40}
-						/>
+						<Image src={user?.avatar || images.defaultAvatar} alt='Avatar' className={styles.avatar} width={40} height={40} />
 					</div>
 				</Tippy>
 			</div>
-
 			{loading && <Loading fullScreen />}
 		</header>
 	);

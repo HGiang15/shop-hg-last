@@ -292,14 +292,36 @@ const ProductDetailPage = () => {
 					<h1 className={styles.productTitle}>{product.name}</h1>
 					<p className={styles.productId}>{product.code}</p>
 
+					<div className={styles.productMeta}>
+						<p className={styles.metaItem}>
+							<strong style={{fontSize: '16px'}}>Trạng thái:</strong>{' '}
+							<span className={`${styles.status} ${styles[product.status]}`}>
+								{product.status === 'active'
+									? 'Hoạt động'
+									: product.status === 'inactive'
+									? 'Sản phẩm đang cập nhật'
+									: 'Ngừng bán'}
+							</span>
+						</p>
+
+						<p className={styles.metaItem}>
+							<strong style={{fontSize: '16px'}}>Nổi bật:</strong> {product.isFeatured ? '✅ Sản phẩm nổi bật' : '❌'}
+						</p>
+					</div>
+
 					<div className={styles.colorSelect}>
 						<span>Màu: </span>
-						{product.colors?.[0] && (
-							<>
-								<span className={styles.colorDot} style={{backgroundColor: product.colors[0].colorCode || '#000'}}></span>
-								<span>{product.colors[0].name}</span>
-							</>
-						)}
+						{product.colors?.length > 0 &&
+							product.colors.map((color, index) => (
+								<span key={color._id} className={styles.colorItem}>
+									<span
+										className={styles.colorDot}
+										style={{backgroundColor: color.colorCode || '#000', marginRight: 4}}
+									></span>
+									<span>{color.name}</span>
+									{index !== product.colors.length - 1 && <span style={{margin: '0 6px'}}>|</span>}
+								</span>
+							))}
 					</div>
 
 					<p className={styles.productPrice}>
@@ -331,13 +353,25 @@ const ProductDetailPage = () => {
 					</div>
 
 					<div className={styles.buttonGroup}>
-						<Button className={styles.addToCart} onClick={handleAddToCart}>
+						<Button
+							className={styles.addToCart}
+							onClick={handleAddToCart}
+							disabled={product.status !== 'active' || !product.quantityBySize || product.quantityBySize.length === 0}
+						>
 							Thêm giỏ hàng
 						</Button>
-						<Button className={styles.buyNow} onClick={handleBuyNow}>
+						<Button
+							className={styles.buyNow}
+							onClick={handleBuyNow}
+							disabled={product.status !== 'active' || !product.quantityBySize || product.quantityBySize.length === 0}
+						>
 							Thanh toán ngay
 						</Button>
 					</div>
+
+					<p className={styles.metaItem}>
+						<strong>Đã bán:</strong> {product.totalSold} sản phẩm
+					</p>
 
 					{product.description && (
 						<div className={styles.additionalDescription}>

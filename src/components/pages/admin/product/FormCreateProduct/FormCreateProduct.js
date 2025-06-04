@@ -13,7 +13,6 @@ import {ROUTES} from '@/constants/config';
 import {toast} from 'react-toastify';
 import {createProduct} from '@/services/productService';
 import {getAllColors} from '@/services/colorService';
-import {getAllSizes} from '@/services/sizeService';
 import {getAllCategories} from '@/services/categoryService';
 import {uploadMultiple} from '@/services/uploadService';
 
@@ -79,6 +78,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 	const handleSubmitForm = async () => {
 		const formCreate = new FormData();
 		const formUpload = new FormData();
+		console.log('Form status gửi đi là:', form.status);
 
 		selectedImages.forEach((file) => formUpload.append('files', file));
 
@@ -120,8 +120,9 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		formCreate.append('description', form.description);
 		formCreate.append('detailDescription', detailDescription);
 		formCreate.append('isFeatured', form.isFeatured);
-		formCreate.append('status', form.status);
+		formCreate.append('status', String(form.status));
 		formCreate.append('images', JSON.stringify(imagesPath));
+		console.log('Form status gửi đi là:', form.status);
 
 		try {
 			const response = await createProduct(formCreate);
@@ -145,6 +146,8 @@ const FormCreateProduct = ({setActiveMenu}) => {
 
 	const handleInputChange = (e) => {
 		const {name, value} = e.target;
+
+		console.log('Thay đổi:', name, value);
 
 		if (name === 'category') {
 			const selectedCategory = categoryOptions.find((cat) => cat._id === value);
@@ -237,30 +240,6 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		};
 		fetchColors();
 	}, []);
-
-	// Get all sizes
-	// useEffect(() => {
-	// 	const fetchSizes = async () => {
-	// 		try {
-	// 			const res = await getAllSizes();
-	// 			if (res && res.sizes) {
-	// 				setSizes(res.sizes);
-	// 				const initialQuantities = {};
-	// 				res.sizes.forEach((size) => {
-	// 					initialQuantities[size.name] = 0;
-	// 				});
-	// 				setSizeQuantities(initialQuantities);
-	// 			} else {
-	// 				console.error('Lỗi khi tải danh sách size: Dữ liệu trả về không hợp lệ', res);
-	// 				toast.error('Lỗi khi tải danh sách size.', {position: 'top-right'});
-	// 			}
-	// 		} catch (err) {
-	// 			console.error('Lỗi khi tải danh sách size:', err.message);
-	// 			toast.error('Lỗi kết nối khi tải danh sách size.', {position: 'top-right'});
-	// 		}
-	// 	};
-	// 	fetchSizes();
-	// }, []);
 
 	// Get all category
 	useEffect(() => {
@@ -440,12 +419,6 @@ const FormCreateProduct = ({setActiveMenu}) => {
 						<option value='discontinued'>Ngừng bán</option>
 					</select>
 					{errors.status && <p className={styles.errorText}>{errors.status}</p>}
-				</div>
-
-				{/* Total Sold */}
-				<div className={styles.formGroup}>
-					<label className={styles.label}>Số lượng đã bán</label>
-					<input type='number' className={styles.input} value={0} disabled />
 				</div>
 
 				{/* Images */}

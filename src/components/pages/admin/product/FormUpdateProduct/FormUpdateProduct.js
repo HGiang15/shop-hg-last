@@ -71,6 +71,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 					description: productData.description || '',
 					detailDescription: productData.detailDescription || '',
 					isFeatured: productData.isFeatured || false,
+					status: productData.status || '',
 				});
 
 				setDetailDesc(productData.detailDescription || '');
@@ -473,6 +474,19 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 							}))
 						}
 					/>
+				</div>
+
+				{/* Status */}
+				<div className={styles.formGroup}>
+					<label htmlFor='status' className={styles.label}>
+						Trạng thái sản phẩm <span style={{color: 'red'}}>*</span>
+					</label>
+					<select id='status' name='status' className={styles.select} onChange={handleInputChange} value={form.status}>
+						<option value=''>Chọn trạng thái</option>
+						<option value='active'>Hoạt động</option>
+						<option value='inactive'>Không hoạt động</option>
+						<option value='discontinued'>Ngừng bán</option>
+					</select>
 				</div>
 
 				{/* Image */}

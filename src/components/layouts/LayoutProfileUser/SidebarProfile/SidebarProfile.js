@@ -8,9 +8,14 @@ import Image from 'next/image';
 import {ROUTES} from '@/constants/config';
 import {useRouter} from 'next/router';
 import {getCurrentUser} from '@/services/authService';
+import Loading from '@/components/common/Loading/Loading';
+import useCart from '@/hooks/useCart';
 
 const SidebarProfile = ({isOpen, onClose}) => {
 	const router = useRouter();
+	const {dispatch} = useCart();
+
+	const [loading, setLoading] = useState(false);
 	const [activeLink, setActiveLink] = useState(ROUTES.Profile);
 	const sidebarRef = useRef(null);
 	const [isClient, setIsClient] = useState(false);
@@ -83,6 +88,33 @@ const SidebarProfile = ({isOpen, onClose}) => {
 		return d.toLocaleDateString('vi-VN');
 	};
 
+	const handleLogout = () => {
+		setLoading(true);
+		localStorage.removeItem('token');
+		localStorage.removeItem('cart');
+		localStorage.removeItem('name');
+		localStorage.removeItem('avatar');
+		localStorage.removeItem('cartToken');
+
+		// Xoá giỏ hàng trong context
+		dispatch({type: 'CLEAR_CART'});
+
+		setUser({
+			name: '',
+			gender: '',
+			dateOfBirth: '',
+			avatar: '',
+		});
+
+		// Đồng bộ các tab (nếu dùng nhiều tab)
+		window.dispatchEvent(new Event('storage'));
+
+		setTimeout(() => {
+			setLoading(false);
+			router.push('/');
+		}, 1500);
+	};
+
 	return (
 		<div ref={sidebarRef} className={`${styles.container} ${isOpen ? styles.open : styles.closed}`}>
 			{isClient && window.innerWidth < 768 && isOpen && (
@@ -136,7 +168,7 @@ const SidebarProfile = ({isOpen, onClose}) => {
 					</Link>
 				</li>
 				<li className={`${styles.menuItem} ${activeLink === '/logout' ? styles.active : ''}`}>
-					<Link href='#' onClick={() => handleLinkClick('/logout')}>
+					<Link href='#' onClick={handleLogout}>
 						<div className={styles.menuLink}>
 							<Image src={icons.logout} alt='Đăng xuất' width={20} height={20} className={styles.icon} />
 							Đăng xuất
@@ -144,6 +176,7 @@ const SidebarProfile = ({isOpen, onClose}) => {
 					</Link>
 				</li>
 			</ul>
+			{loading && <Loading fullScreen />}
 		</div>
 	);
 };

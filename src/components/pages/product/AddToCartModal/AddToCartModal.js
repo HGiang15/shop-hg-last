@@ -4,7 +4,6 @@ import {addToCart, getAllCart} from '@/services/cartService';
 import {getAllSizes} from '@/services/sizeService';
 import {toast} from 'react-toastify';
 import useCart from '@/hooks/useCart';
-import images from '@/constants/static/images';
 
 const AddToCartModal = ({product, show, onClose}) => {
 	const {dispatch, setCartFromServer} = useCart();

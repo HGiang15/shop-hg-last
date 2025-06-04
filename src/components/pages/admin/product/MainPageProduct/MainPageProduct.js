@@ -30,15 +30,6 @@ const MainPageProduct = ({setActiveMenu}) => {
 	const [sortOption, setSortOption] = useState('newest'); // mặc định 'mới nhất'
 	const debounce = useDebounce(searchTerm, 600);
 
-	// const productSortOptions = [
-	// 	{value: 'newest', label: 'Mới nhất'},
-	// 	{value: 'oldest', label: 'Cũ nhất'},
-	// 	{value: 'name_asc', label: 'Tên A-Z'},
-	// 	{value: 'name_desc', label: 'Tên Z-A'},
-	// 	{value: 'price_asc', label: 'Giá thấp đến cao'},
-	// 	{value: 'price_desc', label: 'Giá cao đến thấp'},
-	// ];
-
 	const fetchProducts = async () => {
 		try {
 			const data = await getAllProducts(currentPage, productsPerPage, sortOption, debounce);
