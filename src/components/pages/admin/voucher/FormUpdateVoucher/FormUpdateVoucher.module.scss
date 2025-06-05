@@ -1,0 +1,104 @@
+.form {
+	max-height: 90vh;
+	overflow-y: auto;
+	padding-right: 10px;
+
+	scrollbar-width: thin;
+	scrollbar-color: #aaa transparent;
+
+	&::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: #aaa;
+		border-radius: 6px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+}
+
+.title {
+	font-size: 24px;
+	font-weight: 700;
+	margin-bottom: 16px;
+	text-align: center;
+	color: #222;
+}
+
+.label {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 14px;
+	font-size: 0.9rem;
+	color: #444;
+}
+
+.input,
+.select {
+	margin-top: 6px;
+	padding: 8px 10px;
+	font-size: 1rem;
+	border: 1.5px solid #ccc;
+	border-radius: 4px;
+	transition: border-color 0.2s ease;
+
+	&:focus {
+		outline: none;
+		border-color: #4a90e2;
+	}
+}
+
+.checkboxLabel {
+	display: flex;
+	align-items: center;
+	font-size: 1rem;
+	color: #444;
+
+	input[type='checkbox'] {
+		margin-right: 8px;
+		width: 18px;
+		height: 18px;
+	}
+}
+
+.buttons {
+	margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	gap: 16px;
+
+	button {
+		padding: 10px 22px;
+		font-size: 1rem;
+		border-radius: 5px;
+		border: none;
+		cursor: pointer;
+		transition: background-color 0.25s ease;
+
+		&:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+		}
+	}
+
+	.submitBtn {
+		background-color: #4a90e2;
+		color: #fff;
+
+		&:hover:not(:disabled) {
+			background-color: #357abd;
+		}
+	}
+
+	.cancelBtn {
+		background-color: #ccc;
+		color: #333;
+
+		&:hover {
+			background-color: #b3b3b3;
+		}
+	}
+}

@@ -3,7 +3,6 @@ import styles from './MainPageCategory.module.scss';
 import Table from '@/components/common/Table/Table';
 import Pagination from '@/components/common/Pagination/Pagination';
 import Button from '@/components/common/Button/Button';
-import {ROUTES} from '@/constants/config';
 import {useRouter} from 'next/router';
 import Image from 'next/image';
 import {getAllCategories, deleteCategory} from '@/services/categoryService';

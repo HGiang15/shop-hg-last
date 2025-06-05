@@ -14,7 +14,7 @@ import {ROUTES} from '@/constants/config';
 import {FaTimes} from 'react-icons/fa';
 import {connect} from 'react-redux';
 import {setActiveMenu} from '@/redux/actions/menuTabActions';
-import {StarBorderOutlined} from '@mui/icons-material';
+import {AirplaneTicket, AirplaneTicketTwoTone, StarBorderOutlined} from '@mui/icons-material';
 import images from '@/constants/static/images';
 
 const menuItems = [
@@ -26,6 +26,7 @@ const menuItems = [
 	{label: 'Quản lý sản phẩm', icon: <InventoryIcon />, path: ROUTES.AdminProduct},
 	{label: 'Quản lý đơn hàng', icon: <ShoppingCartIcon />, path: ROUTES.AdminOrder},
 	{label: 'Quản lý đánh giá', icon: <StarBorderOutlined />, path: ROUTES.AdminReview},
+	{label: 'Quản lý voucher', icon: <AirplaneTicketTwoTone />, path: ROUTES.AdminVoucher},
 ];
 
 const MenuTab = ({menuOpen, setMenuOpen, activeMenu}) => {

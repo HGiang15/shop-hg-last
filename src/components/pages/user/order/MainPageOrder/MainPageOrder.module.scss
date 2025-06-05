@@ -133,3 +133,94 @@
 		}
 	}
 }
+
+.voucherSection {
+	margin-top: 20px;
+
+	.voucherInput {
+		padding: 10px;
+		width: calc(100% - 120px);
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		margin-right: 10px;
+
+		@media (max-width: 576px) {
+			width: 100%;
+			margin-bottom: 10px;
+		}
+	}
+
+	button {
+		padding: 10px 20px;
+	}
+
+	.voucherError {
+		color: red;
+		margin-top: 5px;
+	}
+
+	.voucherSuccess {
+		color: green;
+		margin-top: 5px;
+	}
+
+	.voucherList {
+		margin-top: 15px;
+		border-top: 1px solid #eee;
+		padding-top: 10px;
+
+		max-height: 250px; // Giới hạn chiều cao
+		overflow-y: auto; // Hiện thanh cuộn dọc
+
+		scrollbar-width: thin; // Firefox
+		scrollbar-color: #ccc transparent;
+
+		/* Chrome, Safari */
+		&::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		&::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: #ccc;
+			border-radius: 3px;
+		}
+
+		.voucherListTitle {
+			font-weight: 600;
+			margin-bottom: 10px;
+			position: sticky;
+			top: 0;
+			background-color: white;
+			z-index: 1;
+			padding-top: 5px;
+		}
+
+		.voucherItem {
+			background-color: #f8f8f8;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 6px;
+			margin-bottom: 10px;
+			cursor: pointer;
+			transition: background 0.3s ease;
+
+			&:hover {
+				background-color: #e6f7ff;
+			}
+
+			.voucherCode {
+				font-weight: 600;
+				color: #007bff;
+			}
+
+			.voucherDesc {
+				font-size: 14px;
+				color: #555;
+			}
+		}
+	}
+}
