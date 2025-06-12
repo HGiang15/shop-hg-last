@@ -114,6 +114,12 @@ const MainPageHistoryOrder = () => {
 									<div>Số lượng: {String(item.quantity).padStart(2, '0')}</div>
 									<div>Kích cỡ: {item.size}</div>
 									<div>Màu sắc: {item.color}</div>
+									<div className={styles.paymentStatus}>
+										Thanh toán: <span>{order.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}</span>
+									</div>{' '}
+									{order.discountAmount > 0 && (
+										<div className={styles.discount}>Giảm giá: -{formatCurrency(order.discountAmount)}</div>
+									)}
 								</div>
 								<div className={styles.itemTotal}>Thành tiền: {formatCurrency(item.price * item.quantity)}</div>
 							</div>
@@ -121,9 +127,7 @@ const MainPageHistoryOrder = () => {
 
 						<div className={styles.orderFooter}>
 							<div>Tổng số lượng: {getTotalQuantity(order.items)} sản phẩm</div>
-							{order.discountAmount > 0 && (
-								<div className={styles.discount}>Giảm giá: -{formatCurrency(order.discountAmount)}</div>
-							)}
+
 							<div className={styles.total}>Tổng tiền: {formatCurrency(order.finalAmount)}</div>
 							{(activeTab === 'pending' || activeTab === 'shipping') && (
 								<Button

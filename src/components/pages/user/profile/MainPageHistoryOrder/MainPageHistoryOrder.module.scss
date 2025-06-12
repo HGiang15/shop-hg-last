@@ -73,6 +73,29 @@
 
 .itemDetails {
 	flex-grow: 1;
+	.paymentStatus {
+		margin: 4px 0;
+		span {
+			font-weight: bold;
+			color: #00701a;
+		}
+
+		span:has(> span):not(:contains('Đã thanh toán')) {
+			color: #d32f2f;
+		}
+	}
+
+	.discount {
+		background-color: #ffeaea;
+		color: #d62828;
+		font-weight: 600;
+		font-size: 14px;
+		padding: 4px 8px;
+		border-radius: 6px;
+		margin-top: 4px;
+		display: inline-block;
+		text-align: right;
+	}
 }
 
 .itemName {
@@ -91,18 +114,6 @@
 	justify-content: space-between;
 	align-items: center;
 	margin-top: 12px;
-
-	.discount {
-		background-color: #ffeaea;
-		color: #d62828;
-		font-weight: 600;
-		font-size: 14px;
-		padding: 4px 8px;
-		border-radius: 6px;
-		margin-top: 4px;
-		display: inline-block;
-		text-align: right;
-	}
 }
 
 .total {

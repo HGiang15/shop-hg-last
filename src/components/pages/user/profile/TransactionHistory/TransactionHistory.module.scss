@@ -1,0 +1,108 @@
+.container {
+	padding: 24px;
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+.title {
+	font-size: 28px;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 20px;
+}
+
+.filter {
+	margin-bottom: 24px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+
+	select {
+		padding: 10px 14px;
+		font-size: 15px;
+		border: 1px solid #ccc;
+		border-radius: 6px;
+		outline: none;
+		transition: border-color 0.2s;
+
+		&:hover,
+		&:focus {
+			border-color: #0070f3;
+		}
+	}
+}
+
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.orderCard {
+	border: 1px solid #e0e0e0;
+	padding: 20px;
+	border-radius: 10px;
+	background-color: #fff;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+	p {
+		margin: 6px 0;
+		color: #444;
+		line-height: 1.5;
+
+		strong {
+			color: #222;
+		}
+	}
+
+	.items {
+		margin-top: 12px;
+
+		strong {
+			display: block;
+			margin-bottom: 6px;
+			color: #333;
+		}
+
+		ul {
+			margin: 0;
+			padding-left: 20px;
+			list-style-type: disc;
+
+			li {
+				margin-bottom: 4px;
+				color: #555;
+			}
+		}
+	}
+}
+
+.pagination {
+	margin-top: 28px;
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+
+	button {
+		padding: 8px 14px;
+		border: 1px solid #ccc;
+		border-radius: 6px;
+		background-color: #f4f4f4;
+		cursor: pointer;
+		font-size: 14px;
+		transition: all 0.2s;
+
+		&:hover {
+			background-color: #0070f3;
+			color: #fff;
+			border-color: #0070f3;
+		}
+	}
+
+	.active {
+		background-color: #0070f3;
+		color: #fff;
+		border-color: #0070f3;
+		font-weight: 600;
+	}
+}

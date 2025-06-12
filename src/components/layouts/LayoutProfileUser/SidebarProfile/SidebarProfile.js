@@ -167,6 +167,14 @@ const SidebarProfile = ({isOpen, onClose}) => {
 						</div>
 					</Link>
 				</li>
+				<li className={`${styles.menuItem} ${activeLink === ROUTES.TransactionHistory ? styles.active : ''}`}>
+					<Link href={ROUTES.TransactionHistory} onClick={() => handleLinkClick(ROUTES.TransactionHistory)}>
+						<div className={styles.menuLink}>
+							<Image src={icons.iconAddress} alt='Lịch sử giao dịch' width={20} height={20} className={styles.icon} />
+							Lịch sử giao dịch
+						</div>
+					</Link>
+				</li>
 				<li className={`${styles.menuItem} ${activeLink === '/logout' ? styles.active : ''}`}>
 					<Link href='#' onClick={handleLogout}>
 						<div className={styles.menuLink}>

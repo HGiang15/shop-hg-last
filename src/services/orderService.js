@@ -152,3 +152,26 @@ export const getRevenueByYear = async () => {
 		throw error.response?.data || {message: 'Lấy doanh thu theo năm thất bại'};
 	}
 };
+
+// Lịch sử giao dịch của người dùng
+export const getTransactionHistory = async ({
+	page = 1,
+	limit = 1000,
+	status = '',
+	isPaid = '',
+	paymentMethod = '',
+	sort = 'desc', // mặc định: mới nhất
+}) => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.get('/api/order/transaction-history', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {page, limit, status, isPaid, paymentMethod, sort},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Lấy lịch sử giao dịch thất bại'};
+	}
+};

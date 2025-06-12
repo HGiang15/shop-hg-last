@@ -8,6 +8,7 @@ export const ROUTES = {
 	Order: '/order',
 	ChangePassword: '/profile/change-password',
 	Address: '/profile/address',
+	TransactionHistory: '/profile/transaction-history',
 	HistoryOrder: '/profile/history-order',
 
 	// Admin
