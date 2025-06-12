@@ -13,8 +13,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import {ROUTES} from '@/constants/config';
 import {FaTimes} from 'react-icons/fa';
 import {connect} from 'react-redux';
-import {setActiveMenu} from '@/redux/actions/menuTabActions';
-import {AirplaneTicket, AirplaneTicketTwoTone, StarBorderOutlined} from '@mui/icons-material';
+import {AirplaneTicketTwoTone, Password, Settings, StarBorderOutlined} from '@mui/icons-material';
 import images from '@/constants/static/images';
 
 const menuItems = [
@@ -27,6 +26,8 @@ const menuItems = [
 	{label: 'Quản lý đơn hàng', icon: <ShoppingCartIcon />, path: ROUTES.AdminOrder},
 	{label: 'Quản lý đánh giá', icon: <StarBorderOutlined />, path: ROUTES.AdminReview},
 	{label: 'Quản lý voucher', icon: <AirplaneTicketTwoTone />, path: ROUTES.AdminVoucher},
+	{label: 'Thông tin cá nhân', icon: <Settings />, path: ROUTES.AdminProfile},
+	{label: 'Đổi mật khẩu', icon: <Password />, path: ROUTES.AdminChangePassword},
 ];
 
 const MenuTab = ({menuOpen, setMenuOpen, activeMenu}) => {
@@ -49,13 +50,10 @@ const MenuTab = ({menuOpen, setMenuOpen, activeMenu}) => {
 
 			<ul className={styles.menuList}>
 				{menuItems.map((item, index) => {
-					// const isActive =
-					// 	item.path === ROUTES.AdminProduct ? router.pathname.startsWith(ROUTES.AdminProduct) : router.pathname === item.path;
-					// const isActive = router.pathname === item.path;
 					const isActive =
 						item.path === ROUTES.AdminProduct
 							? router.pathname.startsWith(ROUTES.AdminProduct) || activeMenu === ROUTES.AdminProductCreate // Kiểm tra cả pathname và activeMenu
-							: router.pathname === item.path || activeMenu === item.path; // Kiểm tra cả pathname và activeMenu
+							: router.pathname === item.path || activeMenu === item.path;
 
 					return (
 						<li key={index} className={isActive ? styles.active : ''}>

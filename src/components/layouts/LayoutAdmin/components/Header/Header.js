@@ -8,6 +8,8 @@ import Loading from '@/components/common/Loading/Loading';
 import styles from './Header.module.scss';
 import {FaTimes} from 'react-icons/fa';
 import images from '@/constants/static/images';
+import {ROUTES} from '@/constants/config';
+import {getCurrentUser} from '@/services/authService';
 
 const Header = ({title, setMenuOpen, menuOpen}) => {
 	const [visible, setVisible] = useState(false);
@@ -20,25 +22,26 @@ const Header = ({title, setMenuOpen, menuOpen}) => {
 	};
 
 	useEffect(() => {
-		const token = localStorage.getItem('token');
-		const name = localStorage.getItem('name');
-		const avatar = localStorage.getItem('avatar');
+		const fetchUser = async () => {
+			const token = localStorage.getItem('token');
+			if (!token) return;
 
-		if (token) {
 			try {
 				const decoded = jwtDecode(token);
-				const validAvatar = avatar && (avatar.startsWith('http') || avatar.startsWith('/')) ? avatar : null;
+				const userData = await getCurrentUser();
 
 				setUser({
 					...decoded,
-					name,
-					avatar: validAvatar,
+					name: userData.name,
+					avatar: userData.avatar,
 				});
 			} catch (error) {
-				console.error('Token không hợp lệ', error);
+				console.error('Lỗi khi lấy thông tin người dùng', error);
 				localStorage.removeItem('token');
 			}
-		}
+		};
+
+		fetchUser();
 	}, []);
 
 	const handleLogout = () => {
@@ -73,14 +76,25 @@ const Header = ({title, setMenuOpen, menuOpen}) => {
 					render={(attrs) => (
 						<div className={styles.dropdown} tabIndex='-1' ref={attrs.ref} {...attrs}>
 							<ul>
-								<li>
+								<li
+									onClick={() => {
+										router.push(ROUTES.AdminProfile);
+										setVisible(false);
+									}}
+								>
 									<HiOutlineUser className={styles.icon} />
 									Thông tin cá nhân
 								</li>
-								<li>
+								<li
+									onClick={() => {
+										router.push(ROUTES.AdminChangePassword);
+										setVisible(false);
+									}}
+								>
 									<HiOutlineKey className={styles.icon} />
 									Đổi mật khẩu
 								</li>
+
 								<li onClick={handleLogout}>
 									<HiOutlineLogout className={styles.icon} />
 									Đăng xuất

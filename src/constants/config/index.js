@@ -19,6 +19,8 @@ export const ROUTES = {
 	AdminCategory: '/admin/category',
 	AdminReview: '/admin/review',
 	AdminVoucher: '/admin/voucher',
+	AdminProfile: '/admin/profile',
+	AdminChangePassword: '/admin/change-password',
 
 	AdminProduct: '/admin/product',
 	AdminProductCreate: '/admin/product/create',

@@ -1,0 +1,150 @@
+.container {
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 32px;
+	background-color: #fff;
+	border-radius: 12px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+	font-size: 28px;
+	font-weight: 600;
+	text-align: center;
+	margin-bottom: 32px;
+}
+
+.avatarSection {
+	display: flex;
+	align-items: center;
+	gap: 32px;
+	margin-bottom: 32px;
+}
+
+.avatarPreview {
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	overflow: hidden;
+	background-color: #f3f3f3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #ddd;
+}
+
+.avatarPlaceholder {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.avatarUpload {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	font-size: 14px;
+
+	.uploadButton {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		background-color: #0070f3;
+		color: #fff;
+		padding: 8px 16px;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+
+		&:hover {
+			background-color: #005bb5;
+		}
+
+		img {
+			filter: brightness(0) invert(1);
+		}
+	}
+}
+
+.formGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 24px;
+
+	@media (max-width: 768px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.formGroup {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	label {
+		font-weight: 500;
+		font-size: 15px;
+	}
+
+	input[type='text'],
+	input[type='email'],
+	input[type='tel'],
+	input[type='date'] {
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 8px;
+		font-size: 15px;
+		transition: border-color 0.2s;
+
+		&:focus {
+			border-color: #0070f3;
+			outline: none;
+		}
+
+		&:disabled {
+			background-color: #f5f5f5;
+			cursor: not-allowed;
+		}
+	}
+}
+
+.radioGroup {
+	display: flex;
+	gap: 16px;
+
+	label {
+		font-size: 15px;
+		display: flex;
+		align-items: center;
+		gap: 5px;
+
+		input[type='radio'] {
+			transform: scale(1.1);
+		}
+	}
+}
+
+.error {
+	color: red;
+	font-size: 13px;
+	margin-top: -4px;
+}
+
+.submitButtonContainer {
+	grid-column: span 2;
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 16px;
+
+	@media (max-width: 768px) {
+		grid-column: span 1;
+	}
+}
+
+.submitButton {
+	padding: 12px 24px;
+	border-radius: 8px;
+	font-size: 16px;
+}
