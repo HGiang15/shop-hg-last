@@ -111,7 +111,7 @@ const MainOrderPendingConfirm = ({setActiveMenu}) => {
 						<div className={styles.tableWrapper}>
 							<Table
 								users={orders.map((order, index) => {
-									const totalAmount = order.totalAmount ?? 0;
+									const finalAmount = order.finalAmount ?? 0;
 									return {
 										index: index + 1,
 										_id: order._id,
@@ -119,7 +119,7 @@ const MainOrderPendingConfirm = ({setActiveMenu}) => {
 										type: order.shippingAddress?.name ?? 'Không rõ',
 										color: order.shippingAddress?.phone ?? 'Không rõ',
 										quantity: order.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0,
-										price: totalAmount.toLocaleString('vi-VN', {
+										price: finalAmount.toLocaleString('vi-VN', {
 											style: 'currency',
 											currency: 'VND',
 										}),

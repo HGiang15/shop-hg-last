@@ -14,6 +14,8 @@ import FormUpdateVoucher from '../FormUpdateVoucher/FormUpdateVoucher';
 import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 import {deleteVoucher, getAllVouchers} from '@/services/voucherService';
+import moment from 'moment';
+import 'moment/locale/vi';
 
 const MainPageVoucher = () => {
 	const [vouchers, setVouchers] = useState([]);
@@ -143,13 +145,17 @@ const MainPageVoucher = () => {
 								label: 'Số lượng',
 							},
 							{
+								key: 'showAt',
+								label: 'Hiển thị lúc',
+								render: (voucher) => moment(voucher.showAt).format('HH:mm:ss DD/MM/YYYY'),
+							},
+							{
 								key: 'duration',
 								label: 'Thời gian áp dụng',
-								render: (voucher) => {
-									const start = new Date(voucher.startDate).toLocaleDateString('vi-VN');
-									const end = new Date(voucher.endDate).toLocaleDateString('vi-VN');
-									return `${start} - ${end}`;
-								},
+								render: (voucher) =>
+									`${moment(voucher.startDate).format('HH:mm:ss DD/MM/YYYY')} - ${moment(voucher.endDate).format(
+										'HH:mm:ss DD/MM/YYYY'
+									)}`,
 							},
 							{
 								key: 'isActive',
@@ -164,17 +170,8 @@ const MainPageVoucher = () => {
 								key: 'createdAt',
 								label: 'Thời gian tạo',
 								render: (voucher) => {
-									const date = new Date(voucher.createdAt);
-									return isNaN(date.getTime())
-										? 'Không xác định'
-										: date.toLocaleString('vi-VN', {
-												hour: '2-digit',
-												minute: '2-digit',
-												second: '2-digit',
-												day: '2-digit',
-												month: '2-digit',
-												year: 'numeric',
-										  });
+									const date = voucher.createdAt;
+									return date ? moment(date).format('HH:mm:ss DD/MM/YYYY') : 'Không xác định';
 								},
 							},
 						]}

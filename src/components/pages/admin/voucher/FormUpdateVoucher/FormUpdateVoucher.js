@@ -13,6 +13,7 @@ const FormUpdateVoucher = ({voucherId, onCancel, onSuccess}) => {
 		quantity: '',
 		startDate: '',
 		endDate: '',
+		showAt: '',
 		isActive: true,
 	});
 	const [loading, setLoading] = useState(true);
@@ -46,6 +47,13 @@ const FormUpdateVoucher = ({voucherId, onCancel, onSuccess}) => {
 		}
 	};
 
+	const formatDatetimeLocal = (isoString) => {
+		if (!isoString) return '';
+		const date = new Date(isoString);
+		const pad = (n) => (n < 10 ? '0' + n : n);
+		return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+	};
+
 	useEffect(() => {
 		const fetchVoucher = async () => {
 			try {
@@ -57,8 +65,9 @@ const FormUpdateVoucher = ({voucherId, onCancel, onSuccess}) => {
 					minOrderValue: data.minOrderValue || '',
 					maxDiscount: data.maxDiscount || '',
 					quantity: data.quantity || '',
-					startDate: data.startDate?.slice(0, 10) || '',
-					endDate: data.endDate?.slice(0, 10) || '',
+					startDate: formatDatetimeLocal(data.startDate),
+					endDate: formatDatetimeLocal(data.endDate),
+					showAt: formatDatetimeLocal(data.showAt),
 					isActive: data.isActive,
 				});
 			} catch (err) {
@@ -67,14 +76,20 @@ const FormUpdateVoucher = ({voucherId, onCancel, onSuccess}) => {
 				setLoading(false);
 			}
 		};
-
 		if (voucherId) fetchVoucher();
 	}, [voucherId]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			await updateVoucher(voucherId, formData);
+			await updateVoucher(voucherId, {
+				...formData,
+				discountValue: Number(formData.discountValue),
+				minOrderValue: Number(formData.minOrderValue),
+				maxDiscount: formData.discountType === 'percent' ? Number(formData.maxDiscount) : null,
+				quantity: Number(formData.quantity),
+			});
+
 			toast.success('Cập nhật voucher thành công');
 			onSuccess?.();
 		} catch (err) {
@@ -137,13 +152,18 @@ const FormUpdateVoucher = ({voucherId, onCancel, onSuccess}) => {
 			</label>
 
 			<label className={styles.label}>
+				Hiển thị từ ngày
+				<input className={styles.input} type='datetime-local' name='showAt' value={formData.showAt} onChange={handleChange} />
+			</label>
+
+			<label className={styles.label}>
 				Ngày bắt đầu
-				<input className={styles.input} type='date' name='startDate' value={formData.startDate} onChange={handleChange} />
+				<input className={styles.input} type='datetime-local' name='startDate' value={formData.startDate} onChange={handleChange} />
 			</label>
 
 			<label className={styles.label}>
 				Ngày kết thúc
-				<input className={styles.input} type='date' name='endDate' value={formData.endDate} onChange={handleChange} />
+				<input className={styles.input} type='datetime-local' name='endDate' value={formData.endDate} onChange={handleChange} />
 			</label>
 
 			<label className={styles.checkboxLabel}>

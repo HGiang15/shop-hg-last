@@ -16,6 +16,8 @@ import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
 import FormUpdateCategory from '../FormUpdateCategory/FormUpdateCategory';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 import useDebounce from '@/hooks/useDebounce';
+import moment from 'moment';
+import 'moment/locale/vi'; // để sử dụng tiếng Việt
 
 const MainPageCategory = () => {
 	const router = useRouter();
@@ -100,17 +102,9 @@ const MainPageCategory = () => {
 								key: 'createdAt',
 								label: 'Thời gian tạo',
 								render: (category) => {
-									const date = new Date(category.createdAt);
-									return isNaN(date.getTime())
-										? 'Không xác định'
-										: date.toLocaleString('vi-VN', {
-												hour: '2-digit',
-												minute: '2-digit',
-												second: '2-digit',
-												day: '2-digit',
-												month: '2-digit',
-												year: 'numeric',
-										  });
+									return category.createdAt
+										? moment(category.createdAt).locale('vi').format('HH:mm:ss - DD/MM/YYYY')
+										: 'Không xác định';
 								},
 							},
 						]}

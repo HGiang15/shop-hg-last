@@ -15,6 +15,8 @@ import FormUpdateColor from '../FormUpdateColor/FormUpdateColor';
 import images from '@/constants/static/images';
 import useDebounce from '@/hooks/useDebounce';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
+import moment from 'moment';
+import 'moment/locale/vi';
 
 const MainPageColor = () => {
 	const [currentPage, setCurrentPage] = useState(1);
@@ -136,15 +138,7 @@ const MainPageColor = () => {
 								{
 									key: 'createdAt',
 									label: 'Thời gian tạo',
-									render: (color) =>
-										new Date(color.createdAt).toLocaleString('vi-VN', {
-											hour: '2-digit',
-											minute: '2-digit',
-											second: '2-digit',
-											day: '2-digit',
-											month: '2-digit',
-											year: 'numeric',
-										}),
+									render: (color) => moment(color.createdAt).locale('vi').format('HH:mm:ss - DD/MM/YYYY'),
 								},
 							]}
 							renderActions={(color) => (

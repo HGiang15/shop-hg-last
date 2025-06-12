@@ -91,6 +91,18 @@
 	justify-content: space-between;
 	align-items: center;
 	margin-top: 12px;
+
+	.discount {
+		background-color: #ffeaea;
+		color: #d62828;
+		font-weight: 600;
+		font-size: 14px;
+		padding: 4px 8px;
+		border-radius: 6px;
+		margin-top: 4px;
+		display: inline-block;
+		text-align: right;
+	}
 }
 
 .total {

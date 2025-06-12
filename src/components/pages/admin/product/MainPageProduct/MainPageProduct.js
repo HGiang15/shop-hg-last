@@ -16,6 +16,8 @@ import {toast} from 'react-toastify';
 import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
 import useDebounce from '@/hooks/useDebounce';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
+import moment from 'moment';
+import 'moment/locale/vi';
 
 const MainPageProduct = ({setActiveMenu}) => {
 	const router = useRouter();
@@ -108,6 +110,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 									color: product.colors.map((color) => color.name).join(', '),
 									price: product.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'}),
 									quantity: quantity,
+									createdAt: moment(product.createdAt).locale('vi').format('HH:mm:ss - DD/MM/YYYY'),
 									product,
 								};
 							})}
@@ -119,6 +122,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 								{key: 'color', label: 'Màu sản phẩm'},
 								{key: 'price', label: 'Giá (VNĐ)'},
 								{key: 'quantity', label: 'Số lượng'},
+								{key: 'createdAt', label: 'Thời gian tạo'},
 							]}
 							renderActions={(product) => (
 								<>

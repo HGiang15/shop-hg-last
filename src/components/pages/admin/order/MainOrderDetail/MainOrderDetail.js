@@ -162,8 +162,16 @@ const MainOrderDetail = ({setActiveMenu}) => {
 						<div className={styles.value}>{order.items?.length}</div>
 					</div>
 					<div className={styles.infoItem}>
+						<div className={styles.label}>Giảm giá</div>
+						<div className={styles.value}>{order.discountAmount?.toLocaleString('vi-VN')} VNĐ</div>
+					</div>
+					<div className={styles.infoItem}>
 						<div className={styles.label}>Tổng tiền đơn hàng</div>
 						<div className={styles.value}>{order.totalAmount?.toLocaleString('vi-VN')} VND</div>
+					</div>
+					<div className={styles.infoItem}>
+						<div className={styles.label}>Tổng tiền đơn hàng sau khi giảm</div>
+						<div className={styles.value}>{order.finalAmount?.toLocaleString('vi-VN')} VND</div>
 					</div>
 					<div className={styles.infoItem}>
 						<div className={styles.label}>Trạng thái đơn hàng</div>

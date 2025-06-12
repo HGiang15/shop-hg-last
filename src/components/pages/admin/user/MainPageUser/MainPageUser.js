@@ -15,6 +15,7 @@ import images from '@/constants/static/images';
 import useDebounce from '@/hooks/useDebounce';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 import Button from '@/components/common/Button/Button';
+import moment from 'moment';
 
 const MainPageUser = () => {
 	const [users, setUsers] = useState([]);
@@ -190,6 +191,7 @@ const MainPageUser = () => {
 									...user,
 									index: (currentPage - 1) * limit + index + 1,
 									roleLabel: getRoleLabel(user.role),
+									createdAt: moment(user.createdAt).format('DD/MM/YYYY HH:mm'),
 								}))}
 								headers={[
 									{key: 'index', label: 'STT'},
@@ -198,6 +200,7 @@ const MainPageUser = () => {
 									{key: 'email', label: 'Email'},
 									{key: 'role', label: 'Quyền'},
 									{key: 'status', label: 'Trạng thái'},
+									{key: 'createdAt', label: 'Thời gian tạo'},
 								]}
 								renderActions={(user) => (
 									<>

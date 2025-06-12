@@ -121,7 +121,10 @@ const MainPageHistoryOrder = () => {
 
 						<div className={styles.orderFooter}>
 							<div>Tổng số lượng: {getTotalQuantity(order.items)} sản phẩm</div>
-							<div className={styles.total}>Tổng tiền: {formatCurrency(order.totalAmount)}</div>
+							{order.discountAmount > 0 && (
+								<div className={styles.discount}>Giảm giá: -{formatCurrency(order.discountAmount)}</div>
+							)}
+							<div className={styles.total}>Tổng tiền: {formatCurrency(order.finalAmount)}</div>
 							{(activeTab === 'pending' || activeTab === 'shipping') && (
 								<Button
 									className={activeTab === 'pending' ? styles.canceledBtn : styles.successBtn}

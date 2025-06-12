@@ -15,6 +15,8 @@ import FormUpdateSize from '../FormUpdateSize/FormUpdateSize';
 import images from '@/constants/static/images';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 import useDebounce from '@/hooks/useDebounce';
+import moment from 'moment';
+import 'moment/locale/vi';
 
 const MainPageSize = () => {
 	const [sizes, setSizes] = useState([]);
@@ -111,15 +113,7 @@ const MainPageSize = () => {
 							{
 								key: 'createdAt',
 								label: 'Thời gian tạo',
-								render: (size) =>
-									new Date(size.createdAt).toLocaleString('vi-VN', {
-										hour: '2-digit',
-										minute: '2-digit',
-										second: '2-digit',
-										day: '2-digit',
-										month: '2-digit',
-										year: 'numeric',
-									}),
+								render: (size) => moment(size.createdAt).locale('vi').format('HH:mm:ss DD/MM/YYYY'),
 							},
 						]}
 						renderActions={(size) => (

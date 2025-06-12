@@ -13,6 +13,7 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 		quantity: '',
 		startDate: '',
 		endDate: '',
+		showAt: '',
 		isActive: true,
 	});
 
@@ -25,15 +26,19 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 	const parsePriceInput = (value) => value.replace(/\./g, '');
 
 	const handleChange = (e) => {
-		const {name, value} = e.target;
+		const {name, value, type, checked} = e.target;
 
-		// Nếu là input tiền thì parse lại rồi cập nhật
 		if (['discountValue', 'minOrderValue', 'maxDiscount'].includes(name)) {
 			const raw = parsePriceInput(value);
-			if (!/^\d*$/.test(raw)) return; // chỉ cho nhập số
+			if (!/^\d*$/.test(raw)) return;
 			setFormData((prev) => ({
 				...prev,
 				[name]: raw,
+			}));
+		} else if (type === 'checkbox') {
+			setFormData((prev) => ({
+				...prev,
+				[name]: checked,
 			}));
 		} else {
 			setFormData((prev) => ({
@@ -42,6 +47,7 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 			}));
 		}
 	};
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
@@ -83,6 +89,7 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 			quantity: Number(formData.quantity),
 			startDate: formData.startDate,
 			endDate: formData.endDate,
+			showAt: formData.showAt || formData.startDate, // nếu không có thì lấy luôn startDate
 			isActive: formData.isActive,
 		};
 
@@ -146,7 +153,8 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 						className={styles.input}
 						type='number'
 						name='maxDiscount'
-						value={formData.maxDiscount}
+						// value={formData.maxDiscount}
+						value={formatPriceDisplay(formData.maxDiscount)}
 						onChange={handleChange}
 						min='0'
 						required={formData.discountType === 'percent'}
@@ -168,13 +176,39 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 			</label>
 
 			<label className={styles.label}>
+				Hiển thị từ ngày
+				<input
+					className={styles.input}
+					type='datetime-local'
+					name='showAt'
+					value={formData.showAt}
+					onChange={handleChange}
+					required
+				/>
+			</label>
+
+			<label className={styles.label}>
 				Ngày bắt đầu
-				<input className={styles.input} type='date' name='startDate' value={formData.startDate} onChange={handleChange} required />
+				<input
+					className={styles.input}
+					type='datetime-local'
+					name='startDate'
+					value={formData.startDate}
+					onChange={handleChange}
+					required
+				/>
 			</label>
 
 			<label className={styles.label}>
 				Ngày kết thúc
-				<input className={styles.input} type='date' name='endDate' value={formData.endDate} onChange={handleChange} required />
+				<input
+					className={styles.input}
+					type='datetime-local'
+					name='endDate'
+					value={formData.endDate}
+					onChange={handleChange}
+					required
+				/>
 			</label>
 
 			<label className={styles.checkboxLabel}>

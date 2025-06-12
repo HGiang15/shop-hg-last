@@ -4,14 +4,12 @@ import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 import Button from '@/components/common/Button/Button';
 import FormChangeAddress from '../FormChangeAddress/FormChangeAddress';
 import {createOrder, createVNPayUrl} from '@/services/orderService';
-import {useRouter} from 'next/router';
 import {getUserAddresses} from '@/services/userAddressService';
 import {toast} from 'react-toastify';
 import OrderSuccessModal from '../OrderSuccessModal/OrderSuccessModal';
-import {applyVoucher} from '@/services/voucherService';
+import {applyVoucher, getAvailableVouchersForUser} from '@/services/voucherService';
 
 const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
-	const router = useRouter();
 	const [orderList, setOrderList] = useState([]);
 	const [totalAmount, setTotalAmount] = useState(0);
 	const [policyChecked, setPolicyChecked] = useState(false);
@@ -26,55 +24,11 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const [voucherCode, setVoucherCode] = useState('');
 	const [appliedVoucher, setAppliedVoucher] = useState(null);
 	const [voucherError, setVoucherError] = useState('');
+	const [paymentMethod, setPaymentMethod] = useState('cod');
+	const [availableVouchers, setAvailableVouchers] = useState([]);
+	const [finalAmount, setFinalAmount] = useState(0);
 
-	const mockVouchers = [
-		{
-			_id: '1',
-			code: 'GIAM50K',
-			discountType: 'fixed',
-			discountValue: 50000,
-			minOrderValue: 200000,
-			maxDiscount: null,
-			quantity: 5,
-			startDate: '2025-06-01T00:00:00.000Z',
-			endDate: '2025-06-30T23:59:59.999Z',
-			isActive: true,
-			usedBy: [],
-			createdAt: '2025-06-01T10:00:00.000Z',
-			updatedAt: '2025-06-01T10:00:00.000Z',
-		},
-		{
-			_id: '2',
-			code: 'SALE20',
-			discountType: 'percent',
-			discountValue: 20,
-			minOrderValue: 300000,
-			maxDiscount: 80000,
-			quantity: 10,
-			startDate: '2025-06-01T00:00:00.000Z',
-			endDate: '2025-06-15T23:59:59.999Z',
-			isActive: true,
-			usedBy: [],
-			createdAt: '2025-06-01T10:00:00.000Z',
-			updatedAt: '2025-06-01T10:00:00.000Z',
-		},
-		{
-			_id: '3',
-			code: 'FREESHIP',
-			discountType: 'fixed',
-			discountValue: 20000,
-			minOrderValue: 100000,
-			maxDiscount: null,
-			quantity: 50,
-			startDate: '2025-06-01T00:00:00.000Z',
-			endDate: '2025-07-01T00:00:00.000Z',
-			isActive: true,
-			usedBy: [],
-			createdAt: '2025-06-01T10:00:00.000Z',
-			updatedAt: '2025-06-01T10:00:00.000Z',
-		},
-	];
-
+	// Get All UserAddress
 	const fetchAddresses = async () => {
 		try {
 			const res = await getUserAddresses();
@@ -95,7 +49,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		fetchAddresses();
 	}, []);
 
-	// 1) Đọc buyNow từ localStorage
+	// get buyNow từ localStorage
 	useEffect(() => {
 		const raw = typeof window !== 'undefined' && localStorage.getItem('buyNow');
 		if (raw) {
@@ -106,7 +60,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		}
 	}, []);
 
-	// 2) Tính tổng
+	//  Tính tổng
 	useEffect(() => {
 		const sum = orderList.reduce((acc, item) => acc + item.price * item.quantity, 0);
 		setTotalAmount(sum);
@@ -132,43 +86,94 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 					price: item.price,
 				})),
 				note,
-				voucherCode: appliedVoucher?.code || null,
+				voucherCode: voucherCode?.toUpperCase() || null,
+				paymentMethod,
 			});
 
-			// B2: Gọi API tạo URL thanh toán VNPay
-			const paymentRes = await createVNPayUrl({
-				amount: totalAmount - (appliedVoucher?.discountAmount || 0),
-				orderId: order._id,
-			});
+			if (paymentMethod === 'vnpay') {
+				const paymentRes = await createVNPayUrl({
+					amount: order.finalAmount,
+					orderId: order._id,
+				});
 
-			// B3: Clear localStorage và redirect tới VNPay
-			localStorage.removeItem('buyNow');
-
-			console.log(paymentRes);
-
-			window.location.href = paymentRes;
+				localStorage.removeItem('buyNow');
+				window.location.href = paymentRes;
+			} else {
+				// COD: chỉ hiện modal thành công
+				localStorage.removeItem('buyNow');
+				setShowSuccessModal(true);
+			}
 		} catch (err) {
 			console.error(err);
-			toast.error(err.message || 'Tạo đơn hàng/thanh toán thất bại');
-		} finally {
-			setIsPlacingOrder(false);
+			toast.error(err.response?.data?.message || err.message || 'Tạo đơn hàng/thanh toán thất bại');
+			return;
 		}
 	};
+
+	// Hiện voucher cho user
+	useEffect(() => {
+		const fetchAvailableVouchers = async () => {
+			try {
+				const vouchers = await getAvailableVouchersForUser(totalAmount);
+				setAvailableVouchers(vouchers);
+			} catch (err) {
+				console.error('Lỗi khi lấy voucher:', err);
+			}
+		};
+
+		if (totalAmount > 0) {
+			fetchAvailableVouchers();
+		}
+	}, [totalAmount]);
 
 	const handleApplyVoucher = async () => {
 		try {
 			setVoucherError('');
+			const now = new Date();
+
+			const matchedVoucher = availableVouchers.find((v) => v.code === voucherCode.toUpperCase());
+
+			if (matchedVoucher) {
+				const start = new Date(matchedVoucher.startDate);
+				const end = new Date(matchedVoucher.endDate);
+
+				if (now < start) {
+					setVoucherError('Mã giảm giá chưa có hiệu lực.');
+					return;
+				}
+
+				if (now > end) {
+					setVoucherError('Mã giảm giá đã hết hạn.');
+					return;
+				}
+			}
+
+			// Gửi API
 			const response = await applyVoucher({
 				code: voucherCode,
 				orderTotal: totalAmount,
-				// Có thể thêm userId nếu cần (nếu hệ thống yêu cầu), hiện tại có thể bỏ
 			});
-			setAppliedVoucher(response); // response gồm: code, discountAmount
+			setAppliedVoucher(response);
+			setFinalAmount(response.finalPrice);
 			toast.success('Áp dụng mã giảm giá thành công');
 		} catch (error) {
 			setAppliedVoucher(null);
 			setVoucherError(error.message || 'Mã giảm giá không hợp lệ');
 		}
+	};
+
+	// Tính giá sau giảm
+	const calculateDiscountAmount = (voucher) => {
+		if (totalAmount < voucher.minOrderValue) return 0;
+
+		if (voucher.discountType === 'percent') {
+			const rawDiscount = (totalAmount * voucher.discountValue) / 100;
+			return voucher.maxDiscount ? Math.min(rawDiscount, voucher.maxDiscount) : rawDiscount;
+		}
+		if (voucher.discountType === 'fixed') {
+			return voucher.discountValue;
+		}
+		return 0;
 	};
 
 	return (
@@ -198,8 +203,32 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 					<div className={styles.total}>
 						Tổng thanh toán:
 						<span className={styles.totalAmount}>
-							{(totalAmount - (appliedVoucher?.discountAmount || 0)).toLocaleString('vi-VN')} VNĐ
+							{(appliedVoucher ? finalAmount : totalAmount).toLocaleString('vi-VN')} VNĐ
 						</span>
+					</div>
+
+					<div className={styles.paymentMethods}>
+						<h4>Phương thức thanh toán</h4>
+						<label>
+							<input
+								type='radio'
+								name='paymentMethod'
+								value='cod'
+								checked={paymentMethod === 'cod'}
+								onChange={(e) => setPaymentMethod(e.target.value)}
+							/>
+							Tiền mặt khi nhận hàng (COD)
+						</label>
+						<label>
+							<input
+								type='radio'
+								name='paymentMethod'
+								value='vnpay'
+								checked={paymentMethod === 'vnpay'}
+								onChange={(e) => setPaymentMethod(e.target.value)}
+							/>
+							Chuyển khoản qua VNPay
+						</label>
 					</div>
 
 					<div className={styles.policyCheckbox}>
@@ -220,7 +249,12 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 							type='text'
 							placeholder='Nhập mã giảm giá'
 							value={voucherCode}
-							onChange={(e) => setVoucherCode(e.target.value)}
+							onChange={(e) => {
+								setVoucherCode(e.target.value);
+								setAppliedVoucher(null);
+								setVoucherError('');
+								setFinalAmount(totalAmount);
+							}}
 							className={styles.voucherInput}
 						/>
 						<Button onClick={handleApplyVoucher}>Áp dụng</Button>
@@ -236,24 +270,61 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 						{/* Danh sách mã giảm giá */}
 						<div className={styles.voucherList}>
 							<h4 className={styles.voucherListTitle}>Mã giảm giá hiện có:</h4>
-							{mockVouchers.map((v) => (
-								<div key={v._id} className={styles.voucherItem} onClick={() => setVoucherCode(v.code)}>
-									<p className={styles.voucherCode}>{v.code}</p>
-									<p className={styles.voucherDesc}>
-										{v.discountType === 'percent'
-											? `Giảm ${v.discountValue}%`
-											: `Giảm ${v.discountValue.toLocaleString('vi-VN')}đ`}
-										{v.discountType === 'percent' && v.maxDiscount
-											? ` (tối đa ${v.maxDiscount.toLocaleString('vi-VN')}đ)`
-											: ''}{' '}
-										cho đơn từ {v.minOrderValue.toLocaleString('vi-VN')}đ
-									</p>
-								</div>
-							))}
+							{availableVouchers.map((v) => {
+								const discountAmount = calculateDiscountAmount(v);
+								const finalAmount = totalAmount - discountAmount;
+								const isAvailableNow = new Date() >= new Date(v.startDate);
+
+								return (
+									<div
+										key={v._id}
+										className={styles.voucherItem}
+										onClick={() => {
+											if (isAvailableNow) {
+												setVoucherCode(v.code);
+												setTimeout(() => handleApplyVoucher(), 100);
+											}
+										}}
+										style={{
+											opacity: isAvailableNow ? 1 : 0.8,
+											pointerEvents: isAvailableNow ? 'auto' : 'none',
+										}}
+									>
+										<span className={styles.voucherShockLabel}>Áp dụng ngay </span>
+										<p className={styles.voucherCode}>{v.code}</p>
+										<p className={styles.voucherDesc}>
+											{v.discountType === 'percent'
+												? `Giảm ${v.discountValue}%`
+												: `Giảm ${v.discountValue.toLocaleString('vi-VN')}đ`}
+											{v.discountType === 'percent' && v.maxDiscount
+												? ` (tối đa ${v.maxDiscount.toLocaleString('vi-VN')}đ)`
+												: ''}{' '}
+											cho đơn từ {v.minOrderValue.toLocaleString('vi-VN')}đ
+										</p>
+										<p className={styles.voucherMore}>
+											Còn lại: {v.quantity} | Hiệu lực:{' '}
+											{new Date(v.startDate).toLocaleString('vi-VN', {hour12: false})} -{' '}
+											{new Date(v.endDate).toLocaleString('vi-VN', {hour12: false})}
+										</p>
+
+										{isAvailableNow ? (
+											<p className={styles.voucherPreviewDiscount}>
+												Giá sau giảm (nếu áp dụng): {finalAmount.toLocaleString('vi-VN')}đ
+											</p>
+										) : (
+											<p className={styles.voucherNote}>
+												Có hiệu lực từ: {new Date(v.startDate).toLocaleString('vi-VN', {hour12: false})} - Hết hạn:{' '}
+												{new Date(v.endDate).toLocaleString('vi-VN', {hour12: false})}
+											</p>
+										)}
+									</div>
+								);
+							})}
 						</div>
 					</div>
 				</div>
 
+				{/* Address */}
 				<div className={styles.deliveryInfo}>
 					<div className={styles.deliveryHeader}>
 						<h2 className={styles.deliveryTitle}>Thông tin nhận hàng</h2>
