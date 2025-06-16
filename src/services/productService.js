@@ -38,6 +38,17 @@ export const deleteProduct = async (productId) => {
 	}
 };
 
+export const deleteMultipleProducts = async (ids) => {
+	try {
+		const response = await axiosClient.delete(`/api/product/deleteMultipleProducts`, {
+			data: {ids},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Xóa nhiều sản phẩm thất bại'};
+	}
+};
+
 export const getProductById = async (productId) => {
 	try {
 		const response = await axiosClient.get(`/api/product/getProductById/${productId}`);

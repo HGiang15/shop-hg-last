@@ -18,7 +18,8 @@ const ConfirmDeleteModal = ({isOpen, onClose, onConfirm, sizeName}) => {
 				<div className={styles.wrapper}>
 					<Image src={icons.question} alt='Xóa kích cỡ' width={60} height={60} />
 					<h2>Xóa kích cỡ</h2>
-					<p>Bạn có chắc chắn muốn xóa kích cỡ &quot;{sizeName}&quot;?</p>
+					{/* <p>Bạn có chắc chắn muốn xóa kích cỡ &quot;{sizeName}&quot;?</p> */}
+					<p>Bạn có chắc chắn muốn xóa kích cỡ này không?</p>
 				</div>
 				<div className={styles.actions}>
 					<Button onClick={onClose} className={styles.cancel}>

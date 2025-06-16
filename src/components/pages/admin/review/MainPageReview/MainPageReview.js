@@ -7,7 +7,7 @@ import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
 import IconCustom from '@/components/common/IconCustom/IconCustom';
 import Image from 'next/image';
 import icons from '@/constants/static/icons';
-import {getAllReviewsForAdmin, deleteReview} from '@/services/reviewService';
+import {getAllReviewsForAdmin, deleteReview, deleteMultipleReviews} from '@/services/reviewService';
 import {toast} from 'react-toastify';
 import useDebounce from '@/hooks/useDebounce';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
@@ -22,6 +22,8 @@ const MainPageReview = () => {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [sortOption, setSortOption] = useState('');
 	const [selectedRating, setSelectedRating] = useState('');
+	const [selectedReviews, setSelectedReviews] = useState([]);
+	const [deleteMode, setDeleteMode] = useState('single'); // 'single' | 'multiple'
 	const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
 	const [showUpdateForm, setShowUpdateForm] = useState(false);
@@ -91,6 +93,16 @@ const MainPageReview = () => {
 							],
 						},
 					]}
+					selectedProducts={selectedReviews}
+					onDeleteMany={() => {
+						if (!selectedReviews || selectedReviews.length === 0) {
+							toast.warn('Vui lòng chọn ít nhất một đánh giá để xoá!');
+							return;
+						}
+						setDeleteMode('multiple');
+						setSelectedReviewId(null);
+						setIsModalOpen(true);
+					}}
 				/>
 			</div>
 
@@ -112,6 +124,22 @@ const MainPageReview = () => {
 							createdAt: review.createdAt,
 						}))}
 						headers={[
+							{
+								key: 'checkbox',
+								label: (
+									<input
+										type='checkbox'
+										checked={selectedReviews.length === reviews.length && reviews.length > 0}
+										onChange={(e) => {
+											if (e.target.checked) {
+												setSelectedReviews(reviews.map((r) => r._id));
+											} else {
+												setSelectedReviews([]);
+											}
+										}}
+									/>
+								),
+							},
 							{key: 'index', label: 'STT'},
 							{key: 'name', label: 'Tên người dùng'},
 							{key: 'email', label: 'Email'},
@@ -132,6 +160,19 @@ const MainPageReview = () => {
 									}),
 							},
 						]}
+						renderCheckbox={(review) => (
+							<input
+								type='checkbox'
+								checked={selectedReviews.includes(review._id)}
+								onChange={(e) => {
+									if (e.target.checked) {
+										setSelectedReviews((prev) => [...prev, review._id]);
+									} else {
+										setSelectedReviews((prev) => prev.filter((id) => id !== review._id));
+									}
+								}}
+							/>
+						)}
 						renderActions={(review) => (
 							<>
 								<IconCustom
@@ -185,7 +226,22 @@ const MainPageReview = () => {
 			<ConfirmDeleteModal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				onConfirm={handleDelete}
+				onConfirm={async () => {
+					try {
+						if (deleteMode === 'single' && selectedReviewId) {
+							await deleteReview(selectedReviewId);
+							toast.success('Xóa đánh giá thành công');
+						} else if (deleteMode === 'multiple') {
+							await deleteMultipleReviews(selectedReviews); // cần tạo service này
+							toast.success('Xóa nhiều đánh giá thành công');
+						}
+						setIsModalOpen(false);
+						setSelectedReviews([]);
+						fetchReviews();
+					} catch (error) {
+						toast.error(error.message || 'Xóa đánh giá thất bại');
+					}
+				}}
 				reviewName={reviews.find((s) => s._id === selectedReviewId)?.name}
 			/>
 		</div>

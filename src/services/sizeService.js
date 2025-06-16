@@ -56,3 +56,14 @@ export const deleteSize = async (id) => {
 		throw error.response?.data || {message: 'Xóa kích cỡ thất bại'};
 	}
 };
+
+export const deleteMultipleSizes = async (ids) => {
+	try {
+		const response = await axiosClient.delete(`/api/size/delete-multiple`, {
+			data: {ids},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Xóa nhiều kích cỡ thất bại'};
+	}
+};

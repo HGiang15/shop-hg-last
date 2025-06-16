@@ -9,7 +9,7 @@ import Button from '@/components/common/Button/Button';
 import IconCustom from '@/components/common/IconCustom/IconCustom';
 import Image from 'next/image';
 import icons from '@/constants/static/icons';
-import {getAllSizes, deleteSize} from '@/services/sizeService';
+import {getAllSizes, deleteSize, deleteMultipleSizes} from '@/services/sizeService';
 import {toast} from 'react-toastify';
 import FormUpdateSize from '../FormUpdateSize/FormUpdateSize';
 import images from '@/constants/static/images';
@@ -32,6 +32,9 @@ const MainPageSize = () => {
 	const [sortOption, setSortOption] = useState('newest');
 	const [searchTerm, setSearchTerm] = useState('');
 	const debounce = useDebounce(searchTerm, 600);
+
+	const [selectedSizes, setSelectedSizes] = useState([]);
+	const [deleteMode, setDeleteMode] = useState('single'); // 'single' | 'multiple'
 
 	const fetchSizes = async (page = currentPage, customLimit = limit, sort = sortOption, search = debounce) => {
 		try {
@@ -66,6 +69,18 @@ const MainPageSize = () => {
 		}
 	};
 
+	const handleConfirmDeleteMany = () => {
+		if (selectedSizes.length === 0) {
+			toast.warn('Vui lòng chọn ít nhất một kích cỡ để xoá!');
+			return;
+		}
+		setDeleteMode('multiple');
+		setSelectedSizeId(null);
+		setIsModalOpen(true);
+	};
+
+	const isAllSelected = selectedSizes.length === sizes.length && sizes.length > 0;
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
@@ -81,6 +96,8 @@ const MainPageSize = () => {
 						{value: 'name_asc', label: 'Tên A-Z'},
 						{value: 'name_desc', label: 'Tên Z-A'},
 					]}
+					selectedProducts={selectedSizes}
+					onDeleteMany={handleConfirmDeleteMany}
 				/>
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
 					Thêm mới kích cỡ
@@ -107,6 +124,22 @@ const MainPageSize = () => {
 							createdAt: size.createdAt,
 						}))}
 						headers={[
+							{
+								key: 'checkbox',
+								label: (
+									<input
+										type='checkbox'
+										checked={isAllSelected}
+										onChange={(e) => {
+											if (e.target.checked) {
+												setSelectedSizes(sizes.map((s) => s._id));
+											} else {
+												setSelectedSizes([]);
+											}
+										}}
+									/>
+								),
+							},
 							{key: 'index', label: 'STT'},
 							{key: 'name', label: 'Tên kích cỡ'},
 							{key: 'description', label: 'Mô tả'},
@@ -116,6 +149,19 @@ const MainPageSize = () => {
 								render: (size) => moment(size.createdAt).locale('vi').format('HH:mm:ss DD/MM/YYYY'),
 							},
 						]}
+						renderCheckbox={(size) => (
+							<input
+								type='checkbox'
+								checked={selectedSizes.includes(size._id)}
+								onChange={(e) => {
+									if (e.target.checked) {
+										setSelectedSizes((prev) => [...prev, size._id]);
+									} else {
+										setSelectedSizes((prev) => prev.filter((id) => id !== size._id));
+									}
+								}}
+							/>
+						)}
 						renderActions={(size) => (
 							<>
 								<IconCustom
@@ -132,6 +178,7 @@ const MainPageSize = () => {
 									tooltip='Xóa kích cỡ'
 									onClick={() => {
 										setSelectedSizeId(size._id);
+										setDeleteMode('single');
 										setIsModalOpen(true);
 									}}
 								/>
@@ -185,7 +232,22 @@ const MainPageSize = () => {
 			<ConfirmDeleteModal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				onConfirm={handleDelete}
+				onConfirm={async () => {
+					try {
+						if (deleteMode === 'single' && selectedSizeId) {
+							await deleteSize(selectedSizeId);
+							toast.success('Xóa kích cỡ thành công');
+						} else if (deleteMode === 'multiple') {
+							await deleteMultipleSizes(selectedSizes);
+							toast.success('Xóa nhiều kích cỡ thành công');
+						}
+						fetchSizes();
+					} catch (error) {
+						toast.error(error.message || 'Xoá thất bại');
+					} finally {
+						setIsModalOpen(false);
+					}
+				}}
 				sizeName={sizes.find((s) => s._id === selectedSizeId)?.name}
 			/>
 		</div>

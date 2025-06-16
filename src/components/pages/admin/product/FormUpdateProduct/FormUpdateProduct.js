@@ -29,7 +29,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 	const [categoryOptions, setCategoryOptions] = useState([]);
 	const [sizes, setSizes] = useState([]);
 	const [sizeQuantities, setSizeQuantities] = useState({});
-
+	const [loading, setLoading] = useState(false);
 	const [form, setForm] = useState({
 		name: '',
 		code: '',
@@ -150,7 +150,15 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 	const handleInputChange = async (e) => {
 		const {name, value} = e.target;
 
-		if (name === 'category') {
+		if (name === 'name') {
+			const autoCode = slugify(value);
+
+			setForm((prev) => ({
+				...prev,
+				name: value,
+				code: autoCode, // Tự động set mã sản phẩm
+			}));
+		} else if (name === 'category') {
 			const selectedCategory = categoryOptions.find((cat) => cat._id === value);
 			if (selectedCategory) {
 				setForm((prev) => ({
@@ -237,79 +245,96 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 	const handleUpdateProduct = async () => {
 		if (!productIdFromRouter) return toast.error('Không có ID sản phẩm để cập nhật!');
 
+		setLoading(true);
 		const formUpdate = new FormData();
 		const formUpload = new FormData();
 
-		const files = imagesSelected?.filter((v) => !!v.file && !v.path)?.map((m) => m.file);
-
-		if (files.length == 0) {
-			const paths = imagesSelected?.filter((v) => !!v.path && !v.file)?.map((m) => m.path);
-			formUpdate.append('images', JSON.stringify(paths));
-		}
-
-		if (files.length > 0) {
-			const paths = imagesSelected?.filter((v) => !!v.path && !v.file)?.map((m) => m.path);
-
-			files.forEach((file) => formUpload.append('files', file));
-			const {data: imagesPath} = await uploadMultiple(formUpload);
-			formUpdate.append('images', JSON.stringify([...paths, ...imagesPath]));
-		}
-
-		const quantityBySize = sizes
-			.map((size) => ({
-				sizeId: size._id,
-				name: size.name,
-				quantity: sizeQuantities[size.name] || 0,
-			}))
-			.filter((item) => item.quantity > 0);
-
-		formUpdate.append('code', form.code);
-		formUpdate.append('name', form.name);
-		formUpdate.append(
-			'quantityBySize',
-			JSON.stringify(
-				quantityBySize.map((item) => ({
-					sizeId: item.sizeId.toString(),
-					name: item.name,
-					quantity: item.quantity,
-				}))
-			)
-		);
-
-		const category = JSON.parse(form.category || '{}');
-		formUpdate.append(
-			'category',
-			JSON.stringify({
-				categoryId: category.categoryId || '',
-				name: category.name || '',
-			})
-		);
-
-		const colors = JSON.parse(form.colors || '[]');
-		formUpdate.append('colors', JSON.stringify(colors));
-		formUpdate.append('price', form.price);
-		formUpdate.append('description', form.description);
-		formUpdate.append('detailDescription', detailDescription);
-		formUpdate.append('isFeatured', form.isFeatured);
-		formUpdate.append('status', form.status);
-
 		try {
+			// ===== VALIDATE =====
+			if (!form.name.trim()) {
+				toast.error('Tên sản phẩm không được để trống!', {position: 'top-right'});
+				return;
+			}
+			if (!form.code.trim()) {
+				toast.error('Mã sản phẩm không được để trống!', {position: 'top-right'});
+				return;
+			}
+			if (!form.category || form.category === '{}') {
+				toast.error('Vui lòng chọn danh mục sản phẩm!', {position: 'top-right'});
+				return;
+			}
+			if (!form.colors || form.colors === '[]') {
+				toast.error('Vui lòng chọn ít nhất một màu sắc!', {position: 'top-right'});
+				return;
+			}
+			if (!form.price || isNaN(form.price) || Number(form.price) <= 0) {
+				toast.error('Giá sản phẩm không hợp lệ!', {position: 'top-right'});
+				return;
+			}
+
+			// ===== ẢNH =====
+			const files = imagesSelected?.filter((v) => !!v.file && !v.path)?.map((m) => m.file) || [];
+			const existingPaths = imagesSelected?.filter((v) => !!v.path && !v.file)?.map((m) => m.path) || [];
+
+			let finalImagePaths = [...existingPaths];
+
+			if (files.length > 0) {
+				files.forEach((file) => formUpload.append('files', file));
+				const {data: uploadedPaths} = await uploadMultiple(formUpload);
+				finalImagePaths = [...existingPaths, ...uploadedPaths];
+			}
+
+			if (finalImagePaths.length === 0) {
+				toast.error('Cần ít nhất 1 ảnh sản phẩm!', {position: 'top-right'});
+				return;
+			}
+			formUpdate.append('images', JSON.stringify(finalImagePaths));
+
+			// ===== DỮ LIỆU =====
+			const quantityBySize = sizes
+				.map((size) => ({
+					sizeId: size._id,
+					name: size.name,
+					quantity: sizeQuantities[size.name] || 0,
+				}))
+				.filter((item) => item.quantity > 0);
+
+			formUpdate.append('code', form.code);
+			formUpdate.append('name', form.name);
+			formUpdate.append('quantityBySize', JSON.stringify(quantityBySize));
+
+			const category = JSON.parse(form.category || '{}');
+			formUpdate.append(
+				'category',
+				JSON.stringify({
+					categoryId: category.categoryId || '',
+					name: category.name || '',
+				})
+			);
+
+			const colors = JSON.parse(form.colors || '[]');
+			formUpdate.append('colors', JSON.stringify(colors));
+			formUpdate.append('price', form.price);
+			formUpdate.append('description', form.description);
+			formUpdate.append('detailDescription', detailDescription);
+			formUpdate.append('isFeatured', form.isFeatured);
+			formUpdate.append('status', form.status);
+
+			// ===== GỌI API UPDATE =====
 			const response = await updateProduct(productIdFromRouter, formUpdate);
 			if (response.message === 'Cập nhật sản phẩm thành công') {
-				toast.success('Cập nhật sản phẩm thành công!', {
-					position: 'top-right',
-				});
+				toast.success('Cập nhật sản phẩm thành công!', {position: 'top-right'});
 				router.push(ROUTES.AdminProduct);
 			}
 		} catch (error) {
-			if (error.response && error.response.data?.errors) {
+			if (error.response?.data?.errors) {
 				setErrors(error.response.data.errors);
 			} else {
-				toast.error(error.message || 'Vui lòng điền đầy đủ thông tin sản phẩm', {
-					position: 'top-right',
-				});
+				toast.error(error.message || 'Vui lòng điền đầy đủ thông tin sản phẩm', {position: 'top-right'});
 			}
-			console.error('Lỗi tạo sản phẩm:', error);
+			console.error('Lỗi cập nhật sản phẩm:', error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -337,6 +362,16 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 		return value.replace(/\./g, '');
 	};
 
+	const slugify = (str) =>
+		str
+			.normalize('NFD') // Loại dấu tiếng Việt
+			.replace(/[\u0300-\u036f]/g, '')
+			.replace(/[^a-zA-Z0-9\s-]/g, '')
+			.trim()
+			.toLowerCase()
+			.replace(/\s+/g, '-') // Khoảng trắng -> dấu gạch ngang
+			.replace(/-+/g, '-'); // Loại trùng dấu "-"
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
@@ -350,11 +385,18 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 						Hủy bỏ
 					</Button>
 					<Button
-						leftIcon={<Image src={icons.edit} alt='Icon' width={18} height={18} className={styles.icon} />}
+						leftIcon={
+							loading ? (
+								<span className={styles.spinner}></span>
+							) : (
+								<Image src={icons.edit} alt='Icon' width={18} height={18} className={styles.icon} />
+							)
+						}
 						className={styles.saveButton}
-						onClick={handleSubmitForm}
+						onClick={handleUpdateProduct}
+						disabled={loading}
 					>
-						Lưu lại
+						{loading ? 'Đang cập nhật...' : 'Lưu lại'}
 					</Button>
 				</div>
 			</div>
@@ -378,7 +420,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 				{/* ID */}
 				<div className={styles.formGroup}>
 					<label htmlFor='code' className={styles.label}>
-						Mã sản phẩm <span style={{color: 'red'}}>*</span>
+						Mã code <span style={{color: 'red'}}>*</span>
 					</label>
 					<input
 						type='text'
@@ -388,6 +430,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 						placeholder='Mã sản phẩm'
 						onChange={handleInputChange}
 						value={form.code}
+						disabled
 					/>
 				</div>
 

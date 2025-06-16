@@ -46,3 +46,14 @@ export const deleteColor = async (id) => {
 		throw error.response?.data || {message: 'Xóa màu thất bại'};
 	}
 };
+
+export const deleteMultipleColors = async (ids) => {
+	try {
+		const response = await axiosClient.delete(`/api/color/delete-multiple`, {
+			data: {ids},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Xóa nhiều màu thất bại'};
+	}
+};

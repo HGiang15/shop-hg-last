@@ -107,3 +107,21 @@ export const deleteReview = async (id) => {
 		throw error.response?.data || {message: 'Không thể xóa đánh giá.'};
 	}
 };
+
+// Xóa nhiều đánh giá
+export const deleteMultipleReviews = async (ids) => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.delete('/api/review/delete-multiple-reviews', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			data: {
+				ids,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Không thể xóa nhiều đánh giá.'};
+	}
+};

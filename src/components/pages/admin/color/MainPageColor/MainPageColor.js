@@ -6,7 +6,7 @@ import IconCustom from '@/components/common/IconCustom/IconCustom';
 import Table from '@/components/common/Table/Table';
 import icons from '@/constants/static/icons';
 import Pagination from '@/components/common/Pagination/Pagination';
-import {getAllColors, deleteColor} from '@/services/colorService';
+import {getAllColors, deleteColor, deleteMultipleColors} from '@/services/colorService';
 import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
 import Button from '@/components/common/Button/Button';
 import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
@@ -26,6 +26,8 @@ const MainPageColor = () => {
 	const [editColorId, setEditColorId] = useState(null); // Update
 	const [isModalOpen, setIsModalOpen] = useState(false); // Delete
 	const [selectedColorId, setSelectedColorId] = useState(null); // Delete
+	const [selectedColors, setSelectedColors] = useState([]);
+	const [deleteMode, setDeleteMode] = useState('single'); // 'single' | 'multiple'
 	const [limit, setLimit] = useState(5); // Default limit
 	const [totalItems, setTotalItems] = useState(0);
 	const [totalPages, setTotalPages] = useState(1);
@@ -78,6 +80,15 @@ const MainPageColor = () => {
 						{value: 'name_asc', label: 'Tên A-Z'},
 						{value: 'name_desc', label: 'Tên Z-A'},
 					]}
+					selectedProducts={selectedColors}
+					onDeleteMany={() => {
+						if (!selectedColors || selectedColors.length === 0) {
+							toast.warn('Vui lòng chọn ít nhất một màu sắc để xoá!');
+							return;
+						}
+						setDeleteMode('multiple');
+						setIsModalOpen(true);
+					}}
 				/>
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
 					Thêm mới màu sắc
@@ -106,6 +117,22 @@ const MainPageColor = () => {
 								createdAt: color.createdAt,
 							}))}
 							headers={[
+								{
+									key: 'checkbox',
+									label: (
+										<input
+											type='checkbox'
+											checked={selectedColors.length === colors.length && colors.length > 0}
+											onChange={(e) => {
+												if (e.target.checked) {
+													setSelectedColors(colors.map((color) => color._id));
+												} else {
+													setSelectedColors([]);
+												}
+											}}
+										/>
+									),
+								},
 								{key: 'index', label: 'STT'},
 								{
 									key: 'code',
@@ -141,6 +168,19 @@ const MainPageColor = () => {
 									render: (color) => moment(color.createdAt).locale('vi').format('HH:mm:ss - DD/MM/YYYY'),
 								},
 							]}
+							renderCheckbox={(color) => (
+								<input
+									type='checkbox'
+									checked={selectedColors.includes(color._id)}
+									onChange={(e) => {
+										if (e.target.checked) {
+											setSelectedColors((prev) => [...prev, color._id]);
+										} else {
+											setSelectedColors((prev) => prev.filter((id) => id !== color._id));
+										}
+									}}
+								/>
+							)}
 							renderActions={(color) => (
 								<>
 									<IconCustom
@@ -157,6 +197,7 @@ const MainPageColor = () => {
 										tooltip='Xóa màu sắc'
 										onClick={() => {
 											setSelectedColorId(color._id);
+											setDeleteMode('single');
 											setIsModalOpen(true);
 										}}
 									/>
@@ -204,10 +245,16 @@ const MainPageColor = () => {
 				onClose={() => setIsModalOpen(false)}
 				onConfirm={async () => {
 					try {
-						await deleteColor(selectedColorId);
-						toast.success('Xóa màu thành công');
+						if (deleteMode === 'single' && selectedColorId) {
+							await deleteColor(selectedColorId);
+							toast.success('Xóa màu thành công');
+						} else if (deleteMode === 'multiple') {
+							await deleteMultipleColors(selectedColors);
+							toast.success('Xóa nhiều màu thành công');
+						}
 						await fetchColors();
 						setIsModalOpen(false);
+						setSelectedColors([]);
 					} catch (error) {
 						toast.error(error.message || 'Xóa màu thất bại');
 					}

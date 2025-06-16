@@ -90,7 +90,7 @@
 	input[type='checkbox'] {
 		width: 20px;
 		height: 20px;
-		accent-color: #4f46e5; // màu xanh tím hiện đại
+		accent-color: #4f46e5;
 		cursor: pointer;
 		transition: transform 0.2s ease;
 
@@ -258,10 +258,24 @@
 .formGroup.featured {
 	display: flex;
 	align-items: center;
-	gap: 10px; // khoảng cách giữa label và checkbox
-	flex-direction: row !important; // ép nằm ngang, override cái column ở trên
+	gap: 10px;
+	flex-direction: row !important;
 }
 
 .formGroup.featured label {
 	margin-bottom: 0;
+}
+
+.spinner {
+	width: 16px;
+	height: 16px;
+	border: 2px solid #ccc;
+	border-top-color: transparent;
+	border-radius: 50%;
+	animation: spin 0.6s linear infinite;
+}
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
 }

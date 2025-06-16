@@ -5,7 +5,7 @@ import Pagination from '@/components/common/Pagination/Pagination';
 import Button from '@/components/common/Button/Button';
 import {useRouter} from 'next/router';
 import Image from 'next/image';
-import {getAllCategories, deleteCategory} from '@/services/categoryService';
+import {getAllCategories, deleteCategory, deleteMultipleCategories} from '@/services/categoryService';
 import icons from '@/constants/static/icons';
 import images from '@/constants/static/images';
 import IconCustom from '@/components/common/IconCustom/IconCustom';
@@ -17,17 +17,21 @@ import FormUpdateCategory from '../FormUpdateCategory/FormUpdateCategory';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 import useDebounce from '@/hooks/useDebounce';
 import moment from 'moment';
-import 'moment/locale/vi'; // để sử dụng tiếng Việt
+import 'moment/locale/vi';
 
 const MainPageCategory = () => {
 	const router = useRouter();
 	const [categories, setCategories] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [showForm, setShowForm] = useState(false); // Create
-	const [showUpdateForm, setShowUpdateForm] = useState(false); // Update
-	const [editCategoryId, setEditCategoryId] = useState(null); // Update
-	const [selectedCategoryId, setSelectedCategoryId] = useState(null); // Delete
-	const [isModalOpen, setIsModalOpen] = useState(false); // Delete
+	const [showForm, setShowForm] = useState(false);
+	const [showUpdateForm, setShowUpdateForm] = useState(false);
+	const [editCategoryId, setEditCategoryId] = useState(null);
+
+	const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+	const [selectedCategories, setSelectedCategories] = useState([]);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [deleteMode, setDeleteMode] = useState('single');
+
 	const [limit, setLimit] = useState(5);
 	const [totalPages, setTotalPages] = useState(1);
 	const [totalItems, setTotalItems] = useState(0);
@@ -42,6 +46,7 @@ const MainPageCategory = () => {
 			setCurrentPage(data.currentPage);
 			setTotalPages(data.totalPages);
 			setTotalItems(data.totalItems);
+			setSelectedCategories([]);
 		} catch (error) {
 			toast.error('Lỗi lấy danh sách danh mục');
 		}
@@ -55,6 +60,17 @@ const MainPageCategory = () => {
 		setEditCategoryId(id);
 		setShowUpdateForm(true);
 	};
+
+	const handleConfirmDeleteMany = () => {
+		if (selectedCategories.length === 0) {
+			toast.warn('Vui lòng chọn ít nhất một danh mục để xóa!');
+			return;
+		}
+		setDeleteMode('multiple');
+		setIsModalOpen(true);
+	};
+
+	const isAllSelected = selectedCategories.length === categories.length && categories.length > 0;
 
 	return (
 		<div className={styles.container}>
@@ -71,6 +87,8 @@ const MainPageCategory = () => {
 						{value: 'name_asc', label: 'Tên A-Z'},
 						{value: 'name_desc', label: 'Tên Z-A'},
 					]}
+					selectedProducts={selectedCategories}
+					onDeleteMany={handleConfirmDeleteMany}
 				/>
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
 					Thêm mới danh mục
@@ -96,18 +114,46 @@ const MainPageCategory = () => {
 							createdAt: category.createdAt,
 						}))}
 						headers={[
+							{
+								key: 'checkbox',
+								label: (
+									<input
+										type='checkbox'
+										checked={isAllSelected}
+										onChange={(e) => {
+											if (e.target.checked) {
+												setSelectedCategories(categories.map((c) => c._id));
+											} else {
+												setSelectedCategories([]);
+											}
+										}}
+									/>
+								),
+							},
 							{key: 'index', label: 'STT'},
 							{key: 'name', label: 'Tên danh mục'},
 							{
 								key: 'createdAt',
 								label: 'Thời gian tạo',
-								render: (category) => {
-									return category.createdAt
+								render: (category) =>
+									category.createdAt
 										? moment(category.createdAt).locale('vi').format('HH:mm:ss - DD/MM/YYYY')
-										: 'Không xác định';
-								},
+										: 'Không xác định',
 							},
 						]}
+						renderCheckbox={(category) => (
+							<input
+								type='checkbox'
+								checked={selectedCategories.includes(category._id)}
+								onChange={(e) => {
+									if (e.target.checked) {
+										setSelectedCategories((prev) => [...prev, category._id]);
+									} else {
+										setSelectedCategories((prev) => prev.filter((id) => id !== category._id));
+									}
+								}}
+							/>
+						)}
 						renderActions={(category) => (
 							<>
 								<IconCustom
@@ -117,13 +163,13 @@ const MainPageCategory = () => {
 									tooltip='Chỉnh sửa danh mục'
 									onClick={() => handleEditCategory(category._id)}
 								/>
-
 								<IconCustom
 									icon={<Image src={icons.trash} alt='Delete' width={20} height={20} />}
 									iconFilter='invert(17%) sepia(100%) saturate(7480%) hue-rotate(1deg) brightness(90%) contrast(105%)'
 									backgroundColor='#FFD6D6'
 									tooltip='Xóa danh mục'
 									onClick={() => {
+										setDeleteMode('single');
 										setSelectedCategoryId(category._id);
 										setIsModalOpen(true);
 									}}
@@ -174,17 +220,24 @@ const MainPageCategory = () => {
 				onClose={() => setIsModalOpen(false)}
 				onConfirm={async () => {
 					try {
-						await deleteCategory(selectedCategoryId);
-						toast.success('Xóa danh mục thành công');
-						await fetchCategories();
-						const updated = await getAllCategories();
-						setCategories(updated.categories);
+						if (deleteMode === 'single') {
+							await deleteCategory(selectedCategoryId);
+							toast.success('Xóa danh mục thành công');
+						} else if (deleteMode === 'multiple') {
+							await deleteMultipleCategories(selectedCategories);
+							toast.success('Xóa nhiều danh mục thành công');
+						}
 						setIsModalOpen(false);
+						await fetchCategories();
 					} catch (err) {
 						toast.error(err.message || 'Xóa danh mục thất bại');
 					}
 				}}
-				categoryName={categories.find((category) => category._id === selectedCategoryId)?.name}
+				categoryName={
+					deleteMode === 'single'
+						? categories.find((c) => c._id === selectedCategoryId)?.name
+						: `này (${selectedCategories.length} danh mục)`
+				}
 			/>
 		</div>
 	);

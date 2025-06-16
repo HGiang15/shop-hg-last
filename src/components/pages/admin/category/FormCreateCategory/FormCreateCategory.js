@@ -67,17 +67,17 @@ const FormCreateCategory = ({onCancel, onSuccess}) => {
 	// Create category
 	const handleSubmit = async () => {
 		if (!formData.name.trim()) {
-			setError('Tên danh mục là bắt buộc.');
+			toast.error('Tên danh mục là bắt buộc.');
 			return;
 		}
 
 		if (selectedSizes.length === 0) {
-			setError('Vui lòng chọn ít nhất một kích cỡ cho danh mục.');
+			toast.error('Vui lòng chọn ít nhất một kích cỡ cho danh mục.');
 			return;
 		}
 
 		if (!formData.image) {
-			setError('Vui lòng chọn ảnh hợp lệ.');
+			toast.error('Vui lòng chọn ảnh hợp lệ.');
 			return;
 		}
 		setError('');
@@ -115,7 +115,6 @@ const FormCreateCategory = ({onCancel, onSuccess}) => {
 	return (
 		<div className={styles.container}>
 			<h2 className={styles.title}>Thêm mới danh mục</h2>
-			{error && <p className={styles.error}>{error}</p>}
 
 			<div className={styles.formGroup}>
 				<label>

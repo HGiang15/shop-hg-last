@@ -13,7 +13,7 @@ import FormCreateVoucher from '../FormCreateVoucher/FormCreateVoucher';
 import FormUpdateVoucher from '../FormUpdateVoucher/FormUpdateVoucher';
 import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
-import {deleteVoucher, getAllVouchers} from '@/services/voucherService';
+import {deleteMultipleVouchers, deleteVoucher, getAllVouchers} from '@/services/voucherService';
 import moment from 'moment';
 import 'moment/locale/vi';
 
@@ -28,6 +28,8 @@ const MainPageVoucher = () => {
 	const [showUpdateForm, setShowUpdateForm] = useState(false);
 	const [editVoucherId, setEditVoucherId] = useState(null);
 	const [selectedVoucherId, setSelectedVoucherId] = useState(null);
+	const [selectedVouchers, setSelectedVouchers] = useState([]);
+	const [deleteMode, setDeleteMode] = useState('single');
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [sortOption, setSortOption] = useState('newest');
@@ -41,6 +43,7 @@ const MainPageVoucher = () => {
 			setVouchers(res.vouchers || []);
 			setTotalItems(res.total || 0);
 			setTotalPages(res.totalPages || 1);
+			setSelectedVouchers([]);
 		} catch (error) {
 			toast.error(error.message || 'Lỗi khi tải voucher');
 		} finally {
@@ -68,6 +71,15 @@ const MainPageVoucher = () => {
 		}
 	};
 
+	const handleConfirmDeleteManyVouchers = () => {
+		if (!selectedVouchers || selectedVouchers.length === 0) {
+			toast.warn('Vui lòng chọn ít nhất một voucher để xóa!');
+			return;
+		}
+		setDeleteMode('multiple');
+		setIsModalOpen(true);
+	};
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.header}>
@@ -93,6 +105,8 @@ const MainPageVoucher = () => {
 							],
 						},
 					]}
+					selectedProducts={selectedVouchers}
+					onDeleteMany={handleConfirmDeleteManyVouchers}
 				/>
 
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
@@ -119,6 +133,22 @@ const MainPageVoucher = () => {
 							...voucher,
 						}))}
 						headers={[
+							{
+								key: 'checkbox',
+								label: (
+									<input
+										type='checkbox'
+										checked={selectedVouchers.length === vouchers.length && vouchers.length > 0}
+										onChange={(e) => {
+											if (e.target.checked) {
+												setSelectedVouchers(vouchers.map((v) => v._id));
+											} else {
+												setSelectedVouchers([]);
+											}
+										}}
+									/>
+								),
+							},
 							{key: 'index', label: 'STT'},
 							{key: 'code', label: 'Mã voucher'},
 							{
@@ -175,6 +205,19 @@ const MainPageVoucher = () => {
 								},
 							},
 						]}
+						renderCheckbox={(voucher) => (
+							<input
+								type='checkbox'
+								checked={selectedVouchers.includes(voucher._id)}
+								onChange={(e) => {
+									if (e.target.checked) {
+										setSelectedVouchers((prev) => [...prev, voucher._id]);
+									} else {
+										setSelectedVouchers((prev) => prev.filter((id) => id !== voucher._id));
+									}
+								}}
+							/>
+						)}
 						renderActions={(voucher) => (
 							<>
 								<IconCustom
@@ -193,6 +236,7 @@ const MainPageVoucher = () => {
 									onClick={() => {
 										setSelectedVoucherId(voucher._id);
 										setIsModalOpen(true);
+										setDeleteMode('single');
 									}}
 								/>
 							</>
@@ -241,8 +285,22 @@ const MainPageVoucher = () => {
 			<ConfirmDeleteModal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				onConfirm={() => handleDelete(selectedVoucherId)}
-				categoryName={vouchers.find((v) => v._id === selectedVoucherId)?.name}
+				onConfirm={async () => {
+					try {
+						if (deleteMode === 'single' && selectedVoucherId) {
+							await deleteVoucher(selectedVoucherId);
+							toast.success('Xóa voucher thành công');
+						} else if (deleteMode === 'multiple') {
+							await deleteMultipleVouchers(selectedVouchers);
+							toast.success('Xóa nhiều voucher thành công');
+						}
+						setIsModalOpen(false);
+						fetchVouchers();
+					} catch (error) {
+						toast.error(error.message || 'Xóa voucher thất bại');
+					}
+				}}
+				voucherName={vouchers.find((v) => v._id === selectedVoucherId)?.code}
 			/>
 		</div>
 	);

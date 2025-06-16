@@ -109,3 +109,19 @@ export const applyVoucher = async ({code, userId, orderTotal}) => {
 		throw error.response?.data || {message: 'Áp dụng voucher thất bại'};
 	}
 };
+
+// Xóa nhiều voucher
+export const deleteMultipleVouchers = async (ids) => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.delete('/api/voucher/deleteMultipleVouchers', {
+			data: {ids},
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Xóa nhiều voucher thất bại'};
+	}
+};

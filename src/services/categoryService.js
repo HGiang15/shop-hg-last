@@ -55,3 +55,14 @@ export const deleteCategory = async (categoryId) => {
 		throw error.response?.data || {message: 'Xóa danh mục thất bại'};
 	}
 };
+
+export const deleteMultipleCategories = async (ids) => {
+	try {
+		const response = await axiosClient.delete(`/api/category/delete-multiple`, {
+			data: {ids},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Xoá nhiều danh mục thất bại'};
+	}
+};
