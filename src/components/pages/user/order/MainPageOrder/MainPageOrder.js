@@ -70,6 +70,11 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const handlePlaceOrder = async () => {
 		if (!policyChecked || isPlacingOrder) return;
 
+		if (!selectedAddress || !addressId) {
+			toast.error('Vui lòng chọn 1 địa chỉ mặc định để giao hàng nếu chưa có thì thêm địa chỉ giao hàng trước khi đặt hàng');
+			return;
+		}
+
 		setIsPlacingOrder(true);
 
 		try {
@@ -126,6 +131,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		}
 	}, [totalAmount]);
 
+	// Áp dụng voucher
 	const handleApplyVoucher = async () => {
 		try {
 			setVoucherError('');

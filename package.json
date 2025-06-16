@@ -18,6 +18,7 @@
     "@tanstack/react-query": "^5.69.0",
     "@tippyjs/react": "^4.2.6",
     "axios": "^1.8.1",
+    "bad-words": "^4.0.0",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",

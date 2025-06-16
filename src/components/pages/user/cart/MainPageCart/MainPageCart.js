@@ -34,11 +34,14 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 
 	useEffect(() => {
 		const newTotalAmount = cartItems.reduce((sum, item) => {
-			const price = item.productId.price ?? 0;
-			return sum + price * item.quantity;
+			if (selectedItems.includes(item._id)) {
+				const price = item.productId.price ?? 0;
+				return sum + price * item.quantity;
+			}
+			return sum;
 		}, 0);
 		setTotalAmount(newTotalAmount);
-	}, [cartItems]);
+	}, [selectedItems, cartItems]);
 
 	const handleCheckboxChange = (itemId) => {
 		const isSelected = selectedItems.includes(itemId);
@@ -93,6 +96,8 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 			await Promise.all(selectedItems.map((itemId) => removeItemFromCart(itemId)));
 			// Cập nhật lại giỏ hàng sau khi xóa sản phẩm
 			const remainingItems = cartItems.filter((item) => !selectedItems.includes(item._id));
+			localStorage.removeItem('cart');
+
 			setCartItems(remainingItems);
 			setSelectedItems([]);
 			setSelectAllChecked(false);

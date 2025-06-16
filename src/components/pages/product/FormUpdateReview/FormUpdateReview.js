@@ -15,8 +15,17 @@ const FormUpdateReview = ({review, productId, onCancel, onUpdated}) => {
 			const {reviews, totalPages} = await getReviewsByProductId(productId, 1);
 			onUpdated(reviews, totalPages);
 			onCancel();
-		} catch (error) {
-			toast.error(error.message || 'Không thể cập nhật đánh giá.');
+		} catch (err) {
+			const errorMap = {
+				REVIEW_NOT_FOUND: 'Đánh giá không tồn tại.',
+				REVIEW_PERMISSION_DENIED: 'Bạn không có quyền sửa đánh giá này.',
+				REVIEW_PROFANE_COMMENT: 'Nội dung đánh giá chứa từ ngữ không phù hợp.',
+				REVIEW_SERVER_ERROR: 'Lỗi hệ thống, vui lòng thử lại sau.',
+			};
+
+			const errorCode = err.response?.data?.errorCode;
+			const message = errorMap[errorCode] || 'Không thể cập nhật đánh giá.';
+			toast.error(message);
 		}
 	};
 
