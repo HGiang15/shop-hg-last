@@ -9,6 +9,7 @@ export const ROUTES = {
 	ChangePassword: '/profile/change-password',
 	Address: '/profile/address',
 	TransactionHistory: '/profile/transaction-history',
+	MyReview: '/profile/my-review',
 	HistoryOrder: '/profile/history-order',
 
 	// Admin

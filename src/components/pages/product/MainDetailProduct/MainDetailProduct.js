@@ -177,7 +177,6 @@ const ProductDetailPage = () => {
 		} catch (err) {
 			const errorMap = {
 				REVIEW_MISSING_FIELDS: 'Vui lòng điền đầy đủ thông tin đánh giá.',
-				REVIEW_INVALID_RATING: 'Số sao phải từ 1 đến 5.',
 				REVIEW_PROFANE_COMMENT: 'Nội dung đánh giá chứa từ ngữ không phù hợp.',
 				PRODUCT_NOT_FOUND: 'Sản phẩm không tồn tại.',
 				REVIEW_NOT_ELIGIBLE: 'Bạn cần mua thành công sản phẩm này để được đánh giá.',

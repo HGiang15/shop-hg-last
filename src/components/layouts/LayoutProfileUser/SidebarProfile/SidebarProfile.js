@@ -175,6 +175,14 @@ const SidebarProfile = ({isOpen, onClose}) => {
 						</div>
 					</Link>
 				</li>
+				<li className={`${styles.menuItem} ${activeLink === ROUTES.MyReview ? styles.active : ''}`}>
+					<Link href={ROUTES.MyReview} onClick={() => handleLinkClick(ROUTES.MyReview)}>
+						<div className={styles.menuLink}>
+							<Image src={icons.medalStar} alt='Đánh giá của tôi' width={20} height={20} className={styles.icon} />
+							Đánh giá của tôi
+						</div>
+					</Link>
+				</li>
 				<li className={`${styles.menuItem} ${activeLink === '/logout' ? styles.active : ''}`}>
 					<Link href='#' onClick={handleLogout}>
 						<div className={styles.menuLink}>

@@ -27,6 +27,20 @@ export const createReview = async (reviewData) => {
 	}
 };
 
+// Lấy tất cả đánh giá của người dùng đang đăng nhập
+export const getReviewsByUser = async (page = 1, limit = 3) => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.get(`/api/review/get-reviews-by-user/me`, {
+			headers: {Authorization: `Bearer ${token}`},
+			params: {page, limit},
+		});
+		return response.data; // { reviews, page, totalPages }
+	} catch (error) {
+		throw error.response?.data || {message: 'Không thể tải đánh giá của bạn.'};
+	}
+};
+
 // Lấy chi tiết một đánh giá theo id
 export const getReviewById = async (id) => {
 	try {
