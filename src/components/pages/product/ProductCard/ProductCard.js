@@ -118,6 +118,7 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 						{value: 'price_desc', label: 'Giá giảm dần'},
 						{value: 'featured', label: 'Sản phẩm nổi bật'},
 					]}
+					isAdmin={false}
 				/>
 			</div>
 

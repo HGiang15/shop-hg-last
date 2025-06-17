@@ -12,6 +12,7 @@ const FilterAdmin = ({
 	filters = [],
 	selectedProducts = [],
 	onDeleteMany = () => {},
+	isAdmin = false,
 }) => {
 	return (
 		<div className={styles.filterWrapper}>
@@ -62,23 +63,25 @@ const FilterAdmin = ({
 			))}
 
 			{/* Luôn hiển thị hành động, không phụ thuộc vào selectedProducts */}
-			<select
-				onChange={(e) => {
-					if (e.target.value === 'deleteMany') {
-						if (selectedProducts.length === 0) {
-							toast.warn('Vui lòng chọn ít nhất 1 cái để xoá!');
-						} else {
-							onDeleteMany();
+			{isAdmin && (
+				<select
+					onChange={(e) => {
+						if (e.target.value === 'deleteMany') {
+							if (selectedProducts.length === 0) {
+								toast.warn('Vui lòng chọn ít nhất 1 cái để xoá!');
+							} else {
+								onDeleteMany();
+							}
 						}
-					}
-					e.target.value = ''; // reset dropdown
-				}}
-				defaultValue=''
-				className={styles.sortSelect}
-			>
-				<option value=''>Hành động</option>
-				<option value='deleteMany'>Xoá nhiều</option>
-			</select>
+						e.target.value = ''; // reset dropdown
+					}}
+					defaultValue=''
+					className={styles.sortSelect}
+				>
+					<option value=''>Hành động</option>
+					<option value='deleteMany'>Xoá nhiều</option>
+				</select>
+			)}
 		</div>
 	);
 };

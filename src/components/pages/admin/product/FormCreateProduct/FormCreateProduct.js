@@ -87,10 +87,6 @@ const FormCreateProduct = ({setActiveMenu}) => {
 				toast.error('Tên sản phẩm không được để trống!', {position: 'top-right'});
 				return;
 			}
-			if (!form.code.trim()) {
-				toast.error('Mã sản phẩm không được để trống!', {position: 'top-right'});
-				return;
-			}
 			if (!form.category || form.category === '{}') {
 				toast.error('Vui lòng chọn danh mục sản phẩm!', {position: 'top-right'});
 				return;

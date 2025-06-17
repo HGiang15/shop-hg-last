@@ -89,6 +89,7 @@ const MainPageColor = () => {
 						setDeleteMode('multiple');
 						setIsModalOpen(true);
 					}}
+					isAdmin={true}
 				/>
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
 					Thêm mới màu sắc

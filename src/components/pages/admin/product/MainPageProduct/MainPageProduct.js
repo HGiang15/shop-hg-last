@@ -97,6 +97,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 					]}
 					selectedProducts={selectedProducts}
 					onDeleteMany={handleConfirmDeleteMany}
+					isAdmin={true}
 				/>
 
 				<Button className={styles.addButton} onClick={handleFormCreateProductClick}>

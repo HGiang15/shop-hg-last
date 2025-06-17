@@ -98,6 +98,7 @@ const MainPageSize = () => {
 					]}
 					selectedProducts={selectedSizes}
 					onDeleteMany={handleConfirmDeleteMany}
+					isAdmin={true}
 				/>
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
 					Thêm mới kích cỡ

@@ -103,6 +103,7 @@ const MainPageReview = () => {
 						setSelectedReviewId(null);
 						setIsModalOpen(true);
 					}}
+					isAdmin={true}
 				/>
 			</div>
 

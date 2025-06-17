@@ -67,7 +67,7 @@ const FormCreateCategory = ({onCancel, onSuccess}) => {
 	// Create category
 	const handleSubmit = async () => {
 		if (!formData.name.trim()) {
-			toast.error('Tên danh mục là bắt buộc.');
+			toast.error('Vui lòng nhập tên danh mục!');
 			return;
 		}
 
@@ -77,7 +77,7 @@ const FormCreateCategory = ({onCancel, onSuccess}) => {
 		}
 
 		if (!formData.image) {
-			toast.error('Vui lòng chọn ảnh hợp lệ.');
+			toast.error('Vui lòng chọn ảnh danh mục!');
 			return;
 		}
 		setError('');

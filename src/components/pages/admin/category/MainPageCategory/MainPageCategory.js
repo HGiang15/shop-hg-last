@@ -89,6 +89,7 @@ const MainPageCategory = () => {
 					]}
 					selectedProducts={selectedCategories}
 					onDeleteMany={handleConfirmDeleteMany}
+					isAdmin={true}
 				/>
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
 					Thêm mới danh mục

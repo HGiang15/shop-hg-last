@@ -107,6 +107,7 @@ const MainPageVoucher = () => {
 					]}
 					selectedProducts={selectedVouchers}
 					onDeleteMany={handleConfirmDeleteManyVouchers}
+					isAdmin={true}
 				/>
 
 				<Button className={styles.addButton} onClick={() => setShowForm(true)}>
