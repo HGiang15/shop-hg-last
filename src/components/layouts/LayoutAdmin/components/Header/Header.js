@@ -47,6 +47,8 @@ const Header = ({title, setMenuOpen, menuOpen}) => {
 	const handleLogout = () => {
 		setLoading(true);
 		localStorage.removeItem('token');
+		localStorage.removeItem('persist:root');
+
 		setUser(null);
 
 		setTimeout(() => {

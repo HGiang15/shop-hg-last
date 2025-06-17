@@ -130,6 +130,14 @@ const ProductDetailPage = () => {
 
 	// Thanh toán ngay
 	const handleBuyNow = () => {
+		const token = localStorage.getItem('token');
+
+		if (!token) {
+			toast.warning('Vui lòng đăng nhập để thanh toán!');
+			router.push(ROUTES.Login);
+			return;
+		}
+
 		if (!selectedSize) {
 			toast.warn('Vui lòng chọn kích thước!');
 			return;

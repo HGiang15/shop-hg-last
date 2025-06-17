@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import {Fragment} from 'react';
 import MainResetPassword from '@/components/pages/auth/MainResetPassword/MainResetPassword';
+import RequiredLogout from '@/components/protected/RequiredLogout';
 
 export default function LoginPage() {
 	return (
@@ -11,7 +12,9 @@ export default function LoginPage() {
 				<meta name='viewport' content='width=device-width, initial-scale=1' />
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
-			<MainResetPassword />
+			<RequiredLogout>
+				<MainResetPassword />
+			</RequiredLogout>
 		</Fragment>
 	);
 }

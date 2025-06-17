@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import {Fragment} from 'react';
 import MainRegister from '@/components/pages/auth/MainRegister';
+import RequiredLogout from '@/components/protected/RequiredLogout';
 
 export default function Page() {
 	return (
@@ -11,9 +12,9 @@ export default function Page() {
 				<meta name='viewport' content='width=device-width, initial-scale=1' />
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
-			<Fragment>
-                <MainRegister />
-			</Fragment>
+			<RequiredLogout>
+				<MainRegister />
+			</RequiredLogout>
 		</Fragment>
 	);
 }

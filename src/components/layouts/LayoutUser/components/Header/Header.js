@@ -80,6 +80,7 @@ function Header() {
 		localStorage.removeItem('name');
 		localStorage.removeItem('avatar');
 		localStorage.removeItem('cartToken');
+		localStorage.removeItem('persist:root');
 
 		// Xoá giỏ hàng trong context
 		dispatch({type: 'CLEAR_CART'});

@@ -13,10 +13,14 @@ import {toast, ToastContainer} from 'react-toastify';
 import {GoogleLogin} from '@react-oauth/google';
 import {getAllCart, mergeCart} from '@/services/cartService';
 import useCart from '@/hooks/useCart';
+import {useDispatch} from 'react-redux';
+import {loginSuccess} from '@/redux/slices/authSlice';
+import {setUserInfo} from '@/redux/slices/userSlice';
 
 const MainLogin = () => {
 	const router = useRouter();
 	const {dispatch, setCartFromServer} = useCart();
+	const reduxDispatch = useDispatch();
 
 	const [formData, setFormData] = useState({
 		email: '',
@@ -66,6 +70,9 @@ const MainLogin = () => {
 			localStorage.setItem('token', token);
 			localStorage.setItem('name', name);
 			localStorage.setItem('avatar', avatar);
+
+			reduxDispatch(loginSuccess(token));
+			reduxDispatch(setUserInfo({id, name, email, avatar, role}));
 
 			// Lưu remember me nếu được chọn
 			if (rememberMe) {
@@ -184,6 +191,9 @@ const MainLogin = () => {
 									localStorage.setItem('token', token);
 									localStorage.setItem('name', data.name);
 									localStorage.setItem('avatar', data.avatar);
+
+									reduxDispatch(loginSuccess(token));
+									reduxDispatch(setUserInfo({id, name, email, avatar, role}));
 
 									// Merge cart Google
 									const localCart = JSON.parse(localStorage.getItem('cart')) || [];

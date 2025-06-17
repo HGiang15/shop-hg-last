@@ -3,6 +3,7 @@ import {FaBarsProgress} from 'react-icons/fa6';
 import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 import styles from './LayoutProfileUser.module.scss';
 import SidebarProfile from './SidebarProfile/SidebarProfile';
+import RequireAuth from '@/components/protected/RequireAuth';
 
 const LayoutProfileUser = ({children, breadcrumbItems = {titles: [], listHref: []}}) => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -29,20 +30,22 @@ const LayoutProfileUser = ({children, breadcrumbItems = {titles: [], listHref: [
 	};
 
 	return (
-		<div className={styles.container}>
-			<Breadcrumb titles={breadcrumbItems.titles} listHref={breadcrumbItems.listHref} />
+		<RequireAuth>
+			<div className={styles.container}>
+				<Breadcrumb titles={breadcrumbItems.titles} listHref={breadcrumbItems.listHref} />
 
-			<div className={styles.main}>
-				<SidebarProfile isOpen={isSidebarOpen} onClose={handleToggleSidebar} />
-				<div className={`${styles.children} ${isSidebarOpen && isMobile ? styles.childrenBlurred : ''}`}>{children}</div>
-				{isMobile && !isSidebarOpen && (
-					<div className={styles.toggleButton} onClick={handleToggleSidebar}>
-						<FaBarsProgress className={styles.iconBars} />
-					</div>
-				)}
-				{isSidebarOpen && isMobile && <div className={styles.overlay} onClick={handleToggleSidebar} />}
+				<div className={styles.main}>
+					<SidebarProfile isOpen={isSidebarOpen} onClose={handleToggleSidebar} />
+					<div className={`${styles.children} ${isSidebarOpen && isMobile ? styles.childrenBlurred : ''}`}>{children}</div>
+					{isMobile && !isSidebarOpen && (
+						<div className={styles.toggleButton} onClick={handleToggleSidebar}>
+							<FaBarsProgress className={styles.iconBars} />
+						</div>
+					)}
+					{isSidebarOpen && isMobile && <div className={styles.overlay} onClick={handleToggleSidebar} />}
+				</div>
 			</div>
-		</div>
+		</RequireAuth>
 	);
 };
 

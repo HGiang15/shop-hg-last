@@ -1,4 +1,5 @@
 import MainForgotPassword from '@/components/pages/auth/MainForgotPassword/MainForgotPassword';
+import RequiredLogout from '@/components/protected/RequiredLogout';
 import Head from 'next/head';
 import {Fragment} from 'react';
 
@@ -11,9 +12,9 @@ export default function Page() {
 				<meta name='viewport' content='width=device-width, initial-scale=1' />
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
-			<Fragment>
+			<RequiredLogout>
 				<MainForgotPassword />
-			</Fragment>
+			</RequiredLogout>
 		</Fragment>
 	);
 }
