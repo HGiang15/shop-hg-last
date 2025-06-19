@@ -6,7 +6,7 @@ export const getCurrentUserIdFromToken = () => {
 
 	try {
 		const decoded = jwtDecode(token);
-		return decoded._id || decoded.id; // tuỳ theo BE bạn dùng _id hay id
+		return decoded._id || decoded.id;
 	} catch (error) {
 		console.error('Lỗi giải mã token:', error);
 		return null;

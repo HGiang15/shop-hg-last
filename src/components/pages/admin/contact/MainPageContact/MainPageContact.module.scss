@@ -1,0 +1,283 @@
+.container {
+	padding: 20px;
+	background: #f9f9f9;
+	font-family: 'Arial', sans-serif;
+}
+
+.header {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+
+.tableContainer {
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	overflow-x: auto;
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+
+	th,
+	td {
+		padding: 15px 20px;
+		text-align: left;
+		border-bottom: 1px solid #e9ecef;
+	}
+
+	th {
+		font-weight: 600;
+		background: #f8f9fa;
+		color: #495057;
+		font-size: 0.9rem;
+		text-transform: uppercase;
+	}
+
+	tbody tr {
+		transition: background 0.2s ease;
+		&:hover {
+			background: #f1f3f5;
+		}
+	}
+}
+
+.statusBadge {
+	padding: 5px 10px;
+	border-radius: 15px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #fff;
+	text-transform: capitalize;
+}
+
+.statusNew {
+	background: #007bff; // Blue
+}
+
+.statusRead {
+	background: #6c757d; // Gray
+}
+
+.statusReplied {
+	background: #28a745; // Green
+}
+
+.actions {
+	display: flex;
+	gap: 10px;
+}
+
+.actionBtn {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	padding: 6px 12px;
+	border: 1px solid #ccc;
+	background: #fff;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 0.9rem;
+	transition: background 0.2s ease, color 0.2s ease;
+
+	&:hover {
+		background: #e9ecef;
+	}
+}
+
+.deleteBtn {
+	color: #dc3545;
+	&:hover {
+		background: #dc3545;
+		color: #fff;
+		border-color: #dc3545;
+	}
+}
+
+/*
+--- MODAL STYLES ---
+*/
+.modal {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	right: auto;
+	bottom: auto;
+	transform: translate(-50%, -50%);
+	background: #fff;
+	padding: 30px;
+	border-radius: 8px;
+	max-width: 600px;
+	width: 90%;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+	outline: none;
+
+	h2 {
+		margin-top: 0;
+		margin-bottom: 20px;
+	}
+
+	p {
+		margin: 5px 0 10px;
+		line-height: 1.5;
+		color: #555;
+		strong {
+			color: #333;
+		}
+	}
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6);
+	z-index: 1000;
+}
+
+.messageContent {
+	background: #f8f9fa;
+	padding: 15px;
+	border-radius: 5px;
+	margin: 20px 0;
+	line-height: 1.6;
+	#fff-space: pre-wrap;
+}
+
+/* Bổ sung CSS cho form trả lời */
+.replyForm {
+	margin-top: 20px;
+
+	h3 {
+		font-size: 1.2rem;
+		margin-bottom: 10px;
+		border-top: 1px solid #e9ecef;
+		padding-top: 20px;
+	}
+}
+
+.replyTextarea {
+	width: 100%;
+	padding: 10px;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+	font-size: 1rem;
+	resize: vertical;
+	box-sizing: border-box;
+	&:focus {
+		outline: none;
+		border-color: #007bff;
+	}
+}
+
+.modalActions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 20px;
+
+	.closeModalBtn,
+	.sendReplyBtn {
+		padding: 10px 20px;
+		transition: background 0.2s ease;
+	}
+
+	.closeModalBtn {
+		background: #6c757d;
+		color: #fff;
+		&:hover {
+			background: #5a6268;
+		}
+	}
+
+	.sendReplyBtn {
+		background: #007bff;
+		color: #fff;
+		&:hover {
+			background: #0056b3;
+		}
+		&:disabled {
+			background: #a0a0a0;
+			cursor: not-allowed;
+		}
+	}
+}
+
+.uploadContainer {
+	margin-top: 8px;
+}
+
+.uploadButton {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 15px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	cursor: pointer;
+	background: #f8f9fa;
+	transition: background 0.2s ease;
+
+	&:hover {
+		background: #e9ecef;
+	}
+}
+
+.previewContainer {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 15px;
+}
+
+.previewItem {
+	position: relative;
+	width: 80px;
+	height: 80px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	overflow: hidden;
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+}
+
+.removeButton {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	width: 20px;
+	height: 20px;
+	background: rgba(0, 0, 0, 0.6);
+	color: #fff;
+	border: none;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	padding: 0;
+}
+
+.noProducts {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	gap: 8px;
+
+	h4 {
+		font-size: 24px;
+	}
+
+	p {
+		font-size: 14px;
+	}
+}

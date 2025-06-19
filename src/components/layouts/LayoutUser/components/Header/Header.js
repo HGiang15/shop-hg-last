@@ -130,17 +130,12 @@ function Header() {
 						</Link>
 					</li>
 					<li className={styles.nav__item}>
-						<Link className={styles.nav__link} href='/blog'>
-							Blog
-						</Link>
-					</li>
-					<li className={styles.nav__item}>
-						<Link className={styles.nav__link} href='/policy'>
+						<Link className={styles.nav__link} href={ROUTES.Policy}>
 							Chính sách bảo mật
 						</Link>
 					</li>
 					<li className={styles.nav__item}>
-						<Link className={styles.nav__link} href='/contact'>
+						<Link className={styles.nav__link} href={ROUTES.Contact}>
 							Liên hệ
 						</Link>
 					</li>

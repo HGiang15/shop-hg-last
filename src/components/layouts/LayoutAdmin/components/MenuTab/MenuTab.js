@@ -13,7 +13,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import {ROUTES} from '@/constants/config';
 import {FaTimes} from 'react-icons/fa';
 import {connect} from 'react-redux';
-import {AirplaneTicketTwoTone, Password, Settings, StarBorderOutlined} from '@mui/icons-material';
+import {AirplaneTicketTwoTone, ContactMail, Password, Settings, StarBorderOutlined} from '@mui/icons-material';
 import images from '@/constants/static/images';
 
 const menuItems = [
@@ -26,6 +26,7 @@ const menuItems = [
 	{label: 'Quản lý đơn hàng', icon: <ShoppingCartIcon />, path: ROUTES.AdminOrder},
 	{label: 'Quản lý đánh giá', icon: <StarBorderOutlined />, path: ROUTES.AdminReview},
 	{label: 'Quản lý voucher', icon: <AirplaneTicketTwoTone />, path: ROUTES.AdminVoucher},
+	{label: 'Quản lý liên hệ', icon: <ContactMail />, path: ROUTES.AdminContact},
 	{label: 'Thông tin cá nhân', icon: <Settings />, path: ROUTES.AdminProfile},
 	{label: 'Đổi mật khẩu', icon: <Password />, path: ROUTES.AdminChangePassword},
 ];

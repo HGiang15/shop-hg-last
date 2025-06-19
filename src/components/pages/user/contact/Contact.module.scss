@@ -1,0 +1,200 @@
+// components/Contact/Contact.module.scss
+
+.contactPage {
+	max-width: 1200px;
+	margin: 40px auto;
+	padding: 20px;
+	font-family: 'Arial', sans-serif;
+}
+
+.header {
+	text-align: center;
+	margin-bottom: 50px;
+
+	h1 {
+		font-size: 2.8rem;
+		font-weight: 700;
+		margin-bottom: 15px;
+		color: #1a1a1a;
+	}
+
+	p {
+		font-size: 1.1rem;
+		color: #666;
+		max-width: 700px;
+		margin: 0 auto;
+	}
+}
+
+.mainContent {
+	display: flex;
+	gap: 50px;
+	margin-bottom: 50px;
+
+	@media (max-width: 992px) {
+		flex-direction: column;
+	}
+}
+
+.contactInfo {
+	flex: 1;
+
+	h2 {
+		font-size: 1.8rem;
+		margin-bottom: 10px;
+		color: #0056b3;
+	}
+	p {
+		color: #555;
+		line-height: 1.6;
+	}
+}
+
+.infoItem {
+	display: flex;
+	align-items: flex-start;
+	margin-top: 25px;
+
+	.icon {
+		flex-shrink: 0;
+		margin-right: 15px;
+		color: #0056b3;
+		margin-top: 5px;
+	}
+
+	strong {
+		display: block;
+		font-size: 1.1rem;
+		margin-bottom: 4px;
+		color: #333;
+	}
+
+	p,
+	.link {
+		margin: 0;
+		color: #555;
+		font-size: 1rem;
+	}
+
+	.link {
+		color: #0056b3;
+		text-decoration: none;
+		font-weight: 600;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+.contactForm {
+	flex: 1.5;
+
+	h2 {
+		font-size: 1.8rem;
+		margin-bottom: 10px;
+	}
+	p {
+		color: #555;
+		line-height: 1.6;
+		margin-bottom: 20px;
+	}
+}
+
+.formGroup {
+	margin-bottom: 20px;
+
+	label {
+		display: block;
+		font-weight: 600;
+		margin-bottom: 8px;
+		color: #333;
+	}
+
+	input,
+	select,
+	textarea {
+		width: 100%;
+		padding: 12px;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		font-size: 1rem;
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+		&:focus {
+			outline: none;
+			border-color: #0056b3;
+			box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.2);
+		}
+	}
+}
+
+.submitButton {
+	width: 100%;
+	padding: 15px;
+	background: #0056b3;
+	color: #fff;
+	transition: background 0.2s ease;
+
+	&:hover {
+		background: #004494;
+	}
+}
+
+.uploadContainer {
+	margin-top: 8px;
+}
+
+.uploadButton {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 15px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	cursor: pointer;
+	background: #f8f9fa;
+	transition: background 0.2s ease;
+
+	&:hover {
+		background: #e9ecef;
+	}
+}
+
+.previewContainer {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 15px;
+}
+
+.previewItem {
+	position: relative;
+	width: 80px;
+	height: 80px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	overflow: hidden;
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+}
+
+.removeButton {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	width: 20px;
+	height: 20px;
+	background: rgba(0, 0, 0, 0.6);
+	color: #fff;
+	border: none;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	padding: 0;
+}

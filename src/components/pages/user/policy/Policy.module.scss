@@ -1,0 +1,89 @@
+.container {
+	max-width: 900px;
+	margin: 40px auto;
+	padding: 20px 40px;
+	background-color: #ffffff;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	font-family: 'Arial', sans-serif;
+	color: #333;
+	line-height: 1.7;
+}
+
+.title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	text-align: center;
+	color: #1a1a1a;
+	margin-bottom: 10px;
+}
+
+.lastUpdated {
+	text-align: center;
+	font-style: italic;
+	color: #777;
+	margin-bottom: 30px;
+	font-size: 0.9rem;
+}
+
+.section {
+	margin-bottom: 30px;
+}
+
+.sectionTitle {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: #0056b3; // Màu xanh dương đặc trưng cho sự tin cậy
+	padding-bottom: 8px;
+	border-bottom: 2px solid #e9ecef;
+	margin-bottom: 15px;
+}
+
+.list {
+	list-style-type: disc;
+	padding-left: 20px;
+}
+
+.listItem {
+	margin-bottom: 10px;
+}
+
+.contactInfo {
+	background-color: #f8f9fa;
+	border-left: 4px solid #0056b3;
+	padding: 15px 20px;
+	border-radius: 4px;
+
+	p {
+		margin: 5px 0;
+	}
+}
+
+.nav__link {
+	color: #0056b3;
+	font-weight: 600;
+	text-decoration: none;
+	border-bottom: 1px solid #0056b3;
+	padding-bottom: 1px;
+	margin: 0 4px;
+	transition: color 0.2s ease, border-color 0.2s ease;
+
+	&:hover {
+		color: #007bff;
+		border-color: #007bff;
+	}
+}
+
+@media (max-width: 768px) {
+	.container {
+		padding: 20px;
+	}
+
+	.title {
+		font-size: 2rem;
+	}
+
+	.sectionTitle {
+		font-size: 1.3rem;
+	}
+}

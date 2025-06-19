@@ -2,6 +2,8 @@ export const ROUTES = {
 	// User
 	Home: '/',
 	About: '/about',
+	Policy: '/policy',
+	Contact: '/contact',
 	Product: '/products',
 	Profile: '/profile',
 	Cart: '/cart',
@@ -20,6 +22,7 @@ export const ROUTES = {
 	AdminCategory: '/admin/category',
 	AdminReview: '/admin/review',
 	AdminVoucher: '/admin/voucher',
+	AdminContact: '/admin/contact',
 	AdminProfile: '/admin/profile',
 	AdminChangePassword: '/admin/change-password',
 
