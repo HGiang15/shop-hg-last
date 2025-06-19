@@ -84,7 +84,7 @@ const Policy = () => {
 				<p>Bạn có toàn quyền đối với thông tin cá nhân của mình:</p>
 				<ul className={styles.list}>
 					<li className={styles.listItem}>
-						Truy cập và chỉnh sửa thông tin cá nhân của mình bất cứ lúc nào trong mục "Tài khoản của tôi".
+						Truy cập và chỉnh sửa thông tin cá nhân của mình bất cứ lúc nào trong mục &quot;Tài khoản của tôi&quot;.
 					</li>
 					<li className={styles.listItem}>Yêu cầu chúng tôi xóa dữ liệu cá nhân của bạn khỏi hệ thống.</li>
 					<li className={styles.listItem}>Từ chối nhận các thông tin marketing, quảng cáo.</li>

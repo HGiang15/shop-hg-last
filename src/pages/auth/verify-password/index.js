@@ -1,4 +1,5 @@
 import MainVerify from '@/components/pages/auth/MainVerify/MainVerify';
+import RequiredLogout from '@/components/protected/RequiredLogout';
 import Head from 'next/head';
 import {Fragment} from 'react';
 
