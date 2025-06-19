@@ -1,41 +1,29 @@
 import React, {useState, useEffect} from 'react';
+import {useRouter} from 'next/router';
 import styles from './MainPageCart.module.scss';
 import Breadcrumb from '@/components/common/Breadcrumb/Breadcrumb';
 import Image from 'next/image';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
 import {ROUTES} from '@/constants/config';
-import {getAllCart, updateCartItem, removeItemFromCart} from '@/services/cartService';
 import images from '@/constants/static/images';
-import {useRouter} from 'next/router';
 import {toast} from 'react-toastify';
+import useCart from '@/hooks/useCart';
 
 const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const router = useRouter();
 
-	const [cartItems, setCartItems] = useState([]);
+	const {cart, isLoading, updateCartItem, removeCartItem} = useCart();
+	const cartItems = cart?.items || [];
+
 	const [selectAllChecked, setSelectAllChecked] = useState(false);
 	const [selectedItems, setSelectedItems] = useState([]);
 	const [totalAmount, setTotalAmount] = useState(0);
 
-	// Get all cart
-	useEffect(() => {
-		const fetchCartItems = async () => {
-			try {
-				const data = await getAllCart();
-				setCartItems(data.items);
-			} catch (error) {
-				console.error(error);
-			}
-		};
-
-		fetchCartItems();
-	}, []);
-
 	useEffect(() => {
 		const newTotalAmount = cartItems.reduce((sum, item) => {
 			if (selectedItems.includes(item._id)) {
-				const price = item.productId.price ?? 0;
+				const price = item.productId?.price ?? 0;
 				return sum + price * item.quantity;
 			}
 			return sum;
@@ -53,72 +41,67 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	};
 
 	const handleSelectAllChange = () => {
-		setSelectAllChecked(!selectAllChecked);
 		if (!selectAllChecked) {
 			setSelectedItems(cartItems.map((item) => item._id));
 		} else {
 			setSelectedItems([]);
 		}
+		setSelectAllChecked(!selectAllChecked);
 	};
 
 	const handleQuantityChange = async (itemId, newQuantity) => {
-		if (newQuantity < 1 || isNaN(newQuantity)) return; // Kiểm tra nếu giá trị không hợp lệ (kể cả NaN)
+		const quantity = parseInt(newQuantity, 10);
+		if (quantity < 1 || isNaN(quantity)) return;
 		try {
-			const response = await updateCartItem(itemId, newQuantity);
-			const updatedItem = response.item; // Món hàng đã cập nhật
-			const updatedTotalAmount = response.cartTotal; // Tổng giỏ hàng
-
-			// Cập nhật lại giỏ hàng
-			setCartItems((prevItems) => prevItems.map((item) => (item._id === itemId ? {...item, quantity: updatedItem.quantity} : item)));
-
-			// Cập nhật tổng số tiền của giỏ hàng
-			setTotalAmount(updatedTotalAmount);
+			await updateCartItem(itemId, quantity);
 		} catch (error) {
 			console.error('Cập nhật số lượng thất bại:', error);
+			toast.error('Cập nhật số lượng thất bại.');
 		}
 	};
 
-	const handleIncreaseQuantity = async (itemId) => {
+	const handleIncreaseQuantity = (itemId) => {
 		const currentItem = cartItems.find((item) => item._id === itemId);
-		const newQuantity = currentItem ? currentItem.quantity + 1 : 1;
-		handleQuantityChange(itemId, newQuantity);
+		if (currentItem) {
+			handleQuantityChange(itemId, currentItem.quantity + 1);
+		}
 	};
 
-	const handleDecreaseQuantity = async (itemId) => {
+	const handleDecreaseQuantity = (itemId) => {
 		const currentItem = cartItems.find((item) => item._id === itemId);
-		const newQuantity = currentItem ? Math.max(1, currentItem.quantity - 1) : 1;
-		handleQuantityChange(itemId, newQuantity);
+		if (currentItem) {
+			handleQuantityChange(itemId, currentItem.quantity - 1);
+		}
 	};
 
-	// Xóa sản phẩm khỏi giỏ hàng
 	const handleDeleteSelected = async () => {
+		if (selectedItems.length === 0) return;
 		try {
-			await Promise.all(selectedItems.map((itemId) => removeItemFromCart(itemId)));
-			// Cập nhật lại giỏ hàng sau khi xóa sản phẩm
-			const remainingItems = cartItems.filter((item) => !selectedItems.includes(item._id));
-			localStorage.removeItem('cart');
-
-			setCartItems(remainingItems);
+			await Promise.all(selectedItems.map((itemId) => removeCartItem(itemId)));
+			toast.success(`Đã xóa ${selectedItems.length} sản phẩm.`);
 			setSelectedItems([]);
 			setSelectAllChecked(false);
 		} catch (error) {
 			console.error('Xóa sản phẩm thất bại:', error);
+			toast.error('Xóa sản phẩm thất bại.');
 		}
 	};
 
-	// Thanh toán ngay
 	const handleBuyNow = () => {
 		const selectedForCheckout = cartItems
 			.filter((item) => selectedItems.includes(item._id))
 			.map((item) => ({
-				productId: item.productId._id,
-				name: item.productId.name,
-				color: item.productId.colors[0]?.name,
-				image: item.productId.images?.[0] ? `http://localhost:3003/uploads/${item.productId.images[0]}` : '',
-				sizeId: item.sizeId._id,
-				sizeName: item.sizeId.name,
+				_id: item._id,
+				productId: item.productId?._id,
+				sizeId: item.sizeId?._id,
+				colorId: item.productId?.colors?.[0]?.colorId,
 				quantity: item.quantity,
-				price: item.productId.price,
+				// Dữ liệu phụ để hiển thị
+				name: item.productId?.name,
+				colorName: item.productId?.colors?.[0]?.name,
+				image: item.productId?.images?.[0],
+				sizeName: item.sizeId?.name,
+				price: item.productId?.price,
 			}));
 
 		if (selectedForCheckout.length === 0) {
@@ -126,21 +109,29 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 			return;
 		}
 
-		localStorage.setItem('buyNow', JSON.stringify(selectedForCheckout));
-		router.push(ROUTES.Order);
+		try {
+			sessionStorage.setItem('checkoutItems', JSON.stringify(selectedForCheckout));
+			router.push(ROUTES.Order);
+		} catch (error) {
+			console.error('Lỗi khi lưu vào sessionStorage:', error);
+			toast.error('Đã có lỗi xảy ra, vui lòng thử lại.');
+		}
 	};
+
+	if (isLoading) {
+		return <p style={{textAlign: 'center', padding: '50px'}}>Đang tải giỏ hàng của bạn...</p>;
+	}
 
 	return (
 		<div className={styles.container}>
 			<Breadcrumb titles={breadcrumbItems.titles} listHref={breadcrumbItems.listHref} />
 
 			<div className={styles.main}>
-				{/* Kiểm tra nếu giỏ hàng không có sản phẩm */}
 				{cartItems.length === 0 ? (
 					<div className={styles.noProducts}>
 						<Image src={images.boxEmpty} alt='Không tìm thấy sản phẩm' width={180} height={180} priority />
-						<h4>DỮ LIỆU TRỐNG</h4>
-						<p>Hiện tại không có sản phẩm nào phù hợp!</p>
+						<h4>GIỎ HÀNG CỦA BẠN ĐANG TRỐNG</h4>
+						<p>Hãy quay lại và chọn cho mình những sản phẩm ưng ý nhé!</p>
 					</div>
 				) : (
 					<div className={styles.cartTable}>
@@ -164,57 +155,67 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 										onChange={() => handleCheckboxChange(item._id)}
 									/>
 									<div className={styles.productImage}>
-										<Image src={item.productId.images[0]} alt={item.productId.name} width={84} height={84} />
+										<Image
+											src={item.productId?.images?.[0] || images.placeholder}
+											alt={item.productId?.name}
+											width={84}
+											height={84}
+										/>
 									</div>
-									<div className={styles.productInfo}>{item.productId.name}</div>
+									<div className={styles.productInfo}>{item.productId?.name}</div>
 								</div>
-								<div className={styles.price}>{(item.productId.price ?? 0).toLocaleString('vi-VN')} VNĐ</div>
+								<div className={styles.price}>{(item.productId?.price ?? 0).toLocaleString('vi-VN')} VNĐ</div>
 								<div className={styles.color}>
 									<span
 										className={styles.colorDot}
-										style={{backgroundColor: item.productId.colors[0]?.name || 'gray'}}
+										style={{backgroundColor: item.productId?.colors?.[0]?.name || 'gray'}}
 									></span>
-									{item.productId.colors[0]?.name || 'Màu sắc không xác định'}
+									{item.productId?.colors?.[0]?.name || 'N/A'}
 								</div>
-								<div className={styles.size}>{item.sizeId.name}</div>
+								<div className={styles.size}>{item.sizeId?.name}</div>
 								<div className={styles.quantity}>
 									<Button onClick={() => handleDecreaseQuantity(item._id)} className={styles.iconQuantity}>
 										<span>-</span>
 									</Button>
 									<input
-										type='number'
+										type='text'
 										value={item.quantity}
 										min='1'
-										onChange={(e) => handleQuantityChange(item._id, parseInt(e.target.value))}
+										onChange={(e) => handleQuantityChange(item._id, e.target.value)}
 									/>
 									<Button onClick={() => handleIncreaseQuantity(item._id)} className={styles.iconQuantity}>
 										<span>+</span>
 									</Button>
 								</div>
-								<div className={styles.total}>{(item.productId.price * item.quantity).toLocaleString('vi-VN')} VNĐ</div>
+
+								<div className={styles.total}>
+									{((item.productId?.price ?? 0) * item.quantity).toLocaleString('vi-VN')} VNĐ
+								</div>
 							</div>
 						))}
 					</div>
 				)}
 
-				<div className={styles.cartSummary}>
-					<div className={styles.selectAll}>
-						<input type='checkbox' id='selectAllCheckbox' checked={selectAllChecked} onChange={handleSelectAllChange} />
-						<label htmlFor='selectAllCheckbox'>Tất cả sản phẩm ({cartItems.length})</label>
-						<button className={styles.deleteButton} onClick={handleDeleteSelected} disabled={selectedItems.length === 0}>
-							<span role='img' aria-label='delete'>
-								<Image src={icons.trash} alt='Trash' width={24} height={24} />
-							</span>
-						</button>
+				{cartItems.length > 0 && (
+					<div className={styles.cartSummary}>
+						<div className={styles.selectAll}>
+							<input type='checkbox' id='selectAllCheckbox' checked={selectAllChecked} onChange={handleSelectAllChange} />
+							<label htmlFor='selectAllCheckbox'>Tất cả sản phẩm ({cartItems.length})</label>
+							<button className={styles.deleteButton} onClick={handleDeleteSelected} disabled={selectedItems.length === 0}>
+								<span role='img' aria-label='delete'>
+									<Image src={icons.trash} alt='Trash' width={24} height={24} />
+								</span>
+							</button>
+						</div>
+						<div className={styles.totalAmount}>
+							Tổng thanh toán ({selectedItems.length} sản phẩm):{' '}
+							<span>{totalAmount ? totalAmount.toLocaleString('vi-VN') : '0'} VNĐ</span>
+						</div>
+						<Button className={styles.checkoutButton} onClick={handleBuyNow} disabled={selectedItems.length === 0}>
+							Thanh toán
+						</Button>
 					</div>
-					<div className={styles.totalAmount}>
-						Tổng thanh toán: <span>{totalAmount ? totalAmount.toLocaleString('vi-VN') : '0'} VNĐ</span>
-					</div>
-
-					<Button className={styles.checkoutButton} onClick={handleBuyNow}>
-						Thanh toán
-					</Button>
-				</div>
+				)}
 			</div>
 		</div>
 	);

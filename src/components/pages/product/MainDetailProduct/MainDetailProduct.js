@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import {useEffect, useState, useMemo} from 'react';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 import styles from './MainDetailProduct.module.scss';
@@ -7,28 +7,27 @@ import Button from '@/components/common/Button/Button';
 import {ROUTES} from '@/constants/config';
 import {getProductById} from '@/services/productService';
 import images from '@/constants/static/images';
-import {addToCart, getAllCart} from '@/services/cartService';
 import {toast} from 'react-toastify';
 import {createReview, deleteReview, getReviewsByProductId} from '@/services/reviewService';
 import {getCurrentUserIdFromToken} from '@/utils/auth';
 import ConfirmDeleteReview from '../ConfirmDeleteReview/ConfirmDeleteReview';
 import FormUpdateReview from '../FormUpdateReview/FormUpdateReview';
+import useCart from '@/hooks/useCart';
 
 const ProductDetailPage = () => {
 	const router = useRouter();
 	const {id} = router.query;
+	const {addItemToCart} = useCart();
+
 	const [currentUserId, setCurrentUserId] = useState(null);
 	const [product, setProduct] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [mainImage, setMainImage] = useState(null);
-	const [selectedSize, setSelectedSize] = useState(null);
+	const [selectedSize, setSelectedSize] = useState('');
 	const [quantity, setQuantity] = useState(1);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [categoryName, setCategoryName] = useState('');
-	const [selectedColor, setSelectedColor] = useState('');
-	const [colors, setColors] = useState([]);
-	const [sizes, setSizes] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -48,33 +47,24 @@ const ProductDetailPage = () => {
 		if (id) {
 			const fetchProductDetails = async () => {
 				setLoading(true);
-				setError(null);
 				try {
 					const data = await getProductById(id);
 					setProduct(data);
 					setMainImage(data?.images?.[0]);
-
 					if (data.category && data.category.length > 0) {
 						setCategoryName(data.category[0].name);
 					}
-
-					if (data.colors && data.colors.length > 0) {
-						setColors(data.colors);
-						setSelectedColor(data.colors[0]);
+					// Tự động chọn size đầu tiên còn hàng
+					const firstAvailableSize = data.quantityBySize?.find((s) => s.quantity > 0);
+					if (firstAvailableSize) {
+						setSelectedSize(firstAvailableSize.sizeId);
 					}
-
-					if (data.sizes && data.sizes.length > 0) {
-						setSizes(data.sizes);
-						setSelectedSize(data.sizes[0]);
-					}
-
-					setLoading(false);
 				} catch (err) {
 					setError(err.message || 'Không thể tải thông tin sản phẩm.');
+				} finally {
 					setLoading(false);
 				}
 			};
-
 			fetchProductDetails();
 		}
 	}, [id]);
@@ -97,7 +87,12 @@ const ProductDetailPage = () => {
 
 	const averageRating = reviews.length > 0 ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length : 0;
 
-	// Thêm vào giỏ hàng
+	const availableStock = useMemo(() => {
+		if (!product || !selectedSize) return 0;
+		const sizeInfo = product.quantityBySize.find((s) => s.sizeId === selectedSize);
+		return sizeInfo ? sizeInfo.quantity : 0;
+	}, [product, selectedSize]);
+
 	const handleAddToCart = async () => {
 		if (!selectedSize) {
 			toast.warn('Vui lòng chọn kích thước!');
@@ -106,32 +101,24 @@ const ProductDetailPage = () => {
 
 		const payload = {
 			productId: product._id,
-			color: product.colors?.[0] || 'Không xác định',
-			image: product.images?.[0],
 			sizeId: selectedSize,
 			quantity: quantity,
 		};
 
 		try {
-			await addToCart(payload);
-
-			const updatedCart = await getAllCart();
-			localStorage.setItem('cart', JSON.stringify(updatedCart.items || []));
-			if (typeof window !== 'undefined') {
-				window.dispatchEvent(new Event('storage'));
-			}
-
-			toast.success('Đã thêm vào giỏ hàng!');
+			await addItemToCart(payload);
+			toast.success('Đã thêm sản phẩm vào giỏ hàng!');
+			setQuantity(1);
 		} catch (err) {
-			console.error(err);
-			toast.error('Không thể thêm vào giỏ hàng.');
+			console.error('Lỗi khi thêm vào giỏ hàng:', err);
+			const errorMessage = err.response?.data?.message || 'Lỗi không xác định, vui lòng thử lại.';
+			toast.error(errorMessage);
 		}
 	};
 
 	// Thanh toán ngay
 	const handleBuyNow = () => {
 		const token = localStorage.getItem('token');
-
 		if (!token) {
 			toast.warning('Vui lòng đăng nhập để thanh toán!');
 			router.push(ROUTES.Login);
@@ -144,18 +131,27 @@ const ProductDetailPage = () => {
 		}
 
 		const buyNowItem = {
+			// Dữ liệu cốt lõi cho API createOrder
 			productId: product._id,
-			name: product.name,
-			color: product.colors?.[0]?.name,
-			image: product.images?.[0],
 			sizeId: selectedSize,
-			sizeName: product.quantityBySize?.find((s) => s.sizeId === selectedSize)?.name,
 			quantity: quantity,
+			colorId: product.colors?.[0]?.colorId,
+
+			// Dữ liệu phụ để hiển thị trên trang thanh toán
+			name: product.name,
+			image: product.images?.[0],
 			price: product.price,
+			sizeName: product.quantityBySize?.find((s) => s.sizeId === selectedSize)?.name,
+			colorName: product.colors?.[0]?.name,
 		};
 
-		localStorage.setItem('buyNow', JSON.stringify([buyNowItem]));
-		router.push(ROUTES.Order);
+		try {
+			sessionStorage.setItem('checkoutItems', JSON.stringify([buyNowItem]));
+			router.push(ROUTES.Order);
+		} catch (error) {
+			console.error('Lỗi khi lưu vào sessionStorage:', error);
+			toast.error('Đã có lỗi xảy ra, vui lòng thử lại.');
+		}
 	};
 
 	// Thêm Review
@@ -199,10 +195,18 @@ const ProductDetailPage = () => {
 
 	const handleSizeChange = (sizeId) => {
 		setSelectedSize(sizeId);
+		setQuantity(1);
 	};
 
 	const handleQuantityChange = (type) => {
-		setQuantity((prev) => (type === 'increase' ? Math.min(prev + 1, 10) : Math.max(prev - 1, 1)));
+		if (type === 'increase') {
+			// Chỉ cho phép tăng nếu số lượng hiện tại nhỏ hơn tồn kho
+			if (quantity < availableStock) {
+				setQuantity((prev) => prev + 1);
+			}
+		} else {
+			setQuantity((prev) => Math.max(1, prev - 1));
+		}
 	};
 
 	const handleDeleteClick = (reviewId) => {
@@ -352,31 +356,37 @@ const ProductDetailPage = () => {
 							<p>Lựa chọn kích cỡ:</p>
 							{product.quantityBySize.map((sizeObj) => (
 								<button
-									key={sizeObj._id}
+									key={sizeObj.sizeId}
 									className={`${styles.sizeButton} ${selectedSize === sizeObj.sizeId ? styles.active : ''}`}
 									onClick={() => handleSizeChange(sizeObj.sizeId)}
 									disabled={sizeObj.quantity <= 0}
 								>
-									{sizeObj.name} ({sizeObj.quantity})
+									{sizeObj.name}
+									{sizeObj.quantity > 0 ? ` (Còn: ${sizeObj.quantity})` : ' (Hết hàng)'}
 								</button>
 							))}
 						</div>
 					)}
-
 					<div className={styles.quantitySelect}>
 						<p>Số lượng:</p>
-						<button onClick={() => handleQuantityChange('decrease')}>-</button>
+						<button onClick={() => handleQuantityChange('decrease')} disabled={quantity <= 1}>
+							-
+						</button>
 						<span>{quantity}</span>
-						<button onClick={() => handleQuantityChange('increase')}>+</button>
+						<button onClick={() => handleQuantityChange('increase')} disabled={quantity >= availableStock}>
+							+
+						</button>
+
+						{selectedSize && <span className={styles.stockInfo}>(Còn lại: {availableStock} sản phẩm)</span>}
 					</div>
 
 					<div className={styles.buttonGroup}>
 						<Button
 							className={styles.addToCart}
 							onClick={handleAddToCart}
-							disabled={product.status !== 'active' || !product.quantityBySize || product.quantityBySize.length === 0}
+							disabled={!selectedSize || availableStock <= 0 || product.status !== 'active'}
 						>
-							Thêm giỏ hàng
+							{availableStock <= 0 ? 'Hết hàng' : 'Thêm giỏ hàng'}
 						</Button>
 						<Button
 							className={styles.buyNow}

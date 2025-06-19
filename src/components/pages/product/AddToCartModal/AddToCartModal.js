@@ -1,35 +1,32 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useMemo} from 'react';
 import styles from './AddToCartModal.module.scss';
-import {addToCart, getAllCart} from '@/services/cartService';
-import {getAllSizes} from '@/services/sizeService';
 import {toast} from 'react-toastify';
 import useCart from '@/hooks/useCart';
 
 const AddToCartModal = ({product, show, onClose}) => {
-	const {dispatch, setCartFromServer} = useCart();
+	const {addItemToCart} = useCart();
 
 	const [sizeId, setSizeId] = useState('');
 	const [quantity, setQuantity] = useState(1);
-	const [sizes, setSizes] = useState([]);
 
 	useEffect(() => {
-		if (!show) return;
-
-		const loadSizes = async () => {
-			try {
-				if (product?.sizes?.length && product.sizes[0]?.name) {
-					setSizes(product.sizes);
-				} else {
-					const res = await getAllSizes(1, 100);
-					setSizes(res.sizes || []);
-				}
-			} catch (err) {
-				alert('Không thể tải dữ liệu kích cỡ');
+		if (show && product?.quantityBySize) {
+			const firstAvailableSize = product.quantityBySize.find((s) => s.quantity > 0);
+			if (firstAvailableSize) {
+				setSizeId(firstAvailableSize.sizeId);
+			} else {
+				setSizeId('');
 			}
-		};
-
-		loadSizes();
+			setQuantity(1);
+		}
 	}, [show, product]);
+
+	//  TÍNH TOÁN SỐ LƯỢNG TỒN KHO CỦA SIZE ĐANG CHỌN
+	const availableStock = useMemo(() => {
+		if (!product || !sizeId) return 0;
+		const sizeInfo = product.quantityBySize.find((s) => s.sizeId === sizeId);
+		return sizeInfo ? sizeInfo.quantity : 0;
+	}, [product, sizeId]);
 
 	if (!show) return null;
 
@@ -39,32 +36,37 @@ const AddToCartModal = ({product, show, onClose}) => {
 			return;
 		}
 
+		// Kiểm tra client-side lần cuối
+		if (quantity > availableStock) {
+			return toast.error('Số lượng bạn chọn vượt quá số lượng tồn kho.');
+		}
+
+		const payload = {
+			productId: product._id,
+			sizeId,
+			quantity,
+		};
+
 		try {
-			// ✅ Gửi lên server
-			const res = await addToCart({
-				productId: product._id,
-				colorId: product.colors?.[0] || 'Không xác định',
-				sizeId,
-				quantity,
-				image: product.images?.[0],
-			});
-
-			// ✅ Nếu có cartToken mới, lưu lại
-			if (res.cartToken) {
-				localStorage.setItem('cartToken', res.cartToken);
-			}
-
-			// ✅ Đồng bộ lại giỏ hàng từ BE để tránh cộng dồn
-			const serverCart = await getAllCart();
-			setCartFromServer(serverCart.items || []);
-
+			await addItemToCart(payload);
 			toast.success('Đã thêm sản phẩm vào giỏ hàng!');
 			setTimeout(() => {
 				onClose();
 			}, 400);
 		} catch (err) {
 			console.error(err);
-			toast.error(err.message || 'Lỗi thêm sản phẩm');
+			const errorMessage = err.response?.data?.message || 'Lỗi thêm sản phẩm';
+			toast.error(errorMessage);
+		}
+	};
+
+	// Giới hạn số lượng nhập vào không vượt quá tồn kho
+	const handleSetQuantity = (value) => {
+		const num = Number(value);
+		if (num >= 1 && num <= availableStock) {
+			setQuantity(num);
+		} else if (num > availableStock) {
+			setQuantity(availableStock);
 		}
 	};
 
@@ -75,24 +77,39 @@ const AddToCartModal = ({product, show, onClose}) => {
 
 				<div className={styles.formGroup}>
 					<label>Kích thước</label>
-					<select value={sizeId} onChange={(e) => setSizeId(e.target.value)}>
+					<select
+						value={sizeId}
+						onChange={(e) => {
+							setSizeId(e.target.value);
+							setQuantity(1);
+						}}
+					>
 						<option value=''>-- Chọn size --</option>
-						{sizes.map((size) => (
-							<option key={size._id} value={size._id}>
-								{size.name}
+						{product?.quantityBySize?.map((size) => (
+							<option key={size.sizeId} value={size.sizeId} disabled={size.quantity <= 0}>
+								{size.name} {size.quantity > 0 ? `(Còn: ${size.quantity})` : '(Hết hàng)'}
 							</option>
 						))}
 					</select>
 				</div>
 
 				<div className={styles.formGroup}>
-					<label>Số lượng</label>
-					<input type='number' min='1' value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
+					<label>Số lượng (Còn lại: {availableStock})</label>
+					<input
+						type='number'
+						min='1'
+						max={availableStock}
+						value={quantity}
+						onChange={(e) => handleSetQuantity(e.target.value)}
+						disabled={!sizeId || availableStock <= 0}
+					/>
 				</div>
 
 				<div className={styles.actions}>
 					<button onClick={onClose}>Huỷ</button>
-					<button onClick={handleConfirm}>Xác nhận</button>
+					<button onClick={handleConfirm} disabled={!sizeId || availableStock <= 0 || quantity > availableStock}>
+						Xác nhận
+					</button>
 				</div>
 			</div>
 		</div>

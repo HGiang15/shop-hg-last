@@ -11,19 +11,21 @@ import images from '@/constants/static/images';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
 import ShoppingCart from '@/components/pages/user/cart/ShoppingCart/ShoppingCart';
-import useCart from '@/hooks/useCart';
 import {getCurrentUser} from '@/services/authService';
+import useCart from '@/hooks/useCart';
 
 function Header() {
 	const router = useRouter();
-	const {dispatch} = useCart();
+	// ✅ BƯỚC 2.1: LẤY HÀM `clearCart` TỪ CONTEXT, KHÔNG CẦN `dispatch`
+	const {cart, clearCart} = useCart();
 
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [showDropdown, setShowDropdown] = useState(false);
-	const [cartItemCount, setCartItemCount] = useState(0);
 	const [showCart, setShowCart] = useState(false);
+
+	const cartItemCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -31,7 +33,11 @@ function Header() {
 			if (!token) return;
 
 			try {
+				// Check token expiration before decoding
 				const decoded = jwtDecode(token);
+				if (decoded.exp * 1000 < Date.now()) {
+					throw new Error('Token expired');
+				}
 				const currentUser = await getCurrentUser();
 				setUser({
 					...decoded,
@@ -46,19 +52,6 @@ function Header() {
 		};
 
 		fetchUser();
-
-		// Cập nhật số lượng giỏ hàng từ localStorage
-		const cart = localStorage.getItem('cart');
-		if (cart) {
-			try {
-				const cartItems = JSON.parse(cart);
-				const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-				setCartItemCount(totalQuantity);
-			} catch (error) {
-				console.error('Lỗi khi phân tích giỏ hàng từ localStorage', error);
-				setCartItemCount(0);
-			}
-		}
 	}, []);
 
 	const toggleMenu = () => {
@@ -69,47 +62,39 @@ function Header() {
 		setShowDropdown(!showDropdown);
 	};
 
-	const updateCartCount = (newCount) => {
-		setCartItemCount(newCount);
-	};
-
+	// ✅ BƯỚC 2.2: SỬA LẠI HÀM LOGOUT ĐỂ GỌI `clearCart`
 	const handleLogout = () => {
 		setLoading(true);
+		// Xóa thông tin xác thực
 		localStorage.removeItem('token');
-		localStorage.removeItem('cart');
 		localStorage.removeItem('name');
 		localStorage.removeItem('avatar');
-		localStorage.removeItem('cartToken');
 		localStorage.removeItem('persist:root');
 
-		// Xoá giỏ hàng trong context
-		dispatch({type: 'CLEAR_CART'});
+		// Gọi hàm clearCart từ context, rất sạch sẽ và rõ ràng
+		clearCart();
 
 		setUser(null);
-
-		// Đồng bộ các tab (nếu dùng nhiều tab)
-		window.dispatchEvent(new Event('storage'));
+		setShowDropdown(false);
 
 		setTimeout(() => {
 			setLoading(false);
 			router.push('/');
-		}, 1500);
+		}, 1000);
 	};
 
 	return (
 		<div className={styles.header}>
 			<div className={styles.header__logo}>
 				<Link href='/'>
-					<Image className={styles.logo_home} src={images.logoSmall} alt='Logo' />
+					<Image className={styles.logo_home} src={images.logoSmall} alt='Logo' width={50} height={50} />
 				</Link>
 			</div>
 
-			{/* Menu Responsive */}
 			<button className={styles.menuToggle} onClick={toggleMenu}>
 				{menuOpen ? <FaTimes /> : <FaBars />}
 			</button>
 
-			{/* Overlay */}
 			<div className={`${styles.overlay} ${menuOpen ? styles.open : ''}`} onClick={toggleMenu}></div>
 
 			<nav className={`${styles.header__nav} ${menuOpen ? styles.open : ''}`}>
@@ -144,15 +129,14 @@ function Header() {
 
 			<div className={styles.header__actions}>
 				<Button className={styles.cart} onClick={() => setShowCart(true)}>
-					<Image src={icons.cart} width={28} height={28} alt='Cart' className='' />
+					<Image src={icons.cart} width={28} height={28} alt='Cart' />
 					{cartItemCount > 0 && <span className={styles.cart__count}>{cartItemCount}</span>}
 				</Button>
 
-				{showCart && <ShoppingCart onClose={() => setShowCart(false)} onUpdateCartCount={updateCartCount} />}
+				{showCart && <ShoppingCart onClose={() => setShowCart(false)} />}
 
 				<div className={styles.header__auth}>
 					{user ? (
-						// if login
 						<div className={styles.userDropdown}>
 							<div className={styles.userInfo} onClick={toggleDropdown}>
 								<Image
@@ -162,7 +146,6 @@ function Header() {
 									height={40}
 									className={styles.userAvatar}
 								/>
-
 								<span className={styles.userName}>{user.name || 'Người dùng'}</span>
 							</div>
 
@@ -182,7 +165,6 @@ function Header() {
 							)}
 						</div>
 					) : (
-						// if not login
 						<>
 							<Button href={ROUTES.Login} className={styles.auth__login}>
 								Đăng nhập

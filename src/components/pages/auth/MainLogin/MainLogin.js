@@ -19,7 +19,8 @@ import {setUserInfo} from '@/redux/slices/userSlice';
 
 const MainLogin = () => {
 	const router = useRouter();
-	const {dispatch, setCartFromServer} = useCart();
+	// const {dispatch, setCartFromServer} = useCart();
+	const {syncCartAfterLogin} = useCart();
 	const reduxDispatch = useDispatch();
 
 	const [formData, setFormData] = useState({
@@ -84,19 +85,29 @@ const MainLogin = () => {
 				localStorage.removeItem('remember_expiration');
 			}
 
-			// Merge cart nếu có
-			const localCart = JSON.parse(localStorage.getItem('cart')) || [];
-			const validCart = localCart.filter((item) => item.productId?._id && item.sizeId?._id && item.quantity > 0);
-			if (validCart.length > 0) {
-				await mergeCart(validCart);
-			}
+			// // Merge cart nếu có
+			// const localCart = JSON.parse(localStorage.getItem('cart')) || [];
+			// const validCart = localCart.filter((item) => item.productId?._id && item.sizeId?._id && item.quantity > 0);
+			// if (validCart.length > 0) {
+			// 	await mergeCart(validCart);
+			// }
 
-			localStorage.removeItem('cart');
-			localStorage.removeItem('cartToken');
+			// localStorage.removeItem('cart');
+			// localStorage.removeItem('cartToken');
 
-			const serverCart = await getAllCart();
-			setCartFromServer(serverCart.items || []);
+			// const serverCart = await getAllCart();
+			// setCartFromServer(serverCart.items || []);
 
+			// router.push(role === 0 ? ROUTES.AdminDashboard : ROUTES.Home);
+
+			// NEW
+			// 1. GỌI API MERGE
+			const mergeResponse = await mergeCart();
+
+			// 2. YÊU CẦU CART CONTEXT ĐỒNG BỘ LẠI TỪ SERVER
+			await syncCartAfterLogin();
+
+			toast.success('Đăng nhập thành công!');
 			router.push(role === 0 ? ROUTES.AdminDashboard : ROUTES.Home);
 		} catch (error) {
 			toast.error(error.message || 'Đăng nhập thất bại.');
@@ -185,35 +196,31 @@ const MainLogin = () => {
 						<GoogleLogin
 							onSuccess={async (credentialResponse) => {
 								try {
+									setLoading(true); // Thêm loading cho trải nghiệm tốt hơn
 									const {credential} = credentialResponse;
 									const {token, data} = await loginWithGoogle(credential);
 
+									// Lưu thông tin user và token (giữ nguyên)
 									localStorage.setItem('token', token);
 									localStorage.setItem('name', data.name);
 									localStorage.setItem('avatar', data.avatar);
-
 									reduxDispatch(loginSuccess(token));
-									reduxDispatch(setUserInfo({id, name, email, avatar, role}));
+									reduxDispatch(setUserInfo(data)); // Giả sử data chứa đủ thông tin user
 
-									// Merge cart Google
-									const localCart = JSON.parse(localStorage.getItem('cart')) || [];
-									const validCart = localCart.filter(
-										(item) => item.productId?._id && item.sizeId?._id && item.quantity > 0
-									);
-									if (validCart.length > 0) {
-										await mergeCart(validCart);
-									}
-									localStorage.removeItem('cart');
-									localStorage.removeItem('cartToken');
+									// ✅ SỬA LẠI LOGIC MERGE CART CHO ĐÚNG
+									// 1. GỌI API MERGE (không cần body)
+									await mergeCart();
 
-									const serverCart = await getAllCart();
-									setCartFromServer(serverCart.items || []);
+									// 2. YÊU CẦU CART CONTEXT ĐỒNG BỘ LẠI TỪ SERVER
+									await syncCartAfterLogin();
 
 									toast.success('Đăng nhập bằng Google thành công!');
 									router.push(data.role === 0 ? ROUTES.AdminDashboard : ROUTES.Home);
 								} catch (err) {
 									console.error('Google login error:', err);
 									toast.error('Lỗi khi đăng nhập với Google');
+								} finally {
+									setLoading(false);
 								}
 							}}
 							onError={() => toast.error('Đăng nhập bằng Google thất bại')}

@@ -8,8 +8,14 @@ import {getUserAddresses} from '@/services/userAddressService';
 import {toast} from 'react-toastify';
 import OrderSuccessModal from '../OrderSuccessModal/OrderSuccessModal';
 import {applyVoucher, getAvailableVouchersForUser} from '@/services/voucherService';
+import useCart from '@/hooks/useCart';
+import {useRouter} from 'next/router';
+import {ROUTES} from '@/constants/config';
 
 const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
+	const router = useRouter();
+	const {removeItemsFromCart} = useCart();
+
 	const [orderList, setOrderList] = useState([]);
 	const [totalAmount, setTotalAmount] = useState(0);
 	const [policyChecked, setPolicyChecked] = useState(false);
@@ -17,7 +23,6 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const [addressId, setAddressId] = useState(null);
 	const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 	const [showSuccessModal, setShowSuccessModal] = useState(false);
-
 	const [userAddresses, setUserAddresses] = useState([]);
 	const [selectedAddress, setSelectedAddress] = useState(null);
 	const [note, setNote] = useState('');
@@ -28,13 +33,10 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const [availableVouchers, setAvailableVouchers] = useState([]);
 	const [finalAmount, setFinalAmount] = useState(0);
 
-	// Get All UserAddress
 	const fetchAddresses = async () => {
 		try {
 			const res = await getUserAddresses();
 			setUserAddresses(res);
-
-			// Chọn lại địa chỉ mặc định mới nhất
 			if (res.length > 0) {
 				const defaultAddress = res.find((a) => a.isDefault) || res[0];
 				setSelectedAddress(defaultAddress);
@@ -49,73 +51,81 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		fetchAddresses();
 	}, []);
 
-	// get buyNow từ localStorage
 	useEffect(() => {
-		const raw = typeof window !== 'undefined' && localStorage.getItem('buyNow');
-		if (raw) {
+		const rawItems = sessionStorage.getItem('checkoutItems');
+		if (rawItems) {
 			try {
-				const items = JSON.parse(raw);
-				setOrderList(items);
-			} catch {}
+				setOrderList(JSON.parse(rawItems));
+			} catch (e) {
+				console.error('Failed to parse checkout items', e);
+				router.push(ROUTES.Home);
+			}
+		} else {
+			router.push(ROUTES.Home);
 		}
-	}, []);
+	}, [router]);
 
-	//  Tính tổng
 	useEffect(() => {
 		const sum = orderList.reduce((acc, item) => acc + item.price * item.quantity, 0);
 		setTotalAmount(sum);
 	}, [orderList]);
 
-	// Create order and create URL VNPay
+	useEffect(() => {
+		setFinalAmount(totalAmount - (appliedVoucher?.discountAmount || 0));
+	}, [totalAmount, appliedVoucher]);
+
 	const handlePlaceOrder = async () => {
 		if (!policyChecked || isPlacingOrder) return;
-
-		if (!selectedAddress || !addressId) {
-			toast.error('Vui lòng chọn 1 địa chỉ mặc định để giao hàng nếu chưa có thì thêm địa chỉ giao hàng trước khi đặt hàng');
+		if (!selectedAddress) {
+			toast.error('Vui lòng chọn hoặc thêm địa chỉ giao hàng.');
 			return;
 		}
 
 		setIsPlacingOrder(true);
 
 		try {
-			// B1: Gọi API tạo đơn hàng
-			const order = await createOrder({
+			const itemsForApi = orderList.map((item) => ({
+				productId: item.productId,
+				sizeId: item.sizeId,
+				quantity: item.quantity,
+				colorId: item.colorId,
+			}));
+
+			const orderPayload = {
 				shippingAddress: addressId,
-				items: orderList.map((item) => ({
-					productId: item.productId,
-					name: item.name,
-					image: item.image,
-					color: item.color,
-					size: item.sizeName,
-					quantity: item.quantity,
-					price: item.price,
-				})),
+				items: itemsForApi,
 				note,
-				voucherCode: voucherCode?.toUpperCase() || null,
+				voucherCode: appliedVoucher ? voucherCode.toUpperCase() : null,
 				paymentMethod,
-			});
+			};
+
+			const order = await createOrder(orderPayload);
+
+			const cartItemIdsToRemove = orderList.map((item) => item._id).filter((id) => id);
+
+			if (cartItemIdsToRemove.length > 0) {
+				await removeItemsFromCart(cartItemIdsToRemove);
+			}
+
+			sessionStorage.removeItem('checkoutItems');
 
 			if (paymentMethod === 'vnpay') {
 				const paymentRes = await createVNPayUrl({
 					amount: order.finalAmount,
 					orderId: order._id,
 				});
-
-				localStorage.removeItem('buyNow');
 				window.location.href = paymentRes;
 			} else {
-				// COD: chỉ hiện modal thành công
-				localStorage.removeItem('buyNow');
 				setShowSuccessModal(true);
 			}
 		} catch (err) {
 			console.error(err);
-			toast.error(err.response?.data?.message || err.message || 'Tạo đơn hàng/thanh toán thất bại');
-			return;
+			toast.error(err.response?.data?.message || err.message || 'Tạo đơn hàng thất bại');
+		} finally {
+			setIsPlacingOrder(false);
 		}
 	};
 
-	// Hiện voucher cho user
 	useEffect(() => {
 		const fetchAvailableVouchers = async () => {
 			try {
