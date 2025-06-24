@@ -1,4 +1,3 @@
-// MainOrderDetail.tsx
 import React, {useEffect, useState} from 'react';
 import styles from './MainOrderDetail.module.scss';
 import {useRouter} from 'next/router';

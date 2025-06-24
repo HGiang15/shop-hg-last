@@ -208,7 +208,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 						{orderList.map((item, idx) => (
 							<div key={idx} className={styles.orderItem}>
 								<span className={styles.itemName}>
-									{item.name} - ({item.color}) - ({item.sizeName})
+									{item.name} - ({item.colorName}) - ({item.sizeName})
 								</span>
 								<span className={styles.itemQuantity}>{item.quantity}</span>
 								<span className={styles.itemTotal}>{(item.price * item.quantity).toLocaleString('vi-VN')} VNĐ</span>

@@ -13,21 +13,65 @@
 	border-radius: 12px;
 	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 	text-align: center;
-	max-width: 400px;
+	max-width: 450px; // Tăng chiều rộng một chút để có không gian
 	width: 100%;
 }
 
 .success {
 	color: #2e7d32;
 	font-weight: 500;
-	margin-top: 1rem;
+	margin: 1rem 0; // Thêm margin dưới
 }
 
 .fail {
 	color: #c62828;
 	font-weight: 500;
-	margin-top: 1rem;
+	margin: 1rem 0; // Thêm margin dưới
 }
+
+/* === BẮT ĐẦU PHẦN MỚI THÊM === */
+
+.orderDetails {
+	margin-top: 2rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid #e0e0e0; // Thêm đường kẻ phân cách
+	text-align: left; // Căn lề trái cho chi tiết
+
+	h3 {
+		margin-bottom: 1rem;
+		font-size: 1.1rem;
+		color: #333;
+	}
+
+	hr {
+		border: none;
+		border-top: 1px dashed #ccc;
+		margin: 1rem 0;
+	}
+}
+
+.orderItem,
+.total {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.5rem 0;
+	font-size: 0.95rem;
+	flex-wrap: wrap;
+	gap: 4px;
+
+	span {
+		color: #555;
+	}
+}
+
+.total {
+	font-size: 1.1rem;
+	font-weight: bold;
+	color: #000;
+}
+
+/* === KẾT THÚC PHẦN MỚI THÊM === */
 
 .button {
 	margin-top: 2rem;

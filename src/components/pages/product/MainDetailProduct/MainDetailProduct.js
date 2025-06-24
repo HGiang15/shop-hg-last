@@ -118,6 +118,8 @@ const ProductDetailPage = () => {
 
 	// Thanh toán ngay
 	const handleBuyNow = () => {
+		const selectedSizeObject = product.quantityBySize?.find((s) => s.sizeId === selectedSize);
+		const selectedColorObject = product.colors?.[0]; // Giả sử chỉ lấy màu đầu tiên
 		const token = localStorage.getItem('token');
 		if (!token) {
 			toast.warning('Vui lòng đăng nhập để thanh toán!');
@@ -133,16 +135,16 @@ const ProductDetailPage = () => {
 		const buyNowItem = {
 			// Dữ liệu cốt lõi cho API createOrder
 			productId: product._id,
-			sizeId: selectedSize,
+			sizeId: selectedSizeObject.sizeId,
 			quantity: quantity,
-			colorId: product.colors?.[0]?.colorId,
+			colorId: selectedColorObject?.colorId,
 
 			// Dữ liệu phụ để hiển thị trên trang thanh toán
 			name: product.name,
 			image: product.images?.[0],
 			price: product.price,
-			sizeName: product.quantityBySize?.find((s) => s.sizeId === selectedSize)?.name,
-			colorName: product.colors?.[0]?.name,
+			sizeName: selectedSizeObject.name,
+			colorName: selectedColorObject?.name,
 		};
 
 		try {

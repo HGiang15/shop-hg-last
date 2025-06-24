@@ -196,22 +196,18 @@ const MainLogin = () => {
 						<GoogleLogin
 							onSuccess={async (credentialResponse) => {
 								try {
-									setLoading(true); // Thêm loading cho trải nghiệm tốt hơn
+									setLoading(true);
 									const {credential} = credentialResponse;
 									const {token, data} = await loginWithGoogle(credential);
 
-									// Lưu thông tin user và token (giữ nguyên)
 									localStorage.setItem('token', token);
 									localStorage.setItem('name', data.name);
 									localStorage.setItem('avatar', data.avatar);
 									reduxDispatch(loginSuccess(token));
-									reduxDispatch(setUserInfo(data)); // Giả sử data chứa đủ thông tin user
+									reduxDispatch(setUserInfo(data));
 
-									// ✅ SỬA LẠI LOGIC MERGE CART CHO ĐÚNG
-									// 1. GỌI API MERGE (không cần body)
 									await mergeCart();
 
-									// 2. YÊU CẦU CART CONTEXT ĐỒNG BỘ LẠI TỪ SERVER
 									await syncCartAfterLogin();
 
 									toast.success('Đăng nhập bằng Google thành công!');
