@@ -61,7 +61,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 		setCurrentPage(1);
 	};
 
-	const handleFormCreateProductClick = () => {
+	const handleFormCreateProduct = () => {
 		setActiveMenu(ROUTES.AdminProduct);
 		router.push(ROUTES.AdminProductCreate);
 	};
@@ -100,7 +100,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 					isAdmin={true}
 				/>
 
-				<Button className={styles.addButton} onClick={handleFormCreateProductClick}>
+				<Button className={styles.addButton} onClick={handleFormCreateProduct}>
 					Thêm mới sản phẩm
 				</Button>
 			</div>
@@ -110,7 +110,7 @@ const MainPageProduct = ({setActiveMenu}) => {
 					<Image src={images.boxEmpty} alt='Không có sản phẩm' width={180} height={180} priority />
 					<h4>DỮ LIỆU TRỐNG</h4>
 					<p>Hiện tại không có sản phẩm nào!</p>
-					<Button className={styles.btnNoProduct} onClick={handleFormCreateProductClick}>
+					<Button className={styles.btnNoProduct} onClick={handleFormCreateProduct}>
 						Thêm mới sản phẩm
 					</Button>
 				</div>

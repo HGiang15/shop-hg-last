@@ -13,6 +13,9 @@ import {ROUTES} from '@/constants/config';
 import LayoutPages from '@/components/layouts/LayoutPages/LayoutPages';
 import ConfirmDeliveryModal from '../ConfirmDeliveryModal/ConfirmDeliveryModal';
 import {useRouter} from 'next/router';
+import useDebounce from '@/hooks/useDebounce';
+import {toast} from 'react-toastify';
+import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 
 const MainOrderShipping = ({setActiveMenu}) => {
 	const router = useRouter();
@@ -27,6 +30,14 @@ const MainOrderShipping = ({setActiveMenu}) => {
 	const [selectedOrder, setSelectedOrder] = useState(null);
 	const [selectedOrderName, setSelectedOrderName] = useState('');
 
+	// --- states cho FilterAdmin ---
+	const [searchTerm, setSearchTerm] = useState('');
+	const [sortOption, setSortOption] = useState('newest');
+	const [startDate, setStartDate] = useState('');
+	const [endDate, setEndDate] = useState('');
+
+	const debouncedSearchTerm = useDebounce(searchTerm, 600);
+
 	useEffect(() => {
 		setActiveMenu(ROUTES.AdminOrder);
 	}, [setActiveMenu]);
@@ -34,7 +45,15 @@ const MainOrderShipping = ({setActiveMenu}) => {
 	useEffect(() => {
 		const fetchOrders = async () => {
 			try {
-				const data = await getAllOrders(currentPage, ordersPerPage, 'shipping');
+				const data = await getAllOrders(
+					currentPage,
+					ordersPerPage,
+					'shipping',
+					debouncedSearchTerm,
+					sortOption,
+					startDate,
+					endDate
+				);
 				setOrders(data.orders);
 				setTotalPages(data.totalPages);
 				setTotalItems(data.totalItems);
@@ -44,7 +63,7 @@ const MainOrderShipping = ({setActiveMenu}) => {
 		};
 
 		fetchOrders();
-	}, [currentPage, ordersPerPage]);
+	}, [currentPage, ordersPerPage, debouncedSearchTerm, sortOption, startDate, endDate]);
 
 	// Xác nhận giao hàng thành công
 	const handleConfirmDelivery = async () => {
@@ -52,12 +71,14 @@ const MainOrderShipping = ({setActiveMenu}) => {
 			await updateOrderStatus(selectedOrder, 'success');
 			setIsModalOpen(false);
 			setSelectedOrder(null);
-			const data = await getAllOrders(currentPage, ordersPerPage, 'shipping');
+			const data = await getAllOrders(currentPage, ordersPerPage, 'shipping', debouncedSearchTerm, sortOption, startDate, endDate);
 			setOrders(data.orders);
 			setTotalPages(data.totalPages);
 			setTotalItems(data.totalItems);
+			toast.success('Xác nhận giao hàng thành công');
 		} catch (error) {
 			console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error);
+			toast.error('Lỗi khi cập nhật trạng thái đơn hàng');
 		}
 	};
 
@@ -81,6 +102,26 @@ const MainOrderShipping = ({setActiveMenu}) => {
 				]}
 			></LayoutPages>
 			<div className={styles.container}>
+				<div className={styles.header}>
+					<FilterAdmin
+						searchTerm={searchTerm}
+						setSearchTerm={setSearchTerm}
+						sortOption={sortOption}
+						setSortOption={setSortOption}
+						startDate={startDate}
+						setStartDate={setStartDate}
+						endDate={endDate}
+						setEndDate={setEndDate}
+						setCurrentPage={setCurrentPage}
+						sortOptions={[
+							{value: 'newest', label: 'Mới nhất'},
+							{value: 'oldest', label: 'Cũ nhất'},
+						]}
+						isAdmin={true}
+						showDateFilter={true}
+						placeholderSearch='Tìm kiếm theo mã đơn hàng'
+					/>
+				</div>
 				{orders.length === 0 ? (
 					<div className={styles.noProducts}>
 						<Image src={images.boxEmpty} alt='Không có sản phẩm' width={180} height={180} priority />

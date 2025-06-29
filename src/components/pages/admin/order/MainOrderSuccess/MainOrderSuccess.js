@@ -12,6 +12,8 @@ import icons from '@/constants/static/icons';
 import ConfirmDeleteModal from '../../order/ConfirmDeleteModal/ConfirmDeleteModal';
 import {toast} from 'react-toastify';
 import {useRouter} from 'next/router';
+import useDebounce from '@/hooks/useDebounce';
+import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 
 const MainOrderSuccess = () => {
 	const router = useRouter();
@@ -24,20 +26,29 @@ const MainOrderSuccess = () => {
 	const [selectedOrderId, setSelectedOrderId] = useState(null);
 	const [selectedOrderCode, setSelectedOrderCode] = useState('');
 
+	// --- Thêm states cho FilterAdmin ---
+	const [searchTerm, setSearchTerm] = useState('');
+	const [sortOption, setSortOption] = useState('newest');
+	const [startDate, setStartDate] = useState('');
+	const [endDate, setEndDate] = useState('');
+
+	const debouncedSearchTerm = useDebounce(searchTerm, 600);
+
 	useEffect(() => {
 		const fetchOrders = async () => {
 			try {
-				const data = await getAllOrders(currentPage, ordersPerPage, 'success');
+				const data = await getAllOrders(currentPage, ordersPerPage, 'success', debouncedSearchTerm, sortOption, startDate, endDate);
 				setOrders(data.orders);
 				setTotalPages(data.totalPages);
 				setTotalItems(data.totalItems);
 			} catch (err) {
 				console.error(err);
+				toast.error('Lỗi khi tải danh sách đơn hàng!');
 			}
 		};
 
 		fetchOrders();
-	}, [currentPage, ordersPerPage]);
+	}, [currentPage, ordersPerPage, debouncedSearchTerm, sortOption, startDate, endDate]);
 
 	// Xóa đơn hàng
 	const handleConfirmDelete = async () => {
@@ -45,13 +56,10 @@ const MainOrderSuccess = () => {
 			await deleteOrder(selectedOrderId);
 			setIsModalOpen(false);
 			setSelectedOrderId(null);
-
-			// Gọi lại API lấy danh sách đơn hàng mới nhất
-			const data = await getAllOrders(currentPage, ordersPerPage, 'success');
+			const data = await getAllOrders(currentPage, ordersPerPage, 'success', debouncedSearchTerm, sortOption, startDate, endDate);
 			setOrders(data.orders);
 			setTotalPages(data.totalPages);
 			setTotalItems(data.totalItems);
-
 			toast.success('Xóa đơn hàng thành công');
 		} catch (error) {
 			console.error('Lỗi khi xoá đơn hàng:', error);
@@ -79,6 +87,26 @@ const MainOrderSuccess = () => {
 				]}
 			>
 				<div className={styles.container}>
+					<div className={styles.header}>
+						<FilterAdmin
+							searchTerm={searchTerm}
+							setSearchTerm={setSearchTerm}
+							sortOption={sortOption}
+							setSortOption={setSortOption}
+							startDate={startDate}
+							setStartDate={setStartDate}
+							endDate={endDate}
+							setEndDate={setEndDate}
+							setCurrentPage={setCurrentPage}
+							sortOptions={[
+								{value: 'newest', label: 'Mới nhất'},
+								{value: 'oldest', label: 'Cũ nhất'},
+							]}
+							isAdmin={true}
+							showDateFilter={true}
+							placeholderSearch='Tìm kiếm theo mã đơn hàng'
+						/>
+					</div>
 					{orders.length === 0 ? (
 						<div className={styles.noProducts}>
 							<Image src={images.boxEmpty} alt='Không có đơn hàng' width={180} height={180} priority />

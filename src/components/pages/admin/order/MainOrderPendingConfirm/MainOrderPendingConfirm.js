@@ -15,6 +15,8 @@ import ConfirmShippingModal from '../ConfirmShippingModal/ConfirmShippingModal';
 import ConfirmCancelModal from '../ConfirmCancelModal/ConfirmCancelModal';
 import {useRouter} from 'next/router';
 import {setActiveMenu} from '@/redux/actions/menuTabActions';
+import useDebounce from '@/hooks/useDebounce';
+import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 
 const MainOrderPendingConfirm = ({setActiveMenu}) => {
 	const router = useRouter();
@@ -30,6 +32,14 @@ const MainOrderPendingConfirm = ({setActiveMenu}) => {
 	const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 	const [selectedCancelOrder, setSelectedCancelOrder] = useState(null);
 
+	// filtering and searching
+	const [searchTerm, setSearchTerm] = useState('');
+	const [sortOption, setSortOption] = useState('newest');
+	const [startDate, setStartDate] = useState('');
+	const [endDate, setEndDate] = useState('');
+
+	const debouncedSearchTerm = useDebounce(searchTerm, 600);
+
 	useEffect(() => {
 		setActiveMenu(ROUTES.AdminOrder);
 	}, []);
@@ -37,23 +47,24 @@ const MainOrderPendingConfirm = ({setActiveMenu}) => {
 	useEffect(() => {
 		const fetchOrders = async () => {
 			try {
-				const data = await getAllOrders(currentPage, ordersPerPage, 'pending');
+				const data = await getAllOrders(currentPage, ordersPerPage, 'pending', debouncedSearchTerm, sortOption, startDate, endDate);
 				setOrders(data.orders);
 				setTotalPages(data.totalPages);
 				setTotalItems(data.totalItems);
 			} catch (err) {
 				console.error(err);
+				toast.error('Lỗi khi tải danh sách đơn hàng!');
 			}
 		};
 
 		fetchOrders();
-	}, [currentPage, ordersPerPage]);
+	}, [currentPage, ordersPerPage, debouncedSearchTerm, sortOption, startDate, endDate]);
 
 	// Xác nhận đơn hàng
 	const handleConfirmOrder = async (orderId) => {
 		try {
 			await updateOrderStatus(orderId, 'shipping');
-			const data = await getAllOrders(currentPage, ordersPerPage, 'pending');
+			const data = await getAllOrders(currentPage, ordersPerPage, 'pending', debouncedSearchTerm, sortOption, startDate, endDate);
 			setOrders(data.orders);
 			setTotalPages(data.totalPages);
 			setTotalItems(data.totalItems);
@@ -68,7 +79,7 @@ const MainOrderPendingConfirm = ({setActiveMenu}) => {
 	const handleCancelOrder = async (orderId) => {
 		try {
 			await updateOrderStatus(orderId, 'cancelled');
-			const data = await getAllOrders(currentPage, ordersPerPage, 'pending');
+			const data = await getAllOrders(currentPage, ordersPerPage, 'pending', debouncedSearchTerm, sortOption, startDate, endDate);
 			setOrders(data.orders);
 			setTotalPages(data.totalPages);
 			setTotalItems(data.totalItems);
@@ -100,6 +111,26 @@ const MainOrderPendingConfirm = ({setActiveMenu}) => {
 				]}
 			/>
 			<div className={styles.container}>
+				<div className={styles.header}>
+					<FilterAdmin
+						searchTerm={searchTerm}
+						setSearchTerm={setSearchTerm}
+						sortOption={sortOption}
+						setSortOption={setSortOption}
+						startDate={startDate}
+						setStartDate={setStartDate}
+						endDate={endDate}
+						setEndDate={setEndDate}
+						setCurrentPage={setCurrentPage}
+						sortOptions={[
+							{value: 'newest', label: 'Mới nhất'},
+							{value: 'oldest', label: 'Cũ nhất'},
+						]}
+						isAdmin={true}
+						showDateFilter={true}
+						placeholderSearch='Tìm kiếm theo mã đơn hàng'
+					/>
+				</div>
 				{orders.length === 0 ? (
 					<div className={styles.noProducts}>
 						<Image src={images.boxEmpty} alt='Không có sản phẩm' width={180} height={180} priority />

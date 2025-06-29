@@ -16,3 +16,26 @@
 	border: 1px solid #ccc;
 	border-radius: 6px;
 }
+
+.dateInput {
+	padding: 8px 12px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 1rem;
+	color: #333;
+	outline: none;
+	transition: border-color 0.2s ease-in-out;
+	margin-right: 10px;
+	width: 150px;
+	box-sizing: border-box;
+
+	&:focus {
+		border-color: #007bff;
+	}
+}
+
+.dateFilterGroup {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}

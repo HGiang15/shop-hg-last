@@ -5,6 +5,15 @@
 	min-height: 80vh;
 }
 
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
 .actionButton {
 	margin: 0 5px;
 }

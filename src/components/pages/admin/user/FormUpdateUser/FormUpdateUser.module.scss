@@ -1,64 +1,193 @@
 .formUpdateUser {
-	padding: 24px;
-	background: #fff;
-	border-radius: 10px;
-
-	h2 {
+	.formTitle {
+		font-size: 24px;
 		font-weight: 600;
 		text-align: center;
-		margin-bottom: 24px;
+		color: #1f2937;
 	}
 
-	label {
+	.label {
 		display: block;
 		font-weight: 500;
 		margin-top: 12px;
+		font-size: 14px;
+		color: #374151;
 
-		span {
+		.required {
 			color: red;
 			margin-left: 4px;
 		}
 	}
 
-	input[type='text'],
-	input[type='email'],
-	input[type='date'] {
+	.inputField {
 		width: 100%;
 		padding: 10px;
 		margin-top: 4px;
 		border-radius: 8px;
 		border: 1px solid #ccc;
 		margin-bottom: 8px;
-	}
-}
+		outline: none;
 
-.genderGroup {
-	display: flex;
-	align-items: center;
-	margin-top: 8px;
-	gap: 14px;
+		&:focus {
+			border-color: #3b82f6;
+			box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+		}
 
-	label {
-		font-weight: normal;
-
-		input {
-			margin-right: 6px;
+		&:disabled {
+			background-color: #e5e7eb;
+			cursor: not-allowed;
 		}
 	}
-}
 
-.formButtons {
-	display: flex;
-	justify-content: flex-end;
-	margin-top: 24px;
-	gap: 10px;
-
-	.btnCancel {
-		background: #e0e0e0;
-		color: #000;
+	select.inputField {
+		appearance: none;
+		background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%2F%3E%3C%2Fsvg%3E');
+		background-repeat: no-repeat;
+		background-position: right 10px center;
+		background-size: 16px;
+		padding-right: 30px;
 	}
 
-	.btnSubmit {
-		background: #007bff;
+	.genderGroup {
+		display: flex;
+		align-items: center;
+		margin-top: 8px;
+		gap: 14px;
+		margin-bottom: 8px;
+
+		label {
+			font-weight: normal;
+			display: flex;
+			align-items: center;
+			font-size: 14px;
+			color: #374151;
+
+			input {
+				margin-right: 6px;
+			}
+		}
+
+		.radioInput {
+			appearance: none;
+			width: 16px;
+			height: 16px;
+			border: 1px solid #d1d5db;
+			border-radius: 50%;
+			position: relative;
+			cursor: pointer;
+			outline: none;
+
+			&:checked {
+				background-color: #2563eb;
+				border-color: #2563eb;
+			}
+
+			&:checked::before {
+				content: '';
+				display: block;
+				width: 8px;
+				height: 8px;
+				background-color: white;
+				border-radius: 50%;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+
+			&:focus {
+				box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+			}
+		}
+	}
+
+	.checkboxContainer {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		margin-top: 12px;
+		margin-bottom: 8px;
+	}
+
+	.checkboxLabel {
+		display: flex;
+		align-items: center;
+		font-size: 14px;
+		font-weight: 500;
+		color: #374151;
+		cursor: pointer;
+	}
+
+	.checkboxInput {
+		height: 16px;
+		width: 16px;
+		border: 1px solid #d1d5db;
+		border-radius: 4px;
+		outline: none;
+		margin-right: 8px;
+		appearance: none;
+		position: relative;
+		cursor: pointer;
+
+		&:checked {
+			background-color: #2563eb;
+			border-color: #2563eb;
+		}
+
+		&:checked::after {
+			content: '\2713';
+			color: white;
+			font-size: 12px;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+		}
+	}
+
+	.formButtons {
+		display: flex;
+		justify-content: flex-end;
+		gap: 10px;
+
+		.btnCancel {
+			background: #e0e0e0;
+			color: #000;
+		}
+
+		.btnSubmit {
+			background: #007bff;
+		}
+	}
+
+	.messageBox {
+		padding: 12px;
+		border-radius: 6px;
+		font-size: 14px;
+		text-align: center;
+		margin-bottom: 16px;
+	}
+
+	.errorMessage {
+		background-color: #fee2e2;
+		color: #b91c1c;
+	}
+
+	.successMessage {
+		background-color: #d1fae5;
+		color: #065f46;
+	}
+
+	.loadingMessage {
+		padding: 12px;
+		border-radius: 6px;
+		font-size: 14px;
+		text-align: center;
+		background-color: #e0f2fe;
+		color: #0369a1;
 	}
 }

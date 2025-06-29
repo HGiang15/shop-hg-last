@@ -33,7 +33,7 @@ export const createOrder = async (orderData) => {
 	}
 };
 
-// Lấy đơn hàng của người dùng đang đăng nhập
+// Lấy đơn hàng của người dùng đang đăng nhập profile user
 export const getUserOrders = async () => {
 	try {
 		const token = localStorage.getItem('token');
@@ -59,10 +59,18 @@ export const getOrderById = async (id) => {
 };
 
 // Lấy tất cả đơn hàng (admin)
-export const getAllOrders = async (page = 1, limit = 100, status = '') => {
+export const getAllOrders = async (page = 1, limit = 100, status = '', search = '', sort = 'newest', startDate = '', endDate = '') => {
 	try {
 		const response = await axiosClient.get(`/api/order/getAllOrders`, {
-			params: {page, limit, status},
+			params: {
+				page,
+				limit,
+				status,
+				search,
+				sort,
+				startDate,
+				endDate,
+			},
 		});
 		return response.data;
 	} catch (error) {

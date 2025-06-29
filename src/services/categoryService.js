@@ -29,15 +29,6 @@ export const getCategoryById = async (id) => {
 	}
 };
 
-export const getCategoryByName = async (name) => {
-	try {
-		const response = await axiosClient.get(`/api/category/getCategoryByName/${name}`);
-		return response.data;
-	} catch (error) {
-		throw error.response?.data || {message: 'Lấy danh mục theo tên thất bại'};
-	}
-};
-
 export const updateCategory = async (id, categoryData) => {
 	try {
 		const response = await axiosClient.put(`/api/category/updateCategory/${id}`, categoryData);

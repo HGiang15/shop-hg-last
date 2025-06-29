@@ -95,6 +95,7 @@ export const getListUser = async (page = 1, limit = 5, search = '', sort = 'newe
 	}
 };
 
+// user
 export const getCurrentUser = async () => {
 	try {
 		const token = localStorage.getItem('token');
@@ -109,6 +110,51 @@ export const getCurrentUser = async () => {
 	}
 };
 
+// admin
+export const createUserByAdmin = async (userData) => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.post(`/api/user/createUser`, userData, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Tạo người dùng thất bại'};
+	}
+};
+
+// admin
+export const updateUserByAdmin = async (id, updatedData) => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.put(`/api/user/updateUserByAdmin/${id}`, updatedData, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Cập nhật người dùng thất bại'};
+	}
+};
+
+// admin
+export const deleteUserByAdmin = async (id) => {
+	try {
+		const token = localStorage.getItem('token');
+		const response = await axiosClient.delete(`/api/user/deleteUser/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || {message: 'Xóa người dùng thất bại'};
+	}
+};
+
 // Get user by id
 export const getUserById = async (id) => {
 	try {
@@ -119,7 +165,7 @@ export const getUserById = async (id) => {
 	}
 };
 
-// Update user
+// Update user profile
 export const updateUser = async (id, updatedData) => {
 	try {
 		const response = await axiosClient.put(`/api/user/editUser/${id}`, updatedData);

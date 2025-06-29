@@ -6,16 +6,18 @@ import Table from '@/components/common/Table/Table';
 import icons from '@/constants/static/icons';
 import Pagination from '@/components/common/Pagination/Pagination';
 import {toast} from 'react-toastify';
-import {getListUser, updateUserRole, updateUserStatus} from '@/services/authService';
+import {deleteUserByAdmin, getListUser, updateUserRole, updateUserStatus} from '@/services/authService';
 import ConfirmModalStatus from '../ConfirmModalStatus/ConfirmModalStatus';
 import ConfirmModalRole from '../ConfirmModalRole/ConfirmModalRole';
 import FormUpdateUser from '../FormUpdateUser/FormUpdateUser';
+import FormCreateUser from '../FormCreateUser/FormCreateUser';
 import ModalWrapper from '@/components/common/ModalWrapper/ModalWrapper';
 import images from '@/constants/static/images';
 import useDebounce from '@/hooks/useDebounce';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 import Button from '@/components/common/Button/Button';
 import moment from 'moment';
+import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
 
 const MainPageUser = () => {
 	const [users, setUsers] = useState([]);
@@ -33,6 +35,9 @@ const MainPageUser = () => {
 	const [changeRoleModalOpen, setChangeRoleModalOpen] = useState(false);
 	const [showUpdateForm, setShowUpdateForm] = useState(false); // Update
 	const [editUserId, setEditUserId] = useState(null); // Update
+	const [showCreateForm, setShowCreateForm] = useState(false); // Create
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Delete
+	const [userToDelete, setUserToDelete] = useState(null); // Delete
 
 	const [searchTerm, setSearchTerm] = useState('');
 	const [sortOption, setSortOption] = useState('newest');
@@ -42,26 +47,30 @@ const MainPageUser = () => {
 
 	// Fetch Users
 	const fetchUsers = async (page = currentPage, customLimit = limit) => {
+		setLoading(true);
 		try {
 			const res = await getListUser(page, customLimit, debounce, sortOption, filterRole, filterStatus);
 			setUsers(res.data);
 			setTotalPages(res.pagination.totalPages);
 			setTotalItems(res.pagination.totalItems);
 			setCurrentPage(res.pagination.currentPage);
+			setError(false);
 		} catch (error) {
 			toast.error('Lỗi khi lấy danh sách người dùng');
+		} finally {
+			setLoading(false); // End loading
 		}
 	};
 
 	useEffect(() => {
 		fetchUsers(1, limit); // Reset về trang 1 khi filter đổi
-	}, [debounce, sortOption, filterRole, filterStatus]);
+	}, [debounce, sortOption, filterRole, filterStatus, limit]);
 
 	// Handle Pagination
 	const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
+		fetchUsers(pageNumber, limit);
 	};
-
 	// Handle Lock/Unlock
 	const handleLockUnlockClick = (user) => {
 		setSelectedUser(user);
@@ -86,6 +95,7 @@ const MainPageUser = () => {
 			await fetchUsers();
 		} catch (error) {
 			console.error('Lỗi cập nhật trạng thái người dùng:', error);
+			toast.error('Cập nhật trạng thái người dùng thất bại');
 		}
 	};
 
@@ -100,8 +110,8 @@ const MainPageUser = () => {
 	const handleConfirmChangeRole = async () => {
 		if (selectedRoleUser) {
 			let currentRole = selectedRoleUser.role;
-			if (currentRole === 0) currentRole = 'Quản trị';
-			else if (currentRole === 1) currentRole = 'Người dùng';
+			// if (currentRole === 0) currentRole = 'Quản trị';
+			// else if (currentRole === 1) currentRole = 'Người dùng';
 
 			const newRole = currentRole === 'Quản trị' ? 'Người dùng' : 'Quản trị';
 			await handleUpdateUserRole(selectedRoleUser.id, newRole);
@@ -117,6 +127,28 @@ const MainPageUser = () => {
 			await fetchUsers();
 		} catch (error) {
 			console.error('Lỗi thay đổi quyền người dùng:', error);
+			toast.error('Cập nhật vai trò người dùng thất bại');
+		}
+	};
+
+	// Handle Delete
+	const handleDeleteClick = (user) => {
+		setUserToDelete(user);
+		setIsDeleteModalOpen(true);
+	};
+
+	const handleConfirmDelete = async () => {
+		if (userToDelete) {
+			try {
+				await deleteUserByAdmin(userToDelete.id);
+				toast.success('Xóa người dùng thành công!');
+				setIsDeleteModalOpen(false);
+				setUserToDelete(null);
+				fetchUsers();
+			} catch (error) {
+				console.error('Lỗi khi xóa người dùng:', error);
+				toast.error(error.message || 'Xóa người dùng thất bại');
+			}
 		}
 	};
 
@@ -130,6 +162,11 @@ const MainPageUser = () => {
 	const handleEditClick = (id) => {
 		setEditUserId(id);
 		setShowUpdateForm(true);
+	};
+
+	// Handle "Thêm mới người dùng" button click
+	const handleCreateNewUserClick = () => {
+		setShowCreateForm(true);
 	};
 
 	return (
@@ -176,8 +213,11 @@ const MainPageUser = () => {
 								},
 							]}
 						/>
-					</div>
 
+						<Button className={styles.addButton} onClick={handleCreateNewUserClick}>
+							Thêm mới người dùng
+						</Button>
+					</div>
 					<div className={styles.tableWrapper}>
 						{users.length === 0 ? (
 							<div className={styles.noProducts}>
@@ -204,13 +244,13 @@ const MainPageUser = () => {
 								]}
 								renderActions={(user) => (
 									<>
-										{/* <IconCustom
+										<IconCustom
 											icon={<Image src={icons.edit} alt='Edit' width={20} height={20} />}
 											iconFilter='invert(38%) sepia(93%) saturate(1382%) hue-rotate(189deg) brightness(89%) contrast(105%)'
 											backgroundColor='#dce7ff'
 											tooltip='Chỉnh sửa người dùng'
 											onClick={() => handleEditClick(user.id)}
-										/> */}
+										/>
 										<IconCustom
 											icon={
 												<Image
@@ -232,6 +272,14 @@ const MainPageUser = () => {
 											tooltip='Thay đổi quyền người dùng'
 											onClick={() => handleChangeRoleClick(user)}
 										/>
+										 {' '}
+										<IconCustom
+											icon={<Image src={icons.trash} alt='Delete' width={20} height={20} />}
+											iconFilter='invert(66%) sepia(35%) saturate(5412%) hue-rotate(338deg) brightness(98%) contrast(90%)'
+											backgroundColor='#ffe4e4'
+											tooltip='Xóa người dùng'
+											onClick={() => handleDeleteClick(user)}
+										/>
 									</>
 								)}
 								roleStyle={{background: '#ffe4e6', color: '#ff2d2d', padding: '5px 10px', borderRadius: '4px'}}
@@ -239,7 +287,6 @@ const MainPageUser = () => {
 							/>
 						)}
 					</div>
-
 					<Pagination
 						currentPage={currentPage}
 						totalPages={totalPages}
@@ -255,7 +302,6 @@ const MainPageUser = () => {
 							fetchUsers(1, newLimit);
 						}}
 					/>
-
 					<ConfirmModalStatus
 						isOpen={isConfirmLockUnlockOpen}
 						onClose={() => setIsConfirmLockUnlockOpen(false)}
@@ -263,7 +309,6 @@ const MainPageUser = () => {
 						name={selectedUser?.name}
 						currentStatus={selectedUser?.status}
 					/>
-
 					<ConfirmModalRole
 						isOpen={changeRoleModalOpen}
 						onClose={() => setChangeRoleModalOpen(false)}
@@ -271,7 +316,6 @@ const MainPageUser = () => {
 						name={selectedRoleUser?.name}
 						currentRole={selectedRoleUser?.role}
 					/>
-
 					{showUpdateForm && (
 						<ModalWrapper onClose={() => setShowUpdateForm(false)}>
 							<FormUpdateUser
@@ -284,6 +328,25 @@ const MainPageUser = () => {
 							/>
 						</ModalWrapper>
 					)}
+					{showCreateForm && (
+						<ModalWrapper onClose={() => setShowCreateForm(false)}>
+							<FormCreateUser
+								onCancel={() => setShowCreateForm(false)} // Pass a function to close the modal
+								onSuccess={() => {
+									setShowCreateForm(false); // Close modal on success
+									fetchUsers(); // Refresh user list after creation
+									toast.success('Tạo người dùng mới thành công!');
+								}}
+							/>
+						</ModalWrapper>
+					)}
+
+					<ConfirmDeleteModal
+						isOpen={isDeleteModalOpen}
+						onClose={() => setIsDeleteModalOpen(false)}
+						onConfirm={handleConfirmDelete}
+						userName={userToDelete?.name}
+					/>
 				</>
 			)}
 		</div>

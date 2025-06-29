@@ -109,6 +109,9 @@ const MainPageHistoryOrder = () => {
 								<Image src={item?.image} alt={item.name} className={styles.itemImage} width={80} height={80} />
 
 								<div className={styles.itemDetails}>
+									<div className={styles.itemId}>
+										Mã đơn hàng: <span>{item._id}</span>
+									</div>
 									<div className={styles.itemName}>{item.name}</div>
 									<div>Đơn giá: {formatCurrency(item.price)}</div>
 									<div>Số lượng: {String(item.quantity).padStart(2, '0')}</div>

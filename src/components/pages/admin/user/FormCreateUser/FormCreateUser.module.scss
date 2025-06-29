@@ -1,0 +1,126 @@
+.container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.formCard {
+	width: 100%;
+}
+
+.formTitle {
+	font-size: 24px;
+	line-height: 32px;
+	font-weight: 700;
+	text-align: center;
+	color: #1f2937;
+	margin-bottom: 24px;
+
+	@media (min-width: 640px) {
+		font-size: 30px;
+		line-height: 36px;
+	}
+}
+
+.messageBox {
+	padding: 12px;
+	border-radius: 6px;
+	font-size: 14px;
+	margin-bottom: 16px;
+}
+
+.errorMessage {
+	background-color: #fee2e2;
+	color: #b91c1c;
+}
+
+.successMessage {
+	background-color: #d1fae5;
+	color: #065f46;
+}
+
+.formGrid {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.label {
+	display: block;
+	font-size: 14px;
+	font-weight: 500;
+	color: #374151;
+	margin-bottom: 4px;
+}
+
+.inputField {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 6px;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	outline: none;
+
+	&:focus {
+		border-color: #3b82f6;
+		box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+	}
+}
+
+.checkboxContainer {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.checkboxLabel {
+	display: flex;
+	align-items: center;
+	font-size: 14px;
+	font-weight: 500;
+	color: #374151;
+	cursor: pointer;
+}
+
+.formButtons {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+
+	.btnCancel {
+		background: #e0e0e0;
+		color: #000;
+	}
+
+	.btnSubmit {
+		background: #007bff;
+	}
+}
+
+.checkboxInput {
+	height: 16px;
+	width: 16px;
+	color: #3b82f6;
+	border-color: #d1d5db;
+	border-radius: 4px;
+	outline: none;
+	margin-right: 8px;
+
+	&:focus {
+		border-color: #3b82f6;
+		box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+	}
+}
+
+.submitButtonActive {
+	background-color: #2563eb;
+	&:hover {
+		background-color: #1d4ed8;
+	}
+}
+
+.submitButtonLoading {
+	background-color: #60a5fa;
+	cursor: not-allowed;
+	opacity: 0.8;
+}

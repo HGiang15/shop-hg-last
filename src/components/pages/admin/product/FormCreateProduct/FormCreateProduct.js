@@ -82,6 +82,13 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		const formUpload = new FormData();
 
 		try {
+			// --- BẮT ĐẦU KIỂM TRA TẠI ĐÂY ---
+			console.log('Kiểu dữ liệu của form.category:', typeof form.category);
+			console.log('Giá trị của form.category:', form.category);
+
+			console.log('Kiểu dữ liệu của form.colors:', typeof form.colors);
+			console.log('Giá trị của form.colors:', form.colors);
+
 			// ===== VALIDATION =====
 			if (!form.name.trim()) {
 				toast.error('Tên sản phẩm không được để trống!', {position: 'top-right'});
@@ -121,12 +128,13 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					quantity: sizeQuantities[size.name] || 0,
 				}))
 				.filter((item) => item.quantity > 0);
-
+			formCreate.append('quantityBySize', JSON.stringify(quantityBySize));
 			formCreate.append('code', form.code);
 			formCreate.append('name', form.name);
-			formCreate.append('quantityBySize', JSON.stringify(quantityBySize));
 
+			// Giá trị của form.category: {"categoryId":"685a18ca0506867599f17b4d","name":"Áo CLB"} parse cái này ra
 			const category = JSON.parse(form.category || '{}');
+			// sau khi parse { categoryId: "685a18ca0506867599f17b4d", name: "Áo CLB" }
 			formCreate.append(
 				'category',
 				JSON.stringify({
