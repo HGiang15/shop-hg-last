@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import {Fragment} from 'react';
 import LayoutAdmin from '@/components/layouts/LayoutAdmin/LayoutAdmin';
-import {withUserRole} from '@/utils/withAuth';
 import MainPageVoucher from '@/components/pages/admin/voucher/MainPageVoucher/MainPageVoucher';
 
 export default function Page() {
@@ -23,5 +22,3 @@ export default function Page() {
 Page.getLayout = function (page) {
 	return <LayoutAdmin title='Quản lý voucher'>{page}</LayoutAdmin>;
 };
-
-// export const getServerSideProps = withUserRole([0]);

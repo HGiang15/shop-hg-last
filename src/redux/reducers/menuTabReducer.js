@@ -1,7 +1,7 @@
 import {ROUTES, SET_ACTIVE_MENU} from '@/constants/config';
 
 const initialState = {
-	activeMenu: ROUTES.AdminProduct, // Giá trị mặc định khi ứng dụng khởi chạy
+	activeMenu: ROUTES.AdminProduct,
 };
 
 const menuReducer = (state = initialState, action) => {

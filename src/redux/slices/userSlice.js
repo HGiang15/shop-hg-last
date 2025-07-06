@@ -1,4 +1,3 @@
-// redux/slices/userSlice.js
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
@@ -21,5 +20,4 @@ const userSlice = createSlice({
 export const {setUserInfo, clearUserInfo} = userSlice.actions;
 export default userSlice.reducer;
 
-// Lưu thông tin chi tiết của người dùng sau khi đăng nhập như id, name, email, v.v.
-// Tách riêng ra khỏi authSlice để rõ ràng và dễ quản lý.
+// Lưu thông tin chi tiết của người dùng sau khi đăng nhập

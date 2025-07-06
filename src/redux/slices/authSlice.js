@@ -23,5 +23,5 @@ const authSlice = createSlice({
 export const {loginSuccess, logout} = authSlice.actions;
 export default authSlice.reducer;
 
-// Dùng để quản lý trạng thái đăng nhập (authentication).
+// quản lý trạng thái đăng nhập
 // Lưu isLogin, token để biết người dùng có đang đăng nhập không

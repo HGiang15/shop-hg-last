@@ -70,10 +70,8 @@ const SidebarProfile = ({isOpen, onClose}) => {
 		}
 	}, [isOpen, isClient, onClose]);
 
-	// Hiển thị avatar: nếu có URL thì dùng URL, không thì dùng ảnh mặc định
 	const avatarSrc = user.avatar ? user.avatar : images.defaultAvatar;
 
-	// Hiển thị giới tính tiếng Việt (nếu backend trả về English)
 	const genderDisplay =
 		{
 			Male: 'Nam',
@@ -81,7 +79,6 @@ const SidebarProfile = ({isOpen, onClose}) => {
 			Other: 'Khác',
 		}[user.gender] || '';
 
-	// Định dạng ngày sinh dạng dd/mm/yyyy
 	const formatDate = (dateStr) => {
 		if (!dateStr) return '';
 		const d = new Date(dateStr);
@@ -106,7 +103,6 @@ const SidebarProfile = ({isOpen, onClose}) => {
 			avatar: '',
 		});
 
-		// Đồng bộ các tab (nếu dùng nhiều tab)
 		window.dispatchEvent(new Event('storage'));
 
 		setTimeout(() => {

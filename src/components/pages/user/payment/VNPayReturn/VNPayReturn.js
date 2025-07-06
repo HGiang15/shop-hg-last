@@ -6,24 +6,21 @@ import {getOrderById} from '@/services/orderService';
 
 const VNPayReturnPage = () => {
 	const router = useRouter();
-	// Lấy cả orderId từ URL
+	// Lấy orderId từ url
 	const {vnp_ResponseCode, orderId} = router.query;
 
 	const [status, setStatus] = useState(null);
-	const [order, setOrder] = useState(null); // State để lưu thông tin đơn hàng
-	const [loading, setLoading] = useState(true); // State để hiển thị loading
+	const [order, setOrder] = useState(null);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		// Đảm bảo router đã sẵn sàng và có orderId
 		if (router.isReady && orderId) {
-			// Cập nhật trạng thái thành công/thất bại
 			if (vnp_ResponseCode === '00') {
 				setStatus('success');
 			} else {
 				setStatus('fail');
 			}
 
-			// Gọi API để lấy chi tiết đơn hàng
 			const fetchOrderDetails = async () => {
 				try {
 					setLoading(true);
@@ -38,7 +35,7 @@ const VNPayReturnPage = () => {
 
 			fetchOrderDetails();
 		}
-	}, [router.isReady, orderId, vnp_ResponseCode]); // Thêm dependencies
+	}, [router.isReady, orderId, vnp_ResponseCode]);
 
 	const handleGoToOrders = () => {
 		router.push(ROUTES.HistoryOrder);
@@ -49,11 +46,9 @@ const VNPayReturnPage = () => {
 			<div className={styles.card}>
 				<h1>Kết quả thanh toán</h1>
 
-				{/* Hiển thị thông báo chung */}
 				{status === 'success' && <p className={styles.success}>Thanh toán thành công. Cảm ơn bạn!</p>}
 				{status === 'fail' && <p className={styles.fail}>Thanh toán thất bại. Tuy nhiên, đơn hàng của bạn đã được tạo.</p>}
 
-				{/* Hiển thị chi tiết đơn hàng */}
 				{loading ? (
 					<p>Đang tải thông tin đơn hàng...</p>
 				) : order ? (

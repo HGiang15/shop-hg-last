@@ -1,15 +1,13 @@
 import axiosClient from '.';
 
-// Lấy token từ localStorage một cách an toàn
 const getToken = () => {
 	if (typeof window !== 'undefined') {
-		// Sử dụng 'token' để nhất quán với voucherService.js
 		return localStorage.getItem('token');
 	}
 	return null;
 };
 
-// [User] Gửi tin nhắn liên hệ
+// user Gửi tin nhắn liên hệ
 export const createContactMessage = async (contactData) => {
 	try {
 		const response = await axiosClient.post(`/api/contact`, contactData);
@@ -19,9 +17,7 @@ export const createContactMessage = async (contactData) => {
 	}
 };
 
-// --- CÁC HÀM DÀNH CHO ADMIN ---
-
-// [Admin] Lấy tất cả tin nhắn
+// admin Lấy tất cả tin nhắn
 export const getAllMessages = async (page = 1, limit = 10, search = '', sort = 'newest', status = '') => {
 	try {
 		const token = localStorage.getItem('token');
@@ -37,7 +33,7 @@ export const getAllMessages = async (page = 1, limit = 10, search = '', sort = '
 	}
 };
 
-// [Admin] Lấy chi tiết một tin nhắn
+// admin Lấy chi tiết một tin nhắn
 export const getMessageById = async (id) => {
 	try {
 		const token = getToken();
@@ -52,7 +48,7 @@ export const getMessageById = async (id) => {
 	}
 };
 
-// [Admin] Cập nhật trạng thái
+// admin Cập nhật trạng thái
 export const updateMessageStatus = async (id, status) => {
 	try {
 		const token = getToken();
@@ -71,7 +67,7 @@ export const updateMessageStatus = async (id, status) => {
 	}
 };
 
-// [Admin] Xóa một tin nhắn
+// admin Xóa một tin nhắn
 export const deleteMessage = async (id) => {
 	try {
 		const token = getToken();
@@ -86,9 +82,8 @@ export const deleteMessage = async (id) => {
 	}
 };
 
-// [Admin]: Gửi email trả lời
+// admin: Gửi email trả lời
 export const replyToMessage = async (id, replyData) => {
-	// Đổi tên tham số cho rõ ràng
 	try {
 		const token = getToken();
 		const response = await axiosClient.post(`/api/contact/${id}/reply`, replyData, {

@@ -18,7 +18,6 @@ const MainDashboard = () => {
 		const fetchAllData = async () => {
 			setLoading(true);
 			try {
-				// Lấy thống kê chung
 				const data = await getDashboardStats();
 				setOrderStats([
 					{title: 'Tổng số đơn hàng', value: data.orderStats.totalOrders, icon: '\u{1F4C8}'},

@@ -75,7 +75,6 @@ const MainLogin = () => {
 			reduxDispatch(loginSuccess(token));
 			reduxDispatch(setUserInfo({id, name, email, avatar, role}));
 
-			// Lưu remember me nếu được chọn
 			if (rememberMe) {
 				const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
 				localStorage.setItem('email', formData.email);
@@ -85,7 +84,7 @@ const MainLogin = () => {
 				localStorage.removeItem('remember_expiration');
 			}
 
-			// // Merge cart nếu có
+			// // Merge cart
 			// const localCart = JSON.parse(localStorage.getItem('cart')) || [];
 			// const validCart = localCart.filter((item) => item.productId?._id && item.sizeId?._id && item.quantity > 0);
 			// if (validCart.length > 0) {
@@ -100,11 +99,10 @@ const MainLogin = () => {
 
 			// router.push(role === 0 ? ROUTES.AdminDashboard : ROUTES.Home);
 
-			// NEW
-			// 1. GỌI API MERGE
+			// API MERGE
 			const mergeResponse = await mergeCart();
 
-			// 2. YÊU CẦU CART CONTEXT ĐỒNG BỘ LẠI TỪ SERVER
+			// YÊU CẦU CART CONTEXT ĐỒNG BỘ LẠI TỪ SERVER
 			await syncCartAfterLogin();
 
 			toast.success('Đăng nhập thành công!');

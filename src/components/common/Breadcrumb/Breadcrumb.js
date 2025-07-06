@@ -5,7 +5,6 @@ import styles from './Breadcrumb.module.scss';
 import Link from 'next/link';
 
 function Breadcrumb({titles, listHref}) {
-	// Kiểm tra nếu titles hoặc listHref là undefined hoặc không phải là mảng
 	if (!Array.isArray(titles) || !Array.isArray(listHref)) {
 		return <div>Invalid breadcrumb data</div>;
 	}

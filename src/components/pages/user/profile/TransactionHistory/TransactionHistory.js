@@ -136,7 +136,6 @@ const TransactionHistory = () => {
 								<strong>Thành tiền:</strong> {order.finalAmount.toLocaleString()}đ
 							</p>
 
-							{/* Hiển thị sản phẩm */}
 							<div className={styles.items}>
 								<strong>Sản phẩm:</strong>
 								<ul>

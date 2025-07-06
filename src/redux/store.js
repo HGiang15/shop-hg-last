@@ -1,13 +1,12 @@
-// redux/store.js
 import {configureStore} from '@reduxjs/toolkit';
 import rootReducer from './reducers';
 import {persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER} from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // dùng localStorage
+import storage from 'redux-persist/lib/storage';
 
 const persistConfig = {
 	key: 'root',
 	storage,
-	whitelist: ['auth', 'user'], // chỉ lưu state của auth và user
+	whitelist: ['auth', 'user'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

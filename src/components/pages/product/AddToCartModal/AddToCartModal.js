@@ -21,7 +21,7 @@ const AddToCartModal = ({product, show, onClose}) => {
 		}
 	}, [show, product]);
 
-	//  TÍNH TOÁN SỐ LƯỢNG TỒN KHO CỦA SIZE ĐANG CHỌN
+	// quantity tồn kho của size đang chọn
 	const availableStock = useMemo(() => {
 		if (!product || !sizeId) return 0;
 		const sizeInfo = product.quantityBySize.find((s) => s.sizeId === sizeId);
@@ -36,7 +36,6 @@ const AddToCartModal = ({product, show, onClose}) => {
 			return;
 		}
 
-		// Kiểm tra client-side lần cuối
 		if (quantity > availableStock) {
 			return toast.error('Số lượng bạn chọn vượt quá số lượng tồn kho.');
 		}

@@ -162,14 +162,7 @@ export const getRevenueByYear = async () => {
 };
 
 // Lịch sử giao dịch của người dùng
-export const getTransactionHistory = async ({
-	page = 1,
-	limit = 1000,
-	status = '',
-	isPaid = '',
-	paymentMethod = '',
-	sort = 'desc', // mặc định: mới nhất
-}) => {
+export const getTransactionHistory = async ({page = 1, limit = 1000, status = '', isPaid = '', paymentMethod = '', sort = 'desc'}) => {
 	try {
 		const token = localStorage.getItem('token');
 		const response = await axiosClient.get('/api/order/transaction-history', {

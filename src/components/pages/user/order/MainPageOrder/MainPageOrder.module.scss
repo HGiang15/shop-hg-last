@@ -209,13 +209,12 @@
 		border-top: 1px solid #eee;
 		padding-top: 10px;
 
-		max-height: 250px; // Giới hạn chiều cao
-		overflow-y: auto; // Hiện thanh cuộn dọc
+		max-height: 250px;
+		overflow-y: auto;
 
-		scrollbar-width: thin; // Firefox
+		scrollbar-width: thin;
 		scrollbar-color: #ccc transparent;
 
-		/* Chrome, Safari */
 		&::-webkit-scrollbar {
 			width: 6px;
 		}

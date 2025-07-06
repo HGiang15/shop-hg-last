@@ -1,4 +1,3 @@
-// redux/slices/siteSlice.js
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
@@ -18,4 +17,4 @@ const siteSlice = createSlice({
 export const {setLoading} = siteSlice.actions;
 export default siteSlice.reducer;
 
-// Quản lý trạng thái toàn cục giao diện, ví dụ như trạng thái loading khi gửi form, fetch dữ liệu, v.v.
+// Quản lý trạng thái toàn cục giao diện, vd như trạng thái loading khi gửi form, fetch dữ liệu

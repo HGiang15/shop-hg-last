@@ -63,7 +63,6 @@ const MainVerify = () => {
 		try {
 			const response = await verifyOTP(userId, formData.otp);
 			toast.success(response.message, {
-				// Hiển thị toast message thành công
 				position: 'top-right',
 				autoClose: 3000,
 				hideProgressBar: false,
@@ -78,7 +77,6 @@ const MainVerify = () => {
 		} catch (error) {
 			setServerError(error);
 			toast.error(error, {
-				// Hiển thị toast message lỗi
 				position: 'top-right',
 				autoClose: 3000,
 				hideProgressBar: false,
@@ -150,7 +148,7 @@ const MainVerify = () => {
 					</Link>
 
 					<h2 className={styles.verifyTitle}>Xác minh email</h2>
-					<p className={styles.verifyLabel}>Bạn đã gửi mã đến Email gianghoang150503@gmail.com</p>
+					{/* <p className={styles.verifyLabel}>Bạn đã gửi mã đến Email gianghoang150503@gmail.com</p> */}
 
 					<form className={styles.formGroup} onSubmit={handleVerify}>
 						{/* OTP */}

@@ -27,7 +27,6 @@ import Head from 'next/head';
 import {Fragment} from 'react';
 import LayoutAdmin from '@/components/layouts/LayoutAdmin/LayoutAdmin';
 import MainDashboard from '@/components/pages/admin/dashboard/MainDashboard';
-import {withUserRole} from '@/utils/withAuth';
 
 export default function Page({user}) {
 	return (
@@ -48,5 +47,3 @@ export default function Page({user}) {
 Page.getLayout = function (page) {
 	return <LayoutAdmin title='Báo cáo thống kê'>{page}</LayoutAdmin>;
 };
-
-// export const getServerSideProps = withUserRole([0]);

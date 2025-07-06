@@ -1,13 +1,9 @@
 import React, {useState} from 'react';
-// Đã điều chỉnh đường dẫn để khắc phục lỗi không tìm thấy module.
-// Vui lòng kiểm tra lại cấu trúc thư mục của bạn và điều chỉnh đường dẫn này nếu cần.
-import styles from './FormCreateUser.module.scss'; // Import CSS module
+import styles from './FormCreateUser.module.scss';
 import {createUserByAdmin} from '@/services/authService';
 import Button from '@/components/common/Button/Button';
 
 const FormCreateUser = ({onCancel, onSuccess}) => {
-	// Add onCancel and onSuccess props
-	// State để lưu trữ giá trị nhập liệu của form
 	const [formData, setFormData] = useState({
 		name: '',
 		email: '',
@@ -20,12 +16,10 @@ const FormCreateUser = ({onCancel, onSuccess}) => {
 		status: 1,
 	});
 
-	// State cho trạng thái tải và thông báo
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState('');
 	const [isError, setIsError] = useState(false);
 
-	// Xử lý thay đổi đầu vào
 	const handleChange = (e) => {
 		const {name, value, type, checked} = e.target;
 		setFormData((prevData) => ({
@@ -34,7 +28,6 @@ const FormCreateUser = ({onCancel, onSuccess}) => {
 		}));
 	};
 
-	// Xác thực phía client cơ bản
 	const validateForm = () => {
 		const {name, email, password, phone, dateOfBirth, gender, role} = formData;
 
@@ -74,7 +67,6 @@ const FormCreateUser = ({onCancel, onSuccess}) => {
 			return false;
 		}
 
-		// Xác thực vai trò phải là 0 hoặc 1
 		if (Number(role) !== 0 && Number(role) !== 1) {
 			setMessage('Vai trò không hợp lệ. Chỉ chấp nhận 0 (Quản trị) hoặc 1 (Người dùng).');
 			setIsError(true);
@@ -86,10 +78,9 @@ const FormCreateUser = ({onCancel, onSuccess}) => {
 		return true;
 	};
 
-	// Xử lý gửi form
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setMessage(''); // Xóa các thông báo trước đó
+		setMessage('');
 		setIsError(false);
 
 		if (!validateForm()) {
@@ -98,24 +89,21 @@ const FormCreateUser = ({onCancel, onSuccess}) => {
 
 		setLoading(true);
 		try {
-			// Chuyển đổi vai trò sang kiểu số
 			const dataToSend = {
 				...formData,
-				role: Number(formData.role), // Đảm bảo vai trò là số
-				verified: Boolean(formData.verified), // Đảm bảo verified là boolean
-				status: Number(formData.status), // Đảm bảo trạng thái là số (0 hoặc 1)
+				role: Number(formData.role),
+				verified: Boolean(formData.verified),
+				status: Number(formData.status),
 			};
 
 			const response = await createUserByAdmin(dataToSend);
 			setMessage(response.message || 'Người dùng đã được tạo thành công!');
 			setIsError(false);
 
-			// Trigger onSuccess callback to close modal and refresh list in parent
 			if (onSuccess) {
 				onSuccess();
 			}
 
-			// Reset form
 			setFormData({
 				name: '',
 				email: '',

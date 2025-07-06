@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import {Fragment} from 'react';
 import LayoutAdmin from '@/components/layouts/LayoutAdmin/LayoutAdmin';
-import {withUserRole} from '@/utils/withAuth';
 import MainPageProfileAdmin from '@/components/pages/admin/profile/MainPageProfileAdmin';
 
 export default function Page() {
@@ -23,5 +22,3 @@ export default function Page() {
 Page.getLayout = function (page) {
 	return <LayoutAdmin title='Thông tin tài khoản'>{page}</LayoutAdmin>;
 };
-
-// export const getServerSideProps = withUserRole([0]);

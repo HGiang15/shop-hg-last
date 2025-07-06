@@ -45,7 +45,6 @@ const MainPageUser = () => {
 	const [filterStatus, setFilterStatus] = useState('');
 	const debounce = useDebounce(searchTerm, 600);
 
-	// Fetch Users
 	const fetchUsers = async (page = currentPage, customLimit = limit) => {
 		setLoading(true);
 		try {
@@ -58,20 +57,19 @@ const MainPageUser = () => {
 		} catch (error) {
 			toast.error('Lỗi khi lấy danh sách người dùng');
 		} finally {
-			setLoading(false); // End loading
+			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		fetchUsers(1, limit); // Reset về trang 1 khi filter đổi
+		fetchUsers(1, limit);
 	}, [debounce, sortOption, filterRole, filterStatus, limit]);
 
-	// Handle Pagination
 	const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
 		fetchUsers(pageNumber, limit);
 	};
-	// Handle Lock/Unlock
+
 	const handleLockUnlockClick = (user) => {
 		setSelectedUser(user);
 		setIsConfirmLockUnlockOpen(true);
@@ -99,7 +97,6 @@ const MainPageUser = () => {
 		}
 	};
 
-	// Handle Change Role
 	const handleChangeRoleClick = (user) => {
 		setSelectedRoleUser(user);
 		setChangeRoleModalOpen(true);
@@ -132,7 +129,7 @@ const MainPageUser = () => {
 	};
 
 	// Handle Delete
-	const handleDeleteClick = (user) => {
+	const handleDelete = (user) => {
 		setUserToDelete(user);
 		setIsDeleteModalOpen(true);
 	};
@@ -152,7 +149,6 @@ const MainPageUser = () => {
 		}
 	};
 
-	// Utilities
 	const getRoleLabel = (role) => {
 		if (role === 0 || role === 'Quản trị') return 'Quản trị viên';
 		if (role === 1 || role === 'Người dùng') return 'Người dùng';
@@ -164,8 +160,7 @@ const MainPageUser = () => {
 		setShowUpdateForm(true);
 	};
 
-	// Handle "Thêm mới người dùng" button click
-	const handleCreateNewUserClick = () => {
+	const handleCreateNewUser = () => {
 		setShowCreateForm(true);
 	};
 
@@ -214,7 +209,7 @@ const MainPageUser = () => {
 							]}
 						/>
 
-						<Button className={styles.addButton} onClick={handleCreateNewUserClick}>
+						<Button className={styles.addButton} onClick={handleCreateNewUser}>
 							Thêm mới người dùng
 						</Button>
 					</div>
@@ -278,7 +273,7 @@ const MainPageUser = () => {
 											iconFilter='invert(66%) sepia(35%) saturate(5412%) hue-rotate(338deg) brightness(98%) contrast(90%)'
 											backgroundColor='#ffe4e4'
 											tooltip='Xóa người dùng'
-											onClick={() => handleDeleteClick(user)}
+											onClick={() => handleDelete(user)}
 										/>
 									</>
 								)}
@@ -331,10 +326,10 @@ const MainPageUser = () => {
 					{showCreateForm && (
 						<ModalWrapper onClose={() => setShowCreateForm(false)}>
 							<FormCreateUser
-								onCancel={() => setShowCreateForm(false)} // Pass a function to close the modal
+								onCancel={() => setShowCreateForm(false)}
 								onSuccess={() => {
-									setShowCreateForm(false); // Close modal on success
-									fetchUsers(); // Refresh user list after creation
+									setShowCreateForm(false);
+									fetchUsers();
 									toast.success('Tạo người dùng mới thành công!');
 								}}
 							/>

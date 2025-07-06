@@ -1,4 +1,3 @@
-// components/protected/RequireAuth.js
 import {useEffect} from 'react';
 import {useRouter} from 'next/router';
 import {ROUTES} from '@/constants/config';

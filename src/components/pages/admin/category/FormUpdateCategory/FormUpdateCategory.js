@@ -86,7 +86,7 @@ const FormUpdateCategory = ({categoryId, onCancel, onSuccess}) => {
 			setLoading(true);
 			const formUpdate = new FormData();
 
-			// Nếu người dùng chọn ảnh mới thì upload
+			// Nếu user chọn ảnh mới thì upload
 			if (formData.image) {
 				const formUpload = new FormData();
 				formUpload.append('file', formData.image);

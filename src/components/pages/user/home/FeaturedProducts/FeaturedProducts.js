@@ -48,7 +48,7 @@ const FeaturedProducts = () => {
 									width={300}
 									height={400}
 									className={styles.productImage}
-									onError={() => console.error('Lỗi tải ảnh')} // Thêm xử lý lỗi tải ảnh
+									onError={() => console.error('Lỗi tải ảnh')}
 								/>
 							) : (
 								<div className={styles.placeholderImage}>Không có ảnh</div>

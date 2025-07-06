@@ -18,7 +18,6 @@ const MyReview = () => {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [reviewToDelete, setReviewToDelete] = useState(null);
 
-	// Hiển thị thống tin đánh giá của người dùng
 	const fetchReviews = async (currentPage = 1) => {
 		try {
 			const limit = 2;

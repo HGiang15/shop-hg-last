@@ -26,7 +26,6 @@ const MainOrderCancel = () => {
 	const [selectedOrder, setSelectedOrder] = useState(null);
 	const [selectedOrderName, setSelectedOrderName] = useState('');
 
-	// --- Thêm states cho FilterAdmin ---
 	const [searchTerm, setSearchTerm] = useState('');
 	const [sortOption, setSortOption] = useState('newest');
 	const [startDate, setStartDate] = useState('');

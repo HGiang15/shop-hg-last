@@ -18,12 +18,10 @@ const MainPageAddress = () => {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [addressToDelete, setAddressToDelete] = useState(null);
 
-	// callback cập nhật địa chỉ trong state
 	const handleUpdateAddressInList = (updatedAddress) => {
 		setAddresses((prev) => prev.map((addr) => (addr._id === updatedAddress._id ? updatedAddress : addr)));
 	};
 
-	// Lấy danh sách địa chỉ từ server
 	const fetchAddresses = async () => {
 		try {
 			const res = await getUserAddresses();

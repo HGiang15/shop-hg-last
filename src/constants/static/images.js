@@ -15,7 +15,7 @@ import bgLogin from '../../../public/static/images/auth/bgLogin.jpg';
 import user from '../../../public/static/images/auth/user.svg';
 import noImg from '../../../public/static/images/no_img.png';
 import logoSmall from '../../../public/static/images/logo_small.svg';
-import logoFooter from '../../../public/static/images/logo.png';
+import logoHeader from '../../../public/static/images/logo_header.png';
 import defaultAvatar from '../../../public/static/images/auth/user.svg';
 import defaultBg from '../../../public/static/images/defaultBg.png';
 import boxEmpty from '../../../public/static/images/box_empty.svg';
@@ -38,9 +38,9 @@ const images = {
 	user,
 	noImg,
 	logoSmall,
+	logoHeader,
 	defaultAvatar,
 	defaultBg,
-	logoFooter,
 	boxEmpty,
 };
 

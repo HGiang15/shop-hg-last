@@ -32,7 +32,6 @@ const MainOrderPendingConfirm = ({setActiveMenu}) => {
 	const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 	const [selectedCancelOrder, setSelectedCancelOrder] = useState(null);
 
-	// filtering and searching
 	const [searchTerm, setSearchTerm] = useState('');
 	const [sortOption, setSortOption] = useState('newest');
 	const [startDate, setStartDate] = useState('');

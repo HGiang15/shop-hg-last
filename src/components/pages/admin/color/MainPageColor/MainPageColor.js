@@ -56,8 +56,8 @@ const MainPageColor = () => {
 	};
 
 	const handleLimitChange = (newLimit) => {
-		setLimit(newLimit); // Update limit
-		setCurrentPage(1); // Reset to page 1 when limit changes
+		setLimit(newLimit);
+		setCurrentPage(1);
 	};
 
 	const handleEditColor = (id) => {

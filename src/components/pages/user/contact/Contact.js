@@ -43,11 +43,10 @@ const Contact = () => {
 
 		const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file));
 		setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
-		e.target.value = null; // Reset input để có thể chọn lại file giống nhau
+		e.target.value = null;
 	};
 
 	const removeFile = (indexToRemove) => {
-		// Thu hồi object URL để tránh rò rỉ bộ nhớ
 		URL.revokeObjectURL(previews[indexToRemove]);
 		setFiles(files.filter((_, index) => index !== indexToRemove));
 		setPreviews(previews.filter((_, index) => index !== indexToRemove));
@@ -58,7 +57,6 @@ const Contact = () => {
 		setIsLoading(true);
 		try {
 			let imageUrls = [];
-			// Bước 1: Upload ảnh nếu có
 			if (files.length > 0) {
 				const uploadFormData = new FormData();
 				files.forEach((file) => {
@@ -68,12 +66,10 @@ const Contact = () => {
 				imageUrls = uploadResponse.data;
 			}
 
-			// Bước 2: Gửi form liên hệ với URL ảnh đã upload
 			const finalFormData = {...formData, attachments: imageUrls};
 			const response = await createContactMessage(finalFormData);
 
 			toast.success(response.message || 'Gửi tin nhắn thành công!');
-			// Reset form
 			setFormData({
 				name: user ? user.name : '',
 				email: user ? user.email : '',
@@ -201,7 +197,7 @@ const Contact = () => {
 							<textarea id='message' name='message' rows='6' value={formData.message} onChange={handleChange}></textarea>
 						</div>
 
-						{/* Khối Upload Ảnh */}
+						{/* Upload */}
 						<div className={styles.formGroup}>
 							<label>Đính kèm ảnh (tối đa 6 ảnh)</label>
 							<div className={styles.uploadContainer}>

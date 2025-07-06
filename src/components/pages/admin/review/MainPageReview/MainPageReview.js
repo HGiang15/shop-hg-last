@@ -233,7 +233,7 @@ const MainPageReview = () => {
 							await deleteReview(selectedReviewId);
 							toast.success('Xóa đánh giá thành công');
 						} else if (deleteMode === 'multiple') {
-							await deleteMultipleReviews(selectedReviews); // cần tạo service này
+							await deleteMultipleReviews(selectedReviews);
 							toast.success('Xóa nhiều đánh giá thành công');
 						}
 						setIsModalOpen(false);

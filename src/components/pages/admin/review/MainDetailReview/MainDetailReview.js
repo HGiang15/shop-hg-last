@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {getReviewById, updateReview} from '@/services/reviewService';
-import {getProductById} from '@/services/productService'; // API lấy tên sản phẩm
+import {getProductById} from '@/services/productService';
 import styles from './MainDetailReview.module.scss';
 import Button from '@/components/common/Button/Button';
 import moment from 'moment';

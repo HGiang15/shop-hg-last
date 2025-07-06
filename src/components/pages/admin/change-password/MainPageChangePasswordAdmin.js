@@ -40,7 +40,7 @@ const MainPageChangePasswordAdmin = () => {
 
 		try {
 			const res = await changePassword(formData.oldPassword, formData.newPassword);
-			router.push(ROUTES.AdminProfile || ROUTES.Profile); // fallback nếu không có AdminProfile
+			router.push(ROUTES.AdminProfile || ROUTES.Profile);
 			toast.success(res.message || 'Đổi mật khẩu thành công!');
 		} catch (error) {
 			toast.error(error.message || 'Đổi mật khẩu thất bại!');

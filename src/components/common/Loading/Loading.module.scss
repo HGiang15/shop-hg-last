@@ -16,7 +16,6 @@
 	animation: spin 1s linear infinite;
 }
 
-// Spinner toàn màn hình
 .loadingOverlay {
 	position: fixed;
 	top: 0;
@@ -30,7 +29,6 @@
 	z-index: 999;
 }
 
-// Spinner nhỏ gọn (inline)
 .inline {
 	display: inline-flex;
 	align-items: center;

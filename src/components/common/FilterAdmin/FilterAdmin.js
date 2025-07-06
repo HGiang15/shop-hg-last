@@ -13,7 +13,6 @@ const FilterAdmin = ({
 	selectedProducts = [],
 	onDeleteMany = null,
 	isAdmin = false,
-	// --- Props for Date Filtering ---
 	startDate,
 	setStartDate,
 	endDate,

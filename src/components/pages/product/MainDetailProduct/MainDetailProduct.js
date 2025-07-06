@@ -54,7 +54,7 @@ const ProductDetailPage = () => {
 					if (data.category && data.category.length > 0) {
 						setCategoryName(data.category[0].name);
 					}
-					// Tự động chọn size đầu tiên còn hàng
+					// Tự động chọn size đầu tiên
 					const firstAvailableSize = data.quantityBySize?.find((s) => s.quantity > 0);
 					if (firstAvailableSize) {
 						setSelectedSize(firstAvailableSize.sizeId);
@@ -119,7 +119,7 @@ const ProductDetailPage = () => {
 	// Thanh toán ngay
 	const handleBuyNow = () => {
 		const selectedSizeObject = product.quantityBySize?.find((s) => s.sizeId === selectedSize);
-		const selectedColorObject = product.colors?.[0]; // Giả sử chỉ lấy màu đầu tiên
+		const selectedColorObject = product.colors?.[0];
 		const token = localStorage.getItem('token');
 		if (!token) {
 			toast.warning('Vui lòng đăng nhập để thanh toán!');
@@ -133,13 +133,13 @@ const ProductDetailPage = () => {
 		}
 
 		const buyNowItem = {
-			// Dữ liệu cốt lõi cho API createOrder
+			// Dữ liệu API createOrder
 			productId: product._id,
 			sizeId: selectedSizeObject.sizeId,
 			quantity: quantity,
 			colorId: selectedColorObject?.colorId,
 
-			// Dữ liệu phụ để hiển thị trên trang thanh toán
+			// Dữ liệu hiển thị trang thanh toán
 			name: product.name,
 			image: product.images?.[0],
 			price: product.price,
@@ -156,7 +156,7 @@ const ProductDetailPage = () => {
 		}
 	};
 
-	// Thêm Review
+	// Add Review
 	const handleAddReview = async (e) => {
 		e.preventDefault();
 
@@ -202,7 +202,6 @@ const ProductDetailPage = () => {
 
 	const handleQuantityChange = (type) => {
 		if (type === 'increase') {
-			// Chỉ cho phép tăng nếu số lượng hiện tại nhỏ hơn tồn kho
 			if (quantity < availableStock) {
 				setQuantity((prev) => prev + 1);
 			}
@@ -431,7 +430,7 @@ const ProductDetailPage = () => {
 						<div key={review.id} className={styles.reviewItem}>
 							<div className={styles.reviewHeader}>
 								<Image
-									src={review.userId?.avatar || '/default-avatar.png'} // ← avatar
+									src={review.userId?.avatar || '/default-avatar.png'}
 									alt={review.userId?.name}
 									className={styles.reviewAvatar}
 									width={40}

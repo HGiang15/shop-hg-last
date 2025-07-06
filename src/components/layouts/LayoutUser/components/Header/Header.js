@@ -16,7 +16,7 @@ import useCart from '@/hooks/useCart';
 
 function Header() {
 	const router = useRouter();
-	// ✅ BƯỚC 2.1: LẤY HÀM `clearCart` TỪ CONTEXT, KHÔNG CẦN `dispatch`
+	// LẤY clearCart TỪ CONTEXT
 	const {cart, clearCart} = useCart();
 
 	const [menuOpen, setMenuOpen] = useState(false);
@@ -62,16 +62,14 @@ function Header() {
 		setShowDropdown(!showDropdown);
 	};
 
-	// ✅ BƯỚC 2.2: SỬA LẠI HÀM LOGOUT ĐỂ GỌI `clearCart`
 	const handleLogout = () => {
 		setLoading(true);
-		// Xóa thông tin xác thực
 		localStorage.removeItem('token');
 		localStorage.removeItem('name');
 		localStorage.removeItem('avatar');
 		localStorage.removeItem('persist:root');
 
-		// Gọi hàm clearCart từ context, rất sạch sẽ và rõ ràng
+		// Gọi clearCart từ context
 		clearCart();
 
 		setUser(null);

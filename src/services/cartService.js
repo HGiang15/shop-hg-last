@@ -55,24 +55,24 @@ export const updateCartItem = async (itemId, quantity) => {
 
 export const mergeCart = async (localItems) => {
 	try {
-		const token = localStorage.getItem('token'); // Lấy token người dùng từ localStorage
+		const token = localStorage.getItem('token');
 
-		if (!token) throw new Error('Không có thông tin người dùng'); // Nếu không có token, báo lỗi
+		if (!token) throw new Error('Không có thông tin người dùng');
 
 		const headers = {
-			Authorization: `Bearer ${token}`, // Thêm token vào header để xác thực
+			Authorization: `Bearer ${token}`,
 		};
 
 		const response = await axiosClient.post(
-			`/api/cart/mergeCart`, // Địa chỉ endpoint của BE
-			{localItems}, // Gửi giỏ hàng của khách từ frontend
+			`/api/cart/mergeCart`,
+			{localItems},
 			{
-				headers, // Đính kèm header Authorization
-				withCredentials: true, // Đảm bảo cookie được gửi
+				headers,
+				withCredentials: true,
 			}
 		);
 
-		return response.data; // Trả về dữ liệu từ BE
+		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Gộp giỏ hàng thất bại'};
 	}

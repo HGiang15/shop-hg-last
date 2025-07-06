@@ -34,8 +34,8 @@ const FormCreateColor = ({onCancel, onSuccess}) => {
 			setLoading(true);
 			await createColor(formData);
 			toast.success('Thêm màu thành công!');
-			onSuccess?.(); // Refresh data
-			onCancel?.(); // Close form
+			onSuccess?.();
+			onCancel?.();
 		} catch (err) {
 			setError(err.message || 'Thêm màu thất bại');
 		} finally {

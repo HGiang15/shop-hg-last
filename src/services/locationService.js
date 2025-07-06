@@ -1,6 +1,6 @@
 import axiosClient from '.';
 
-// Lấy danh sách tỉnh/thành
+// danh sách tỉnh/thành
 export const getProvinces = async () => {
 	try {
 		const response = await axiosClient.get(`/api/locations/provinces`);
@@ -10,7 +10,7 @@ export const getProvinces = async () => {
 	}
 };
 
-// Lấy danh sách quận/huyện theo provinceId
+// danh sách quận/huyện theo provinceId
 export const getDistricts = async (provinceId) => {
 	try {
 		const response = await axiosClient.get(`/api/locations/districts/${provinceId}`);
@@ -20,7 +20,7 @@ export const getDistricts = async (provinceId) => {
 	}
 };
 
-// Lấy danh sách phường/xã theo districtId
+// danh sách phường/xã theo districtId
 export const getWards = async (districtId) => {
 	try {
 		const response = await axiosClient.get(`/api/locations/wards/${districtId}`);

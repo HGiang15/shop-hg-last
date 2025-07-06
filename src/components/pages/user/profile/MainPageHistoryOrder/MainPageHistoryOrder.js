@@ -62,7 +62,6 @@ const MainPageHistoryOrder = () => {
 				}
 			}
 		}
-		// Đã bỏ logic xoá cho 'cancelled' và 'success'
 	};
 
 	const getButtonLabel = () => {
@@ -72,7 +71,7 @@ const MainPageHistoryOrder = () => {
 			case 'shipping':
 				return 'Đã nhận được hàng';
 			default:
-				return ''; // Không hiển thị nút cho các tab khác
+				return '';
 		}
 	};
 

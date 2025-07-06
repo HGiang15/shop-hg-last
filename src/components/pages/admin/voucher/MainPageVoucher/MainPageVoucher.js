@@ -264,7 +264,7 @@ const MainPageVoucher = () => {
 						onCancel={() => setShowForm(false)}
 						onSuccess={() => {
 							setShowForm(false);
-							fetchVouchers(); // Gọi lại fetch khi thêm thành công
+							fetchVouchers();
 						}}
 					/>
 				</ModalWrapper>

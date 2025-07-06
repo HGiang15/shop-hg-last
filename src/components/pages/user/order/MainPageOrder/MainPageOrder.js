@@ -164,7 +164,6 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 				}
 			}
 
-			// Gửi API
 			const response = await applyVoucher({
 				code: voucherCode,
 				orderTotal: totalAmount,
@@ -283,7 +282,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 							</p>
 						)}
 
-						{/* Danh sách mã giảm giá */}
+						{/* list mã giảm giá */}
 						<div className={styles.voucherList}>
 							<h4 className={styles.voucherListTitle}>Mã giảm giá hiện có:</h4>
 							{availableVouchers.map((v) => {
@@ -348,7 +347,6 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 							Đổi địa chỉ
 						</span>
 					</div>
-					{/* lấy thông tin địa chỉ theo addressId */}
 					<div className={styles.deliveryDetails}>
 						{selectedAddress ? (
 							<>

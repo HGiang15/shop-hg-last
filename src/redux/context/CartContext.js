@@ -26,6 +26,7 @@ function cartReducer(state, action) {
 }
 
 export function CartProvider({children}) {
+	// cart được lưu tạm vào state trong React Context (memory – mất khi reload trang nếu không refetch).
 	const [state, dispatch] = useReducer(cartReducer, initialState);
 
 	const fetchCart = useCallback(async () => {
@@ -39,32 +40,30 @@ export function CartProvider({children}) {
 		}
 	}, []);
 
-	// Tự động tải giỏ hàng khi component được mount lần đầu
 	useEffect(() => {
 		fetchCart();
 	}, [fetchCart]);
 
-	// Hàm thêm sản phẩm, gọi service và fetch lại giỏ hàng
+	// addToCart
 	const addItemToCart = async (itemData) => {
 		await addToCartService(itemData);
 		await fetchCart();
 	};
 
-	// Hàm cập nhật sản phẩm
+	// updateCartItem
 	const updateCartItem = async (itemId, quantity) => {
 		await updateItemService(itemId, quantity);
 		await fetchCart();
 	};
-	// Hàm xoá sản phẩm
+	// removeItemFromCart
 	const removeCartItem = async (itemId) => {
 		await removeItemService(itemId);
 		await fetchCart();
 	};
 
-	// Xóa NHIỀU sản phẩm khỏi giỏ
+	// Xóa nhiều
 	const removeItemsFromCart = async (itemIds) => {
 		if (!itemIds || itemIds.length === 0) return;
-		// Gọi API xóa cho từng item một cách song song
 		await Promise.all(itemIds.map((id) => removeItemService(id)));
 		await fetchCart();
 	};

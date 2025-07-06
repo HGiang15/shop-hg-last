@@ -9,7 +9,6 @@ function Table({users, headers, renderActions, roleStyle, statusStyle, renderChe
 					<tr>
 						{renderCheckbox && <th>{headers.find((h) => h.key === 'checkbox')?.label}</th>}
 
-						{/* Bỏ checkbox khỏi headers ở phần còn lại */}
 						{headers
 							.filter((header) => header.key !== 'checkbox')
 							.map((header) => (
@@ -25,7 +24,6 @@ function Table({users, headers, renderActions, roleStyle, statusStyle, renderChe
 						<tr key={`${user._id || user.id}-${index}`}>
 							{renderCheckbox && <td>{renderCheckbox(user)}</td>}
 
-							{/* Cũng bỏ checkbox ở đây */}
 							{headers
 								.filter((header) => header.key !== 'checkbox')
 								.map((header) => (

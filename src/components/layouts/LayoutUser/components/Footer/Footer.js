@@ -10,7 +10,7 @@ function Footer() {
 		<footer className={styles.footer}>
 			<div className={styles.container}>
 				<div className={styles.left}>
-					<Image className={styles.logo_home} src={images.logoFooter} alt='Logo' />
+					<Image className={styles.logo_home} src={images.logoHeader} alt='Logo' />
 					<p>
 						Chào mừng bạn đến với <strong>HG Shop</strong>, nơi hội tụ những xu hướng thời trang mới nhất! Chúng tôi cung cấp đa
 						dạng các sản phẩm quần áo phong cách, chất lượng cao, phù hợp cho mọi lứa tuổi và dịp đặc biệt.

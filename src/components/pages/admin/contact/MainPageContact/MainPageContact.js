@@ -19,23 +19,19 @@ import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
 
 const MainPageContact = () => {
-	// --- State cho dữ liệu và tải trang ---
 	const [messages, setMessages] = useState([]);
 	const [loading, setLoading] = useState(true);
 
-	// --- State cho Phân trang ---
 	const [page, setPage] = useState(1);
 	const [limit, setLimit] = useState(10);
 	const [totalPages, setTotalPages] = useState(1);
 	const [totalItems, setTotalItems] = useState(0);
 
-	// --- State cho Bộ lọc ---
 	const [searchTerm, setSearchTerm] = useState('');
-	const [sortOption, setSortOption] = useState('newest'); // State mới cho sắp xếp
-	const [statusFilter, setStatusFilter] = useState(''); // State mới cho lọc trạng thái
+	const [sortOption, setSortOption] = useState('newest');
+	const [statusFilter, setStatusFilter] = useState('');
 	const debounceSearch = useDebounce(searchTerm, 600);
 
-	// --- State cho Modal ---
 	const [selectedMessage, setSelectedMessage] = useState(null);
 	const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 	const [replyContent, setReplyContent] = useState('');
@@ -43,15 +39,12 @@ const MainPageContact = () => {
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [deleteId, setDeleteId] = useState(null);
 
-	//  State cho ảnh trả lời của Admin
 	const [replyFiles, setReplyFiles] = useState([]);
 	const [replyPreviews, setReplyPreviews] = useState([]);
 
-	// --- Hàm lấy dữ liệu ---
 	const fetchMessages = async () => {
 		setLoading(true);
 		try {
-			// Truyền đầy đủ các tham số lọc và sắp xếp
 			const data = await getAllMessages(page, limit, debounceSearch, sortOption, statusFilter);
 			setMessages(data.messages);
 			setTotalPages(data.totalPages);
@@ -64,12 +57,11 @@ const MainPageContact = () => {
 		}
 	};
 
-	// Thêm các dependencies mới để tự động gọi lại API khi thay đổi
+	// gọi lại API khi thay đổi
 	useEffect(() => {
 		fetchMessages();
 	}, [page, limit, debounceSearch, sortOption, statusFilter]);
 
-	// --- Các hàm xử lý sự kiện ---
 	const handleViewDetails = (message) => {
 		setSelectedMessage(message);
 		setReplyContent('');
@@ -81,7 +73,6 @@ const MainPageContact = () => {
 		}
 	};
 
-	//  Các hàm xử lý upload và xóa ảnh cho form trả lời của Admin
 	const handleReplyFileChange = (e) => {
 		const selectedFiles = Array.from(e.target.files);
 		if (replyFiles.length + selectedFiles.length > 6) {
@@ -109,7 +100,7 @@ const MainPageContact = () => {
 		try {
 			await deleteMessage(deleteId);
 			toast.success('Xóa tin nhắn thành công');
-			fetchMessages(); // Tải lại dữ liệu
+			fetchMessages();
 		} catch (error) {
 			toast.error(error.message || 'Xóa thất bại');
 		} finally {
@@ -127,7 +118,6 @@ const MainPageContact = () => {
 		setIsReplying(true);
 		try {
 			let replyImageUrls = [];
-			//  Upload ảnh nếu admin có chọn
 			if (replyFiles.length > 0) {
 				const uploadFormData = new FormData();
 				replyFiles.forEach((file) => uploadFormData.append('files', file));
@@ -135,7 +125,6 @@ const MainPageContact = () => {
 				replyImageUrls = uploadResponse.data;
 			}
 
-			//  Gửi nội dung và danh sách URL ảnh lên API
 			await replyToMessage(selectedMessage._id, {
 				replyMessage: replyContent,
 				attachments: replyImageUrls,
@@ -278,7 +267,6 @@ const MainPageContact = () => {
 					<hr />
 					<div className={styles.messageContent}>{selectedMessage.message}</div>
 
-					{/*  Hiển thị ảnh người dùng đã đính kèm */}
 					{selectedMessage.attachments && selectedMessage.attachments.length > 0 && (
 						<div className={styles.attachmentsSection}>
 							<strong>Tệp đính kèm của khách hàng:</strong>
@@ -301,7 +289,6 @@ const MainPageContact = () => {
 							value={replyContent}
 							onChange={(e) => setReplyContent(e.target.value)}
 						/>
-						{/*  Khối Upload ảnh của Admin */}
 						<div className={styles.formGroup}>
 							<label>Đính kèm ảnh trả lời (tối đa 6 ảnh)</label>
 							<div className={styles.uploadContainer}>

@@ -26,7 +26,6 @@ const MainOrderSuccess = () => {
 	const [selectedOrderId, setSelectedOrderId] = useState(null);
 	const [selectedOrderCode, setSelectedOrderCode] = useState('');
 
-	// --- Thêm states cho FilterAdmin ---
 	const [searchTerm, setSearchTerm] = useState('');
 	const [sortOption, setSortOption] = useState('newest');
 	const [startDate, setStartDate] = useState('');

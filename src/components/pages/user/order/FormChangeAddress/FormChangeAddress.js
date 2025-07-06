@@ -11,7 +11,6 @@ const FormChangeAddress = ({onClose, onAddressSelected, currentAddressId, onRelo
 	const [addresses, setAddresses] = useState([]);
 	const [selectedAddressId, setSelectedAddressId] = useState(null);
 
-	// Thêm state cho modal xác nhận xóa
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [addressToDelete, setAddressToDelete] = useState({id: null, name: ''});
 
@@ -50,7 +49,6 @@ const FormChangeAddress = ({onClose, onAddressSelected, currentAddressId, onRelo
 		}
 	};
 
-	//  modal xác nhận xóa
 	const handleRequestDelete = (id, name) => {
 		setAddressToDelete({id, name});
 		setShowDeleteModal(true);

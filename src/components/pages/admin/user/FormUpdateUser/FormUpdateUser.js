@@ -13,9 +13,9 @@ const FormUpdateUser = ({userId, onCancel, onSuccess}) => {
 		phone: '',
 		dateOfBirth: '',
 		gender: 'Male',
-		role: 1, // Added role
-		verified: true, // Added verified
-		status: 1, // Added status
+		role: 1,
+		verified: true,
+		status: 1,
 	});
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState('');
@@ -23,7 +23,7 @@ const FormUpdateUser = ({userId, onCancel, onSuccess}) => {
 
 	useEffect(() => {
 		const fetchUser = async () => {
-			if (!userId) return; // Ensure userId exists before fetching
+			if (!userId) return;
 			setLoading(true);
 			try {
 				const data = await getUserById(userId);
@@ -31,12 +31,11 @@ const FormUpdateUser = ({userId, onCancel, onSuccess}) => {
 					name: data.name || '',
 					email: data.email || '',
 					phone: data.phone || '',
-					// Format dateOfBirth to YYYY-MM-DD for input type="date"
 					dateOfBirth: data.dateOfBirth ? data.dateOfBirth.split('T')[0] : '',
 					gender: data.gender || 'Male',
-					role: data.role !== undefined ? data.role : 1, // Set default if undefined
-					verified: data.verified !== undefined ? data.verified : true, // Set default if undefined
-					status: data.status !== undefined ? data.status : 1, // Set default if undefined
+					role: data.role !== undefined ? data.role : 1,
+					verified: data.verified !== undefined ? data.verified : true,
+					status: data.status !== undefined ? data.status : 1,
 				});
 				setMessage('');
 				setIsError(false);
@@ -63,7 +62,6 @@ const FormUpdateUser = ({userId, onCancel, onSuccess}) => {
 		const {name, email, phone, dateOfBirth, gender, role} = formData;
 
 		if (!name || !email) {
-			// Email is disabled, but still need name
 			setMessage('Vui lòng không để trống tên và email.');
 			setIsError(true);
 			return false;
@@ -115,8 +113,7 @@ const FormUpdateUser = ({userId, onCancel, onSuccess}) => {
 				verified: Boolean(formData.verified),
 				status: Number(formData.status),
 			};
-			// Note: email and password are intentionally not sent from this admin update form
-			delete dataToSend.email; // Email is disabled, should not be updated via this form
+			delete dataToSend.email;
 
 			await updateUser(userId, dataToSend);
 			toast.success('Cập nhật người dùng thành công!');
@@ -152,7 +149,6 @@ const FormUpdateUser = ({userId, onCancel, onSuccess}) => {
 			<label className={styles.label}>
 				Email<span className={styles.required}>*</span>
 			</label>
-			{/* Email is disabled as per your original `editUser` API, which explicitly deletes `updates.email` */}
 			<input
 				type='email'
 				name='email'

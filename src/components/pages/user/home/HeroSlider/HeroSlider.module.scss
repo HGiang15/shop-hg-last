@@ -29,7 +29,6 @@
 	}
 }
 
-// Custom Arrow Buttons
 .arrow {
 	position: absolute;
 	top: 50%;
@@ -41,12 +40,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: #FF7B29;
+	background: #ff7b29;
 	border-radius: 50%;
 	transition: all 0.3s ease;
 
 	&:hover {
-		opacity: 0.9;		
+		opacity: 0.9;
 	}
 
 	img {
@@ -70,14 +69,14 @@
 .slide {
 	position: relative;
 	width: 100%;
-	aspect-ratio: 16 / 9; 
+	aspect-ratio: 16 / 9;
 
 	img {
 		border-radius: 15px;
 		object-fit: cover;
 	}
 
-    @media (max-width: 768px) {
-		height: 300px; 
+	@media (max-width: 768px) {
+		height: 300px;
 	}
 }

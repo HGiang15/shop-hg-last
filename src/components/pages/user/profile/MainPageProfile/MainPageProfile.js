@@ -26,8 +26,8 @@ function MainPageProfile() {
 
 	const [userId, setUserId] = useState(null);
 	const [gender, setGender] = useState('Other');
-	const [avatar, setAvatar] = useState(null); // preview URL
-	const [avatarFile, setAvatarFile] = useState(null); // actual File
+	const [avatar, setAvatar] = useState(null);
+	const [avatarFile, setAvatarFile] = useState(null);
 
 	const [nameError, setNameError] = useState('');
 	const [emailError, setEmailError] = useState('');
@@ -89,7 +89,6 @@ function MainPageProfile() {
 		try {
 			let avatarUrl = null;
 
-			// Nếu người dùng upload ảnh mới
 			if (avatarFile) {
 				const formUpload = new FormData();
 				formUpload.append('file', avatarFile);
@@ -99,12 +98,12 @@ function MainPageProfile() {
 				if (upload?.data) {
 					const realUrl = upload.data;
 					avatarUrl = realUrl;
-					setAvatar(realUrl); // Cập nhật preview thành ảnh thật
+					setAvatar(realUrl);
 				} else {
 					throw new Error('Upload ảnh thất bại');
 				}
 			} else {
-				avatarUrl = avatar; // ảnh cũ (URL đã có từ trước)
+				avatarUrl = avatar; // ảnh cũ
 			}
 
 			await updateUser(userId, {

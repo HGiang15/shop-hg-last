@@ -28,6 +28,10 @@ const ShoppingCart = ({onClose}) => {
 	};
 
 	const handleClick = (productId) => {
+		if (!productId) {
+			toast.error('Sản phẩm đã bị xóa khỏi hệ thống. Vui lòng xóa sản phẩm khỏi giỏ hàng!');
+			return;
+		}
 		router.push(`/products/${productId}`);
 		handleClose();
 	};

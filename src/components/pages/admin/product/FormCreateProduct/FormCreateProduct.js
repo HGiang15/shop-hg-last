@@ -82,14 +82,11 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		const formUpload = new FormData();
 
 		try {
-			// --- BẮT ĐẦU KIỂM TRA TẠI ĐÂY ---
-			console.log('Kiểu dữ liệu của form.category:', typeof form.category);
-			console.log('Giá trị của form.category:', form.category);
+			// console.log('Kiểu dữ liệu form.category:', typeof form.category);
+			// console.log('Giá trị form.category:', form.category);
+			// console.log('Kiểu dữ liệu form.colors:', typeof form.colors);
+			// console.log('Giá trị form.colors:', form.colors);
 
-			console.log('Kiểu dữ liệu của form.colors:', typeof form.colors);
-			console.log('Giá trị của form.colors:', form.colors);
-
-			// ===== VALIDATION =====
 			if (!form.name.trim()) {
 				toast.error('Tên sản phẩm không được để trống!', {position: 'top-right'});
 				return;
@@ -111,7 +108,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 				return;
 			}
 
-			// ===== UPLOAD IMAGES =====
+			// upload images
 			selectedImages.forEach((file) => formUpload.append('files', file));
 
 			const {data: imagesPath} = await uploadMultiple(formUpload);
@@ -120,7 +117,6 @@ const FormCreateProduct = ({setActiveMenu}) => {
 				return;
 			}
 
-			// ===== BUILD FORM DATA =====
 			const quantityBySize = sizes
 				.map((size) => ({
 					sizeId: size._id,
@@ -132,7 +128,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 			formCreate.append('code', form.code);
 			formCreate.append('name', form.name);
 
-			// Giá trị của form.category: {"categoryId":"685a18ca0506867599f17b4d","name":"Áo CLB"} parse cái này ra
+			// Giá trị của form.category: {"categoryId":"685a18ca0506867599f17b4d","name":"Áo CLB"} parse
 			const category = JSON.parse(form.category || '{}');
 			// sau khi parse { categoryId: "685a18ca0506867599f17b4d", name: "Áo CLB" }
 			formCreate.append(
@@ -152,7 +148,6 @@ const FormCreateProduct = ({setActiveMenu}) => {
 			formCreate.append('status', String(form.status));
 			formCreate.append('images', JSON.stringify(imagesPath));
 
-			// ===== CALL API =====
 			const response = await createProduct(formCreate);
 			if (response.message === 'Tạo sản phẩm thành công') {
 				toast.success('Sản phẩm đã được tạo thành công!', {position: 'top-right'});
@@ -179,7 +174,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 			setForm((prev) => ({
 				...prev,
 				name: value,
-				code: autoCode, // Tự động set mã sản phẩm
+				code: autoCode,
 			}));
 		} else if (name === 'category') {
 			const selectedCategory = categoryOptions.find((cat) => cat._id === value);
@@ -192,10 +187,8 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					}),
 				}));
 
-				// Gán sizes từ category
 				setSizes(selectedCategory.sizes || []);
 
-				// Reset sizeQuantities theo size mới
 				const newQuantities = {};
 				(selectedCategory.sizes || []).forEach((size) => {
 					newQuantities[size.name] = 0;
@@ -256,13 +249,13 @@ const FormCreateProduct = ({setActiveMenu}) => {
 
 	const slugify = (str) =>
 		str
-			.normalize('NFD') // Loại dấu tiếng Việt
+			.normalize('NFD')
 			.replace(/[\u0300-\u036f]/g, '')
 			.replace(/[^a-zA-Z0-9\s-]/g, '')
 			.trim()
 			.toLowerCase()
-			.replace(/\s+/g, '-') // Khoảng trắng -> dấu gạch ngang
-			.replace(/-+/g, '-'); // Loại trùng dấu "-"
+			.replace(/\s+/g, '-')
+			.replace(/-+/g, '-');
 
 	// Get all colors
 	useEffect(() => {

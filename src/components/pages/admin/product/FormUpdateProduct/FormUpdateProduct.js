@@ -52,7 +52,6 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 				const productData = await getProductById(productIdFromRouter);
 				if (!productData) throw new Error('Không tìm thấy sản phẩm với ID này!');
 
-				// Lưu lại form sản phẩm
 				setForm({
 					name: productData.name || '',
 					code: productData.code || '',
@@ -79,7 +78,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 				// Gọi API size theo category của product
 				const categoryId = productData.category[0]?.categoryId;
 				if (categoryId) {
-					const res = await getSizesByCategoryId(categoryId);
+					const res = await getAllCategories(categoryId);
 					const fetchedSizes = res?.sizes || [];
 					setSizes(fetchedSizes);
 
@@ -92,7 +91,6 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 					setSizeQuantities(initialQuantities);
 				}
 
-				// Gán ảnh
 				setImagesSelected(
 					productData?.images?.map((img) => ({
 						path: img,
@@ -156,7 +154,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 			setForm((prev) => ({
 				...prev,
 				name: value,
-				code: autoCode, // Tự động set mã sản phẩm
+				code: autoCode,
 			}));
 		} else if (name === 'category') {
 			const selectedCategory = categoryOptions.find((cat) => cat._id === value);
@@ -170,7 +168,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 				}));
 
 				try {
-					const res = await getSizesByCategoryId(selectedCategory._id);
+					const res = await getAllCategories(selectedCategory._id);
 					setSizes(res?.sizes || []);
 
 					const newQuantities = {};
@@ -250,7 +248,6 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 		const formUpload = new FormData();
 
 		try {
-			// ===== VALIDATE =====
 			if (!form.name.trim()) {
 				toast.error('Tên sản phẩm không được để trống!', {position: 'top-right'});
 				return;
@@ -268,7 +265,6 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 				return;
 			}
 
-			// ===== ẢNH =====
 			const files = imagesSelected?.filter((v) => !!v.file && !v.path)?.map((m) => m.file) || [];
 			const existingPaths = imagesSelected?.filter((v) => !!v.path && !v.file)?.map((m) => m.path) || [];
 
@@ -286,7 +282,6 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 			}
 			formUpdate.append('images', JSON.stringify(finalImagePaths));
 
-			// ===== DỮ LIỆU =====
 			const quantityBySize = sizes
 				.map((size) => ({
 					sizeId: size._id,
@@ -316,7 +311,6 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 			formUpdate.append('isFeatured', form.isFeatured);
 			formUpdate.append('status', form.status);
 
-			// ===== GỌI API UPDATE =====
 			const response = await updateProduct(productIdFromRouter, formUpdate);
 			if (response.message === 'Cập nhật sản phẩm thành công') {
 				toast.success('Cập nhật sản phẩm thành công!', {position: 'top-right'});
@@ -360,13 +354,13 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 
 	const slugify = (str) =>
 		str
-			.normalize('NFD') // Loại dấu tiếng Việt
+			.normalize('NFD')
 			.replace(/[\u0300-\u036f]/g, '')
 			.replace(/[^a-zA-Z0-9\s-]/g, '')
 			.trim()
 			.toLowerCase()
-			.replace(/\s+/g, '-') // Khoảng trắng -> dấu gạch ngang
-			.replace(/-+/g, '-'); // Loại trùng dấu "-"
+			.replace(/\s+/g, '-')
+			.replace(/-+/g, '-');
 
 	return (
 		<div className={styles.container}>

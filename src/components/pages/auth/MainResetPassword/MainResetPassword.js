@@ -172,7 +172,6 @@ const MainResetPassword = () => {
 							</Button>
 						</div>
 					</form>
-					{/* {serverError && <p className={styles.errorMsg}>{serverError}</p>} */}
 					{serverError && <p className={styles.errorMsg}>{serverError.message}</p>}
 					<Button className={styles.resendOtpButton} onClick={handleResendOTP}>
 						Gửi lại OTP

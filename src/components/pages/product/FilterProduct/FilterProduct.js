@@ -16,13 +16,11 @@ const FilterProduct = ({selectedCategories, setSelectedCategories, selectedColor
 				const categoryData = await getAllCategories();
 				const colorData = await getAllColors();
 
-				// Kiểm tra xem categoryData có phải là mảng không
 				if (Array.isArray(categoryData.categories)) {
 					setCategories(categoryData.categories);
 				} else {
 					console.error('Dữ liệu danh mục không hợp lệ:', categoryData);
 				}
-				// Kiểm tra xem colorData.colors có phải là mảng không
 				if (Array.isArray(colorData.colors)) {
 					setColors(colorData.colors);
 				} else {
@@ -85,7 +83,7 @@ const FilterProduct = ({selectedCategories, setSelectedCategories, selectedColor
 						onChange={() => {
 							setSelectedCategories([]);
 							const query = {...router.query};
-							delete query.category; // Xóa khỏi query
+							delete query.category;
 							router.push({pathname: router.pathname, query}, undefined, {shallow: true});
 						}}
 					/>
@@ -93,7 +91,6 @@ const FilterProduct = ({selectedCategories, setSelectedCategories, selectedColor
 					Tất cả
 				</label>
 
-				{/* Kiểm tra nếu categories là một mảng hợp lệ */}
 				{Array.isArray(categories) && categories.length > 0 ? (
 					categories.map((category) => (
 						<label className={styles.filterLabel} key={category._id}>
@@ -129,7 +126,6 @@ const FilterProduct = ({selectedCategories, setSelectedCategories, selectedColor
 					Tất cả
 				</label>
 
-				{/* Kiểm tra nếu colors là một mảng hợp lệ */}
 				{Array.isArray(colors) && colors.length > 0 ? (
 					colors.map((color) => (
 						<label className={styles.filterLabel} key={color._id}>

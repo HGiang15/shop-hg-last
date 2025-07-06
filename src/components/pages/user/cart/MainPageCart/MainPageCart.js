@@ -96,16 +96,29 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 				sizeId: item.sizeId?._id,
 				colorId: item.productId?.colors?.[0]?.colorId,
 				quantity: item.quantity,
-				// Dữ liệu phụ để hiển thị
 				name: item.productId?.name,
 				colorName: item.productId?.colors?.[0]?.name,
 				image: item.productId?.images?.[0],
 				sizeName: item.sizeId?.name,
 				price: item.productId?.price,
+				isInvalid: !item.productId || !item.productId._id || !item.productId.name,
 			}));
+
+		const token = localStorage.getItem('token');
+		if (!token) {
+			toast.warning('Vui lòng đăng nhập để thanh toán!');
+			router.push(ROUTES.Login);
+			return;
+		}
 
 		if (selectedForCheckout.length === 0) {
 			toast.warn('Vui lòng chọn sản phẩm để thanh toán');
+			return;
+		}
+
+		const invalidItems = selectedForCheckout.filter((item) => item.isInvalid);
+		if (invalidItems.length > 0) {
+			toast.error('Sản phẩm đã bị xóa khỏi hệ thống. Vui lòng bỏ chọn sản phẩm không hợp lệ.');
 			return;
 		}
 
@@ -162,7 +175,11 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 											height={84}
 										/>
 									</div>
-									<div className={styles.productInfo}>{item.productId?.name}</div>
+									<div className={styles.productInfo}>
+										{item.productId?.name || (
+											<span style={{color: 'red', fontStyle: 'italic'}}>Sản phẩm không tồn tại</span>
+										)}
+									</div>
 								</div>
 								<div className={styles.price}>{(item.productId?.price ?? 0).toLocaleString('vi-VN')} VNĐ</div>
 								<div className={styles.color}>

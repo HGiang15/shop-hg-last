@@ -219,7 +219,6 @@ const MainPageProfileAdmin = () => {
 					</div>
 				</div>
 
-				{/* Nút submit */}
 				<div className={styles.submitButtonContainer}>
 					<Button type='submit' className={styles.submitButton} disabled={!isFormValid}>
 						Cập nhật thông tin

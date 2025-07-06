@@ -161,7 +161,7 @@ const FormCreateAddress = ({onClose, onAddressCreated}) => {
 					wardId: selectedWard.value,
 					name: selectedWard.label,
 				},
-				userId, // đã được decode từ JWT
+				userId,
 			};
 
 			try {

@@ -89,7 +89,7 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 			quantity: Number(formData.quantity),
 			startDate: formData.startDate,
 			endDate: formData.endDate,
-			showAt: formData.showAt || formData.startDate, // nếu không có thì lấy luôn startDate
+			showAt: formData.showAt || formData.startDate,
 			isActive: formData.isActive,
 		};
 

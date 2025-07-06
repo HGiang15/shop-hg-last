@@ -35,7 +35,7 @@ export const getReviewsByUser = async (page = 1, limit = 3) => {
 			headers: {Authorization: `Bearer ${token}`},
 			params: {page, limit},
 		});
-		return response.data; // { reviews, page, totalPages }
+		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Không thể tải đánh giá của bạn.'};
 	}
@@ -56,7 +56,7 @@ export const getReviewById = async (id) => {
 	}
 };
 
-// Lấy tất cả đánh giá cho admin (có phân trang, tìm kiếm)
+// Lấy tất cả đánh giá cho admin
 export const getAllReviewsForAdmin = async (page = 1, limit = 10, search = '', rating = '', sort = '') => {
 	try {
 		const token = localStorage.getItem('token');
@@ -72,7 +72,7 @@ export const getAllReviewsForAdmin = async (page = 1, limit = 10, search = '', r
 				sort: sort,
 			},
 		});
-		return response.data; // { reviews, page, totalPages, total }
+		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Không thể tải danh sách đánh giá.'};
 	}

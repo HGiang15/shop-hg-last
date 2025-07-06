@@ -2,7 +2,6 @@ import Head from 'next/head';
 import {Fragment} from 'react';
 import LayoutAdmin from '@/components/layouts/LayoutAdmin/LayoutAdmin';
 import MainPageSize from '@/components/pages/admin/size/MainPageSize/MainPageSize';
-import {withUserRole} from '@/utils/withAuth';
 
 export default function Page() {
 	return (
@@ -23,5 +22,3 @@ export default function Page() {
 Page.getLayout = function (page) {
 	return <LayoutAdmin title='Quản lý kích cỡ'>{page}</LayoutAdmin>;
 };
-
-// export const getServerSideProps = withUserRole([0]);

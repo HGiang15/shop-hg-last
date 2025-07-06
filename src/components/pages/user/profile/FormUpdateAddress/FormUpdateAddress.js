@@ -182,7 +182,7 @@ const FormUpdateAddress = ({onClose, existingData, onAddressUpdated}) => {
 		};
 
 		try {
-			const updatedAddress = await updateAddress(existingData._id, fullAddress); // lấy response trả về địa chỉ mới
+			const updatedAddress = await updateAddress(existingData._id, fullAddress);
 			toast.success('Cập nhật địa chỉ thành công!');
 			onAddressUpdated?.(updatedAddress);
 			onClose();
@@ -205,7 +205,7 @@ const FormUpdateAddress = ({onClose, existingData, onAddressUpdated}) => {
 					</button>
 				</div>
 
-				{/* Input Tên */}
+				{/* Tên */}
 				<div className={styles.formGroup}>
 					<label className={styles.label}>
 						Tên người nhận <span style={{color: 'red'}}>*</span>
@@ -222,7 +222,7 @@ const FormUpdateAddress = ({onClose, existingData, onAddressUpdated}) => {
 					{nameError && <p className={styles.error}>{nameError}</p>}
 				</div>
 
-				{/* Input SĐT */}
+				{/* SĐT */}
 				<div className={styles.formGroup}>
 					<label className={styles.label}>
 						Số điện thoại <span style={{color: 'red'}}>*</span>
@@ -303,7 +303,6 @@ const FormUpdateAddress = ({onClose, existingData, onAddressUpdated}) => {
 					{detailError && <p className={styles.error}>{detailError}</p>}
 				</div>
 
-				{/* Nút hành động */}
 				<div className={styles.actions}>
 					<Button className={styles.cancelButton} onClick={onClose}>
 						Hủy bỏ
