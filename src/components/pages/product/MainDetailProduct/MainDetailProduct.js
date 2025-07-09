@@ -133,13 +133,11 @@ const ProductDetailPage = () => {
 		}
 
 		const buyNowItem = {
-			// Dữ liệu API createOrder
 			productId: product._id,
 			sizeId: selectedSizeObject.sizeId,
 			quantity: quantity,
 			colorId: selectedColorObject?.colorId,
 
-			// Dữ liệu hiển thị trang thanh toán
 			name: product.name,
 			image: product.images?.[0],
 			price: product.price,

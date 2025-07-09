@@ -34,14 +34,15 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		name: '',
 		code: '',
 		id: '',
-		category: '',
-		colors: '',
+		category: {categoryId: '', name: ''},
+		colors: [],
 		price: '',
 		description: '',
 		detailDescription: '',
 		isFeatured: false,
-		status: 'active',
+		status: '',
 	});
+
 	const MAX_IMAGES = 6;
 
 	const handleImageChange = (event) => {
@@ -82,40 +83,29 @@ const FormCreateProduct = ({setActiveMenu}) => {
 		const formUpload = new FormData();
 
 		try {
-			// console.log('Kiểu dữ liệu form.category:', typeof form.category);
-			// console.log('Giá trị form.category:', form.category);
-			// console.log('Kiểu dữ liệu form.colors:', typeof form.colors);
-			// console.log('Giá trị form.colors:', form.colors);
-
 			if (!form.name.trim()) {
-				toast.error('Tên sản phẩm không được để trống!', {position: 'top-right'});
+				toast.error('Tên sản phẩm không được để trống!');
 				return;
 			}
-			if (!form.category || form.category === '{}') {
-				toast.error('Vui lòng chọn danh mục sản phẩm!', {position: 'top-right'});
+			if (!form.category) {
+				toast.error('Vui lòng chọn danh mục sản phẩm!');
 				return;
 			}
-			if (!form.colors || form.colors === '[]') {
-				toast.error('Vui lòng chọn ít nhất một màu sắc!', {position: 'top-right'});
+			if (!form.colors || form.colors.length === 0) {
+				toast.error('Vui lòng chọn ít nhất một màu sắc!');
 				return;
 			}
 			if (!form.price || isNaN(form.price) || Number(form.price) <= 0) {
-				toast.error('Giá sản phẩm không hợp lệ!', {position: 'top-right'});
+				toast.error('Giá sản phẩm không hợp lệ!');
 				return;
 			}
 			if (selectedImages.length === 0) {
-				toast.error('Vui lòng chọn ít nhất một hình ảnh!', {position: 'top-right'});
+				toast.error('Vui lòng chọn ít nhất một hình ảnh!');
 				return;
 			}
 
-			// upload images
 			selectedImages.forEach((file) => formUpload.append('files', file));
-
 			const {data: imagesPath} = await uploadMultiple(formUpload);
-			if (!imagesPath || imagesPath.length === 0) {
-				toast.error('Không có hình ảnh nào được upload!', {position: 'top-right'});
-				return;
-			}
 
 			const quantityBySize = sizes
 				.map((size) => ({
@@ -124,23 +114,12 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					quantity: sizeQuantities[size.name] || 0,
 				}))
 				.filter((item) => item.quantity > 0);
+
 			formCreate.append('quantityBySize', JSON.stringify(quantityBySize));
 			formCreate.append('code', form.code);
 			formCreate.append('name', form.name);
-
-			// Giá trị của form.category: {"categoryId":"685a18ca0506867599f17b4d","name":"Áo CLB"} parse
-			const category = JSON.parse(form.category || '{}');
-			// sau khi parse { categoryId: "685a18ca0506867599f17b4d", name: "Áo CLB" }
-			formCreate.append(
-				'category',
-				JSON.stringify({
-					categoryId: category.categoryId || '',
-					name: category.name || '',
-				})
-			);
-
-			const colors = JSON.parse(form.colors || '[]');
-			formCreate.append('colors', JSON.stringify(colors));
+			formCreate.append('category', JSON.stringify(form.category));
+			formCreate.append('colors', JSON.stringify(form.colors));
 			formCreate.append('price', form.price);
 			formCreate.append('description', form.description);
 			formCreate.append('detailDescription', detailDescription);
@@ -150,16 +129,11 @@ const FormCreateProduct = ({setActiveMenu}) => {
 
 			const response = await createProduct(formCreate);
 			if (response.message === 'Tạo sản phẩm thành công') {
-				toast.success('Sản phẩm đã được tạo thành công!', {position: 'top-right'});
+				toast.success('Sản phẩm đã được tạo thành công!');
 				router.push(ROUTES.AdminProduct);
 			}
 		} catch (error) {
-			if (error.response?.data?.errors) {
-				toast.error('Đã xảy ra lỗi khi tạo sản phẩm!', {position: 'top-right'});
-				console.error('Chi tiết lỗi:', error.response.data.errors);
-			} else {
-				toast.error(error.message || 'Lỗi không xác định!', {position: 'top-right'});
-			}
+			toast.error(error.message || 'Lỗi không xác định!');
 		} finally {
 			setLoading(false);
 		}
@@ -170,7 +144,6 @@ const FormCreateProduct = ({setActiveMenu}) => {
 
 		if (name === 'name') {
 			const autoCode = slugify(value);
-
 			setForm((prev) => ({
 				...prev,
 				name: value,
@@ -181,32 +154,17 @@ const FormCreateProduct = ({setActiveMenu}) => {
 			if (selectedCategory) {
 				setForm((prev) => ({
 					...prev,
-					category: JSON.stringify({
+					category: {
 						categoryId: selectedCategory._id,
 						name: selectedCategory.name,
-					}),
+					},
 				}));
-
 				setSizes(selectedCategory.sizes || []);
-
 				const newQuantities = {};
 				(selectedCategory.sizes || []).forEach((size) => {
 					newQuantities[size.name] = 0;
 				});
 				setSizeQuantities(newQuantities);
-			}
-		} else if (name === 'colors') {
-			const selectedColor = colorOptions.find((color) => color._id === value);
-			if (selectedColor) {
-				setForm((prev) => ({
-					...prev,
-					colors: JSON.stringify([
-						{
-							colorId: selectedColor._id,
-							name: selectedColor.name,
-						},
-					]),
-				}));
 			}
 		} else {
 			setForm((prev) => ({
@@ -225,18 +183,6 @@ const FormCreateProduct = ({setActiveMenu}) => {
 			...prev,
 			[sizeName]: value,
 		}));
-	};
-
-	const parseColors = (colorsString) => {
-		try {
-			const parsedColors = JSON.parse(colorsString || '[]');
-			return Array.isArray(parsedColors)
-				? parsedColors.map((color) => ({value: color?.colorId || '', label: color?.name || ''}))
-				: [];
-		} catch (error) {
-			console.error('Lỗi parse form.colors:', error);
-			return [];
-		}
 	};
 
 	const formatPriceDisplay = (value) => {
@@ -367,7 +313,7 @@ const FormCreateProduct = ({setActiveMenu}) => {
 						name='category'
 						className={styles.select}
 						onChange={handleInputChange}
-						value={JSON.parse(form.category || '{}').categoryId || ''}
+						value={form.category?.categoryId || ''}
 					>
 						<option value=''>Chọn loại sản phẩm</option>
 						{categoryOptions.map((category) => (
@@ -386,19 +332,26 @@ const FormCreateProduct = ({setActiveMenu}) => {
 					<Select
 						isMulti
 						name='colors'
-						options={colorOptions.map((color) => ({value: color._id, label: color.name}))}
+						options={colorOptions.map((color) => ({
+							value: color._id,
+							label: color.name,
+						}))}
 						className={styles.select}
 						classNamePrefix='react-select'
 						onChange={(selectedOptions) => {
-							const selectedColors = selectedOptions
-								? selectedOptions.map((option) => ({colorId: option.value, name: option.label}))
-								: [];
+							const selectedColors = selectedOptions.map((option) => ({
+								colorId: option.value,
+								name: option.label,
+							}));
 							setForm((prev) => ({
 								...prev,
-								colors: JSON.stringify(selectedColors),
+								colors: selectedColors,
 							}));
 						}}
-						value={parseColors(form.colors)}
+						value={form.colors.map((color) => ({
+							value: color.colorId,
+							label: color.name,
+						}))}
 						placeholder='Chọn màu sản phẩm'
 						isSearchable
 					/>

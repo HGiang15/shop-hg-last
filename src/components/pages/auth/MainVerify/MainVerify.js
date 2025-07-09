@@ -14,6 +14,7 @@ import {toast, ToastContainer} from 'react-toastify';
 const MainVerify = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
+	const userId = searchParams.get('userId');
 
 	const [formData, setFormData] = useState({
 		otp: '',
@@ -23,8 +24,6 @@ const MainVerify = () => {
 	const [serverError, setServerError] = useState('');
 	const [successMessage, setSuccessMessage] = useState('');
 	const [loading, setLoading] = useState(false);
-
-	const userId = searchParams.get('userId');
 
 	const handleChange = (e) => {
 		const {name, value} = e.target;

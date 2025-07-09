@@ -41,7 +41,15 @@ export function CartProvider({children}) {
 	}, []);
 
 	useEffect(() => {
-		fetchCart();
+		const token = localStorage.getItem('token');
+		const cartToken = localStorage.getItem('cartToken');
+
+		// Chỉ fetch cart nếu có token hoặc cartToken
+		if (token || cartToken) {
+			fetchCart();
+		} else {
+			dispatch({type: 'SET_CART_SUCCESS', payload: {items: []}});
+		}
 	}, [fetchCart]);
 
 	// addToCart

@@ -2,9 +2,15 @@ import axiosClient from '.';
 
 export const getAllCart = async () => {
 	try {
+		const token = localStorage.getItem('token');
+
 		const response = await axiosClient.get(`/api/cart/getAllCart`, {
 			withCredentials: true,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
 		});
+
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Lấy giỏ hàng thất bại'};

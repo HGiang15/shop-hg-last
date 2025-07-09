@@ -89,7 +89,7 @@ const MainRegister = () => {
 			setLoading(true);
 			const response = await registerUser(formData);
 
-			if (response.status === 'Đang chờ xác minh') {
+			if (response.code === 'USER_PENDING_VERIFICATION') {
 				if (response.data && response.data.userId) {
 					toast.success('Đăng ký thành công, vui lòng xác minh email.', {
 						position: 'top-right',

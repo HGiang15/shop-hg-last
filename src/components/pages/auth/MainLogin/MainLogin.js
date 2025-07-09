@@ -102,7 +102,6 @@ const MainLogin = () => {
 			// API MERGE
 			const mergeResponse = await mergeCart();
 
-			// YÊU CẦU CART CONTEXT ĐỒNG BỘ LẠI TỪ SERVER
 			await syncCartAfterLogin();
 
 			toast.success('Đăng nhập thành công!');

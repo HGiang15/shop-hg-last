@@ -21,7 +21,7 @@ const JoditEditor = dynamic(() => import('jodit-react'), {ssr: false});
 
 const FormUpdateProduct = ({setActiveMenu}) => {
 	const router = useRouter();
-	const {_id: productIdFromRouter} = router.query;
+	const {_id} = router.query;
 
 	const [imagesSelected, setImagesSelected] = useState([]);
 	const [detailDescription, setDetailDesc] = useState('');
@@ -34,38 +34,38 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 		name: '',
 		code: '',
 		id: '',
-		category: '',
-		colors: '',
+		category: {categoryId: '', name: ''},
+		colors: [],
 		price: '',
 		description: '',
 		detailDescription: '',
 		isFeatured: false,
+		status: '',
 	});
+
 	const MAX_IMAGES = 6;
 
 	// Detail Product
 	useEffect(() => {
-		if (!productIdFromRouter) return;
+		if (!_id) return;
 
 		const fetchProductAndSizes = async () => {
 			try {
-				const productData = await getProductById(productIdFromRouter);
+				const productData = await getProductById(_id);
 				if (!productData) throw new Error('Không tìm thấy sản phẩm với ID này!');
 
 				setForm({
 					name: productData.name || '',
 					code: productData.code || '',
 					id: productData._id || '',
-					category: JSON.stringify({
+					category: {
 						categoryId: productData.category[0]?.categoryId || '',
 						name: productData.category[0]?.name || '',
-					}),
-					colors: JSON.stringify(
-						productData.colors.map((color) => ({
-							colorId: color.colorId || '',
-							name: color.name || '',
-						}))
-					),
+					},
+					colors: productData.colors.map((color) => ({
+						colorId: color.colorId || '',
+						name: color.name || '',
+					})),
 					price: productData.price || '',
 					description: productData.description || '',
 					detailDescription: productData.detailDescription || '',
@@ -78,7 +78,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 				// Gọi API size theo category của product
 				const categoryId = productData.category[0]?.categoryId;
 				if (categoryId) {
-					const res = await getAllCategories(categoryId);
+					const res = await getSizesByCategoryId(categoryId);
 					const fetchedSizes = res?.sizes || [];
 					setSizes(fetchedSizes);
 
@@ -105,7 +105,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 		};
 
 		fetchProductAndSizes();
-	}, [productIdFromRouter]);
+	}, [_id]);
 
 	const handleImageChange = (event) => {
 		const files = event.target.files;
@@ -161,14 +161,14 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 			if (selectedCategory) {
 				setForm((prev) => ({
 					...prev,
-					category: JSON.stringify({
+					category: {
 						categoryId: selectedCategory._id,
 						name: selectedCategory.name,
-					}),
+					},
 				}));
 
 				try {
-					const res = await getAllCategories(selectedCategory._id);
+					const res = await getSizesByCategoryId(selectedCategory._id);
 					setSizes(res?.sizes || []);
 
 					const newQuantities = {};
@@ -189,10 +189,15 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 	};
 
 	const handleColorChange = (selectedOptions) => {
-		const selectedColors = selectedOptions ? selectedOptions.map((option) => ({colorId: option.value, name: option.label})) : [];
+		const selectedColors = selectedOptions
+			? selectedOptions.map((option) => ({
+					colorId: option.value,
+					name: option.label,
+			  }))
+			: [];
 		setForm((prev) => ({
 			...prev,
-			colors: JSON.stringify(selectedColors),
+			colors: selectedColors,
 		}));
 	};
 
@@ -241,7 +246,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 	}, []);
 
 	const handleUpdateProduct = async () => {
-		if (!productIdFromRouter) return toast.error('Không có ID sản phẩm để cập nhật!');
+		if (!_id) return toast.error('Không có ID sản phẩm để cập nhật!');
 
 		setLoading(true);
 		const formUpdate = new FormData();
@@ -293,25 +298,15 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 			formUpdate.append('code', form.code);
 			formUpdate.append('name', form.name);
 			formUpdate.append('quantityBySize', JSON.stringify(quantityBySize));
-
-			const category = JSON.parse(form.category || '{}');
-			formUpdate.append(
-				'category',
-				JSON.stringify({
-					categoryId: category.categoryId || '',
-					name: category.name || '',
-				})
-			);
-
-			const colors = JSON.parse(form.colors || '[]');
-			formUpdate.append('colors', JSON.stringify(colors));
+			formUpdate.append('category', JSON.stringify(form.category));
+			formUpdate.append('colors', JSON.stringify(form.colors));
 			formUpdate.append('price', form.price);
 			formUpdate.append('description', form.description);
 			formUpdate.append('detailDescription', detailDescription);
 			formUpdate.append('isFeatured', form.isFeatured);
 			formUpdate.append('status', form.status);
 
-			const response = await updateProduct(productIdFromRouter, formUpdate);
+			const response = await updateProduct(_id, formUpdate);
 			if (response.message === 'Cập nhật sản phẩm thành công') {
 				toast.success('Cập nhật sản phẩm thành công!', {position: 'top-right'});
 				router.push(ROUTES.AdminProduct);
@@ -328,20 +323,12 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 		}
 	};
 
-	const handleSubmitForm = () => {
-		handleUpdateProduct();
-	};
-
-	const parseColors = (colorsString) => {
-		try {
-			const parsedColors = JSON.parse(colorsString || '[]');
-			return Array.isArray(parsedColors)
-				? parsedColors.map((color) => ({value: color?.colorId || '', label: color?.name || ''}))
-				: [];
-		} catch (error) {
-			console.error('Lỗi parse form.colors:', error);
-			return [];
-		}
+	const parseColors = (colors) => {
+		if (!Array.isArray(colors)) return [];
+		return colors.map((c) => ({
+			value: c.colorId,
+			label: c.name,
+		}));
 	};
 
 	const formatPriceDisplay = (value) => {
@@ -434,7 +421,7 @@ const FormUpdateProduct = ({setActiveMenu}) => {
 						name='category'
 						className={styles.select}
 						onChange={handleInputChange}
-						value={form.category ? JSON.parse(form.category).categoryId : ''}
+						value={form.category?.categoryId || ''}
 					>
 						<option value=''>Chọn loại sản phẩm</option>
 						{categoryOptions.map((category) => (
