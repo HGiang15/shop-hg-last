@@ -10,10 +10,15 @@ import {useRouter} from 'next/router';
 import {getCurrentUser} from '@/services/authService';
 import Loading from '@/components/common/Loading/Loading';
 import useCart from '@/hooks/useCart';
+import {useDispatch} from 'react-redux';
+import {logout} from '@/redux/slices/authSlice';
+import {clearUserInfo} from '@/redux/slices/userSlice';
 
 const SidebarProfile = ({isOpen, onClose}) => {
 	const router = useRouter();
-	const {dispatch} = useCart();
+	const {clearCart} = useCart();
+
+	const reduxDispatch = useDispatch();
 
 	const [loading, setLoading] = useState(false);
 	const [activeLink, setActiveLink] = useState(ROUTES.Profile);
@@ -92,9 +97,12 @@ const SidebarProfile = ({isOpen, onClose}) => {
 		localStorage.removeItem('name');
 		localStorage.removeItem('avatar');
 		localStorage.removeItem('cartToken');
+		localStorage.removeItem('persist:root');
 
-		// Xoá giỏ hàng trong context
-		dispatch({type: 'CLEAR_CART'});
+		clearCart();
+
+		reduxDispatch(logout());
+		reduxDispatch(clearUserInfo());
 
 		setUser({
 			name: '',
@@ -180,12 +188,10 @@ const SidebarProfile = ({isOpen, onClose}) => {
 					</Link>
 				</li>
 				<li className={`${styles.menuItem} ${activeLink === '/logout' ? styles.active : ''}`}>
-					<Link href='#' onClick={handleLogout}>
-						<div className={styles.menuLink}>
-							<Image src={icons.logout} alt='Đăng xuất' width={20} height={20} className={styles.icon} />
-							Đăng xuất
-						</div>
-					</Link>
+					<div onClick={handleLogout} className={styles.menuLink} role='button' tabIndex={0}>
+						<Image src={icons.logout} alt='Đăng xuất' width={20} height={20} className={styles.icon} />
+						Đăng xuất
+					</div>
 				</li>
 			</ul>
 			{loading && <Loading fullScreen />}

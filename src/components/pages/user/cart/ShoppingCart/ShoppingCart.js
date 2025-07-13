@@ -36,6 +36,7 @@ const ShoppingCart = ({onClose}) => {
 		handleClose();
 	};
 
+	// Xóa sp cart
 	const handleRemoveItem = async (itemId) => {
 		try {
 			await removeCartItem(itemId);

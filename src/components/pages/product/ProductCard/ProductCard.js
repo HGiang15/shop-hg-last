@@ -143,13 +143,11 @@ const ProductCard = ({selectedCategories, selectedColors}) => {
 							<div className={styles.info}>
 								<p className={styles.productCode}>Mã: {product.code}</p>
 								<h3 className={styles.productName}>{product.name}</h3>
-								{/* <div className={product.status === 'inactive' ? styles.statusBadgeInactive : styles.statusBadgeActive}>
-									{product.status === 'inactive' ? 'Ngừng bán' : 'Đang bán'}
-								</div> */}
-
 								<p className={styles.productPrice}>
 									{product.price?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})}
 								</p>
+
+								{/* {product.price?.toLocaleString('vi-VN') + ' vnd'} */}
 
 								<div className={styles.cartWrapper}>
 									{product.status === 'active' && product.quantityBySize?.length > 0 && (

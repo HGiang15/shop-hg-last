@@ -33,7 +33,7 @@ export function CartProvider({children}) {
 		dispatch({type: 'SET_CART_START'});
 		try {
 			const serverCart = await getAllCart();
-			dispatch({type: 'SET_CART_SUCCESS', payload: serverCart});
+			dispatch({type: 'SET_CART_SUCCESS', payload: serverCart}); //  Gửi dữ liệu vào reducer
 		} catch (error) {
 			console.error('Failed to fetch cart:', error);
 			dispatch({type: 'SET_CART_ERROR'});
@@ -41,14 +41,12 @@ export function CartProvider({children}) {
 	}, []);
 
 	useEffect(() => {
-		const token = localStorage.getItem('token');
-		const cartToken = localStorage.getItem('cartToken');
-
-		// Chỉ fetch cart nếu có token hoặc cartToken
-		if (token || cartToken) {
+		const token = localStorage.getItem('token'); // nếu có đăng nhập
+		// Gọi fetchCart vì cookie (cartToken) sẽ tự được gửi kèm theo request
+		if (token) {
 			fetchCart();
 		} else {
-			dispatch({type: 'SET_CART_SUCCESS', payload: {items: []}});
+			fetchCart();
 		}
 	}, [fetchCart]);
 

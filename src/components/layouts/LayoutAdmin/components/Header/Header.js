@@ -10,12 +10,16 @@ import {FaTimes} from 'react-icons/fa';
 import images from '@/constants/static/images';
 import {ROUTES} from '@/constants/config';
 import {getCurrentUser} from '@/services/authService';
+import {useDispatch} from 'react-redux';
+import {logout} from '@/redux/slices/authSlice';
+import {clearUserInfo} from '@/redux/slices/userSlice';
 
 const Header = ({title, setMenuOpen, menuOpen}) => {
 	const [visible, setVisible] = useState(false);
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
+	const dispatch = useDispatch();
 
 	const handleClick = () => {
 		setVisible(!visible);
@@ -46,10 +50,15 @@ const Header = ({title, setMenuOpen, menuOpen}) => {
 
 	const handleLogout = () => {
 		setLoading(true);
+
 		localStorage.removeItem('token');
 		localStorage.removeItem('persist:root');
 
-		setUser(null);
+		// Cập nhật Redux
+		dispatch(logout()); // Reset authSlice
+		dispatch(clearUserInfo()); // Reset userSlice
+
+		setUser(null); // Reset local user trong component
 
 		setTimeout(() => {
 			setLoading(false);

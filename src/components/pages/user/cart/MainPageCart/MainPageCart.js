@@ -49,6 +49,7 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		setSelectAllChecked(!selectAllChecked);
 	};
 
+	// Update quantity cart
 	const handleQuantityChange = async (itemId, newQuantity) => {
 		const quantity = parseInt(newQuantity, 10);
 		if (quantity < 1 || isNaN(quantity)) return;
@@ -74,6 +75,7 @@ const MainPageCart = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		}
 	};
 
+	// Xóa sp cart
 	const handleDeleteSelected = async () => {
 		if (selectedItems.length === 0) return;
 		try {

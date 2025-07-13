@@ -11,7 +11,7 @@ import Loading from '@/components/common/Loading/Loading';
 import Button from '@/components/common/Button/Button';
 import {toast, ToastContainer} from 'react-toastify';
 import {GoogleLogin} from '@react-oauth/google';
-import {getAllCart, mergeCart} from '@/services/cartService';
+import {mergeCart} from '@/services/cartService';
 import useCart from '@/hooks/useCart';
 import {useDispatch} from 'react-redux';
 import {loginSuccess} from '@/redux/slices/authSlice';
@@ -19,7 +19,6 @@ import {setUserInfo} from '@/redux/slices/userSlice';
 
 const MainLogin = () => {
 	const router = useRouter();
-	// const {dispatch, setCartFromServer} = useCart();
 	const {syncCartAfterLogin} = useCart();
 	const reduxDispatch = useDispatch();
 
@@ -84,24 +83,7 @@ const MainLogin = () => {
 				localStorage.removeItem('remember_expiration');
 			}
 
-			// // Merge cart
-			// const localCart = JSON.parse(localStorage.getItem('cart')) || [];
-			// const validCart = localCart.filter((item) => item.productId?._id && item.sizeId?._id && item.quantity > 0);
-			// if (validCart.length > 0) {
-			// 	await mergeCart(validCart);
-			// }
-
-			// localStorage.removeItem('cart');
-			// localStorage.removeItem('cartToken');
-
-			// const serverCart = await getAllCart();
-			// setCartFromServer(serverCart.items || []);
-
-			// router.push(role === 0 ? ROUTES.AdminDashboard : ROUTES.Home);
-
-			// API MERGE
 			const mergeResponse = await mergeCart();
-
 			await syncCartAfterLogin();
 
 			toast.success('Đăng nhập thành công!');

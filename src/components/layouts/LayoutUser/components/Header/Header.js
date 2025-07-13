@@ -13,11 +13,15 @@ import Button from '@/components/common/Button/Button';
 import ShoppingCart from '@/components/pages/user/cart/ShoppingCart/ShoppingCart';
 import {getCurrentUser} from '@/services/authService';
 import useCart from '@/hooks/useCart';
+import {useDispatch} from 'react-redux';
+import {logout} from '@/redux/slices/authSlice';
+import {clearUserInfo} from '@/redux/slices/userSlice';
 
 function Header() {
 	const router = useRouter();
 	// LẤY clearCart TỪ CONTEXT
 	const {cart, clearCart} = useCart();
+	const dispatch = useDispatch();
 
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [user, setUser] = useState(null);
@@ -69,8 +73,9 @@ function Header() {
 		localStorage.removeItem('avatar');
 		localStorage.removeItem('persist:root');
 
-		// Gọi clearCart từ context
-		clearCart();
+		clearCart(); // từ context
+		dispatch(logout()); // từ authSlice: reset isLogin + token
+		dispatch(clearUserInfo()); // từ userSlice: reset infoUser
 
 		setUser(null);
 		setShowDropdown(false);
