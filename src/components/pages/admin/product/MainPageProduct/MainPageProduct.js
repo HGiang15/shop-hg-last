@@ -36,6 +36,10 @@ const MainPageProduct = ({setActiveMenu}) => {
 	const [sortOption, setSortOption] = useState('newest');
 	const debounce = useDebounce(searchTerm, 600);
 
+	useEffect(() => {
+		setActiveMenu(ROUTES.AdminProduct);
+	}, []);
+
 	const fetchProducts = async () => {
 		try {
 			const data = await getAllProducts(currentPage, productsPerPage, sortOption, debounce);

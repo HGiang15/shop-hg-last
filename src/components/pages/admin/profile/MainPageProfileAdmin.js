@@ -8,8 +8,11 @@ import Button from '@/components/common/Button/Button';
 import {getCurrentUser, updateUser} from '@/services/authService';
 import {toast} from 'react-toastify';
 import {uploadSingle} from '@/services/uploadService';
+import {setActiveMenu} from '@/redux/actions/menuTabActions';
+import {ROUTES} from '@/constants/config';
+import {connect} from 'react-redux';
 
-const MainPageProfileAdmin = () => {
+const MainPageProfileAdmin = ({setActiveMenu}) => {
 	const validationRules = useMemo(
 		() => ({
 			name: {required: true},
@@ -33,6 +36,10 @@ const MainPageProfileAdmin = () => {
 	const [emailError, setEmailError] = useState('');
 	const [phoneError, setPhoneError] = useState('');
 	const [dobError, setDobError] = useState('');
+
+	useEffect(() => {
+		setActiveMenu(ROUTES.AdminProfile);
+	}, []);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -229,4 +236,10 @@ const MainPageProfileAdmin = () => {
 	);
 };
 
-export default MainPageProfileAdmin;
+// export default MainPageProfileAdmin;
+
+const mapDispatchToProps = (dispatch) => ({
+	setActiveMenu: (menuPath) => dispatch(setActiveMenu(menuPath)),
+});
+
+export default connect(null, mapDispatchToProps)(MainPageProfileAdmin);

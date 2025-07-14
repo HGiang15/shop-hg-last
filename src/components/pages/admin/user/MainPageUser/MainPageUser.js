@@ -18,6 +18,9 @@ import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 import Button from '@/components/common/Button/Button';
 import moment from 'moment';
 import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
+import {setActiveMenu} from '@/redux/actions/menuTabActions';
+import {ROUTES} from '@/constants/config';
+import {connect} from 'react-redux';
 
 const MainPageUser = () => {
 	const [users, setUsers] = useState([]);
@@ -44,6 +47,10 @@ const MainPageUser = () => {
 	const [filterRole, setFilterRole] = useState('');
 	const [filterStatus, setFilterStatus] = useState('');
 	const debounce = useDebounce(searchTerm, 600);
+
+	useEffect(() => {
+		setActiveMenu(ROUTES.AdminUser);
+	}, []);
 
 	const fetchUsers = async (page = currentPage, customLimit = limit) => {
 		setLoading(true);
@@ -348,4 +355,10 @@ const MainPageUser = () => {
 	);
 };
 
-export default MainPageUser;
+// export default MainPageUser;
+
+const mapDispatchToProps = (dispatch) => ({
+	setActiveMenu: (menuPath) => dispatch(setActiveMenu(menuPath)),
+});
+
+export default connect(null, mapDispatchToProps)(MainPageUser);

@@ -17,8 +17,11 @@ import useDebounce from '@/hooks/useDebounce';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 import moment from 'moment';
 import 'moment/locale/vi';
+import {setActiveMenu} from '@/redux/actions/menuTabActions';
+import {ROUTES} from '@/constants/config';
+import {connect} from 'react-redux';
 
-const MainPageColor = () => {
+const MainPageColor = ({setActiveMenu}) => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [colors, setColors] = useState([]);
 	const [showForm, setShowForm] = useState(false); // Create
@@ -34,6 +37,10 @@ const MainPageColor = () => {
 	const [sortOption, setSortOption] = useState('newest');
 	const [searchTerm, setSearchTerm] = useState('');
 	const debounce = useDebounce(searchTerm, 600);
+
+	useEffect(() => {
+		setActiveMenu(ROUTES.AdminColor);
+	}, []);
 
 	// Get all colors with pagination
 	const fetchColors = async () => {
@@ -266,4 +273,10 @@ const MainPageColor = () => {
 	);
 };
 
-export default MainPageColor;
+// export default MainPageColor;
+
+const mapDispatchToProps = (dispatch) => ({
+	setActiveMenu: (menuPath) => dispatch(setActiveMenu(menuPath)),
+});
+
+export default connect(null, mapDispatchToProps)(MainPageColor);

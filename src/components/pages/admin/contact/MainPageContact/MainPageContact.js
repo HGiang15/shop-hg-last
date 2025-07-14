@@ -17,8 +17,11 @@ import images from '@/constants/static/images';
 import IconCustom from '@/components/common/IconCustom/IconCustom';
 import icons from '@/constants/static/icons';
 import Button from '@/components/common/Button/Button';
+import {setActiveMenu} from '@/redux/actions/menuTabActions';
+import {ROUTES} from '@/constants/config';
+import {connect} from 'react-redux';
 
-const MainPageContact = () => {
+const MainPageContact = ({setActiveMenu}) => {
 	const [messages, setMessages] = useState([]);
 	const [loading, setLoading] = useState(true);
 
@@ -41,6 +44,10 @@ const MainPageContact = () => {
 
 	const [replyFiles, setReplyFiles] = useState([]);
 	const [replyPreviews, setReplyPreviews] = useState([]);
+
+	useEffect(() => {
+		setActiveMenu(ROUTES.AdminContact);
+	}, []);
 
 	const fetchMessages = async () => {
 		setLoading(true);
@@ -341,4 +348,10 @@ const MainPageContact = () => {
 	);
 };
 
-export default MainPageContact;
+// export default MainPageContact;
+
+const mapDispatchToProps = (dispatch) => ({
+	setActiveMenu: (menuPath) => dispatch(setActiveMenu(menuPath)),
+});
+
+export default connect(null, mapDispatchToProps)(MainPageContact);

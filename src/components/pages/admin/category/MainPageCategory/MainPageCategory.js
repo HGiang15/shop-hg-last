@@ -18,8 +18,11 @@ import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 import useDebounce from '@/hooks/useDebounce';
 import moment from 'moment';
 import 'moment/locale/vi';
+import {ROUTES} from '@/constants/config';
+import {connect} from 'react-redux';
+import {setActiveMenu} from '@/redux/actions/menuTabActions';
 
-const MainPageCategory = () => {
+const MainPageCategory = ({setActiveMenu}) => {
 	const router = useRouter();
 	const [categories, setCategories] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -38,6 +41,10 @@ const MainPageCategory = () => {
 	const [sortOption, setSortOption] = useState('newest');
 	const [searchTerm, setSearchTerm] = useState('');
 	const debounce = useDebounce(searchTerm, 600);
+
+	useEffect(() => {
+		setActiveMenu(ROUTES.AdminCategory);
+	}, []);
 
 	const fetchCategories = async (page = currentPage, customLimit = limit, sort = sortOption, search = debounce) => {
 		try {
@@ -244,4 +251,10 @@ const MainPageCategory = () => {
 	);
 };
 
-export default MainPageCategory;
+// export default MainPageCategory;
+
+const mapDispatchToProps = (dispatch) => ({
+	setActiveMenu: (menuPath) => dispatch(setActiveMenu(menuPath)),
+});
+
+export default connect(null, mapDispatchToProps)(MainPageCategory);

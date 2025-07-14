@@ -12,8 +12,11 @@ import {toast} from 'react-toastify';
 import useDebounce from '@/hooks/useDebounce';
 import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 import MainDetailReview from '../MainDetailReview/MainDetailReview';
+import {setActiveMenu} from '@/redux/actions/menuTabActions';
+import {ROUTES} from '@/constants/config';
+import {connect} from 'react-redux';
 
-const MainPageReview = () => {
+const MainPageReview = ({setActiveMenu}) => {
 	const [reviews, setReviews] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [limit, setLimit] = useState(5);
@@ -30,6 +33,10 @@ const MainPageReview = () => {
 	const [editReviewId, setEditReviewId] = useState(null);
 	const [selectedReviewId, setSelectedReviewId] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	useEffect(() => {
+		setActiveMenu(ROUTES.AdminReview);
+	}, []);
 
 	const fetchReviews = async () => {
 		try {
@@ -249,4 +256,10 @@ const MainPageReview = () => {
 	);
 };
 
-export default MainPageReview;
+// export default MainPageReview;
+
+const mapDispatchToProps = (dispatch) => ({
+	setActiveMenu: (menuPath) => dispatch(setActiveMenu(menuPath)),
+});
+
+export default connect(null, mapDispatchToProps)(MainPageReview);

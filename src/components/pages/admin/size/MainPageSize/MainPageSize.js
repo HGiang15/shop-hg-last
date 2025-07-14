@@ -17,8 +17,11 @@ import FilterAdmin from '@/components/common/FilterAdmin/FilterAdmin';
 import useDebounce from '@/hooks/useDebounce';
 import moment from 'moment';
 import 'moment/locale/vi';
+import {setActiveMenu} from '@/redux/actions/menuTabActions';
+import {ROUTES} from '@/constants/config';
+import {connect} from 'react-redux';
 
-const MainPageSize = () => {
+const MainPageSize = ({setActiveMenu}) => {
 	const [sizes, setSizes] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [showForm, setShowForm] = useState(false);
@@ -35,6 +38,10 @@ const MainPageSize = () => {
 
 	const [selectedSizes, setSelectedSizes] = useState([]);
 	const [deleteMode, setDeleteMode] = useState('single'); // 'single' | 'multiple'
+
+	useEffect(() => {
+		setActiveMenu(ROUTES.AdminSize);
+	}, []);
 
 	const fetchSizes = async (page = currentPage, customLimit = limit, sort = sortOption, search = debounce) => {
 		try {
@@ -255,4 +262,10 @@ const MainPageSize = () => {
 	);
 };
 
-export default MainPageSize;
+// export default MainPageSize;
+
+const mapDispatchToProps = (dispatch) => ({
+	setActiveMenu: (menuPath) => dispatch(setActiveMenu(menuPath)),
+});
+
+export default connect(null, mapDispatchToProps)(MainPageSize);

@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import styles from './MainPageChangePasswordAdmin.module.scss';
 import icons from '@/constants/static/icons';
 import Image from 'next/image';
@@ -8,8 +8,10 @@ import {changePassword} from '@/services/authService';
 import {toast} from 'react-toastify';
 import {ROUTES} from '@/constants/config';
 import {useRouter} from 'next/router';
+import {setActiveMenu} from '@/redux/actions/menuTabActions';
+import {connect} from 'react-redux';
 
-const MainPageChangePasswordAdmin = () => {
+const MainPageChangePasswordAdmin = ({setActiveMenu}) => {
 	const router = useRouter();
 
 	const validationRules = useMemo(
@@ -29,6 +31,10 @@ const MainPageChangePasswordAdmin = () => {
 	const [showOldPassword, setShowOldPassword] = useState(false);
 	const [showNewPassword, setShowNewPassword] = useState(false);
 	const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
+	useEffect(() => {
+		setActiveMenu(ROUTES.AdminChangePassword);
+	}, []);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -139,4 +145,10 @@ const MainPageChangePasswordAdmin = () => {
 	);
 };
 
-export default MainPageChangePasswordAdmin;
+// export default MainPageChangePasswordAdmin;
+
+const mapDispatchToProps = (dispatch) => ({
+	setActiveMenu: (menuPath) => dispatch(setActiveMenu(menuPath)),
+});
+
+export default connect(null, mapDispatchToProps)(MainPageChangePasswordAdmin);
