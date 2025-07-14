@@ -57,7 +57,7 @@ const MainPageContact = () => {
 		}
 	};
 
-	// gọi lại API khi thay đổi
+	// call lại API khi thay đổi
 	useEffect(() => {
 		fetchMessages();
 	}, [page, limit, debounceSearch, sortOption, statusFilter]);
