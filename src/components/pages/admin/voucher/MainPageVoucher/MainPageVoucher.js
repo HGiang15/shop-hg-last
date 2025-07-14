@@ -60,17 +60,6 @@ const MainPageVoucher = () => {
 		setShowUpdateForm(true);
 	};
 
-	const handleDelete = async (id) => {
-		try {
-			await deleteVoucher(id);
-			toast.success('Xóa voucher thành công!');
-			setVouchers((prev) => prev.filter((item) => item._id !== id));
-			setIsModalOpen(false);
-		} catch (error) {
-			toast.error(error.message || 'Xóa voucher thất bại');
-		}
-	};
-
 	const handleConfirmDeleteManyVouchers = () => {
 		if (!selectedVouchers || selectedVouchers.length === 0) {
 			toast.warn('Vui lòng chọn ít nhất một voucher để xóa!');
@@ -142,7 +131,7 @@ const MainPageVoucher = () => {
 										checked={selectedVouchers.length === vouchers.length && vouchers.length > 0}
 										onChange={(e) => {
 											if (e.target.checked) {
-												setSelectedVouchers(vouchers.map((v) => v._id));
+												setSelectedVouchers(vouchers.map((v) => v._id)); // tick hết
 											} else {
 												setSelectedVouchers([]);
 											}

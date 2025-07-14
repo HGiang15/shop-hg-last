@@ -48,7 +48,7 @@ export const getUserOrders = async () => {
 	}
 };
 
-// Lấy chi tiết đơn hàng theo ID
+// Lấy chi tiết đơn hàng theo ID admin
 export const getOrderById = async (id) => {
 	try {
 		const response = await axiosClient.get(`/api/order/getOrderById/${id}`);

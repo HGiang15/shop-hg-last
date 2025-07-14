@@ -51,46 +51,12 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		if (!formData.code.trim()) {
-			toast.error('Mã voucher không được để trống');
-			return;
-		}
-		if (!formData.discountValue || isNaN(formData.discountValue)) {
-			toast.error('Giá trị giảm giá không hợp lệ');
-			return;
-		}
-		if (!formData.minOrderValue || isNaN(formData.minOrderValue)) {
-			toast.error('Giá trị đơn tối thiểu không hợp lệ');
-			return;
-		}
-		if (formData.discountType === 'percent' && (!formData.maxDiscount || isNaN(formData.maxDiscount))) {
-			toast.error('Giảm tối đa không hợp lệ đối với voucher phần trăm');
-			return;
-		}
-		if (!formData.quantity || isNaN(formData.quantity)) {
-			toast.error('Số lượng không hợp lệ');
-			return;
-		}
-		if (!formData.startDate || !formData.endDate) {
-			toast.error('Vui lòng chọn thời gian áp dụng');
-			return;
-		}
-		if (new Date(formData.endDate) < new Date(formData.startDate)) {
-			toast.error('Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu');
-			return;
-		}
-
 		const payload = {
-			code: formData.code.trim(),
-			discountType: formData.discountType,
+			...formData,
 			discountValue: Number(formData.discountValue),
 			minOrderValue: Number(formData.minOrderValue),
 			maxDiscount: formData.discountType === 'percent' ? Number(formData.maxDiscount) : null,
 			quantity: Number(formData.quantity),
-			startDate: formData.startDate,
-			endDate: formData.endDate,
-			showAt: formData.showAt || formData.startDate,
-			isActive: formData.isActive,
 		};
 
 		try {
@@ -111,7 +77,7 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 
 			<label className={styles.label}>
 				Mã voucher
-				<input className={styles.input} type='text' name='code' value={formData.code} onChange={handleChange} required />
+				<input className={styles.input} type='text' name='code' value={formData.code} onChange={handleChange} />
 			</label>
 
 			<label className={styles.label}>
@@ -130,7 +96,6 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 					name='discountValue'
 					value={formatPriceDisplay(formData.discountValue)}
 					onChange={handleChange}
-					required
 				/>
 			</label>
 
@@ -142,7 +107,6 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 					name='minOrderValue'
 					value={formatPriceDisplay(formData.minOrderValue)}
 					onChange={handleChange}
-					required
 				/>
 			</label>
 
@@ -164,51 +128,22 @@ const FormCreateVoucher = ({onCancel, onSuccess}) => {
 
 			<label className={styles.label}>
 				Số lượng
-				<input
-					className={styles.input}
-					type='number'
-					name='quantity'
-					value={formData.quantity}
-					onChange={handleChange}
-					min='0'
-					required
-				/>
+				<input className={styles.input} type='number' name='quantity' value={formData.quantity} onChange={handleChange} min='0' />
 			</label>
 
 			<label className={styles.label}>
 				Hiển thị từ ngày
-				<input
-					className={styles.input}
-					type='datetime-local'
-					name='showAt'
-					value={formData.showAt}
-					onChange={handleChange}
-					required
-				/>
+				<input className={styles.input} type='datetime-local' name='showAt' value={formData.showAt} onChange={handleChange} />
 			</label>
 
 			<label className={styles.label}>
 				Ngày bắt đầu
-				<input
-					className={styles.input}
-					type='datetime-local'
-					name='startDate'
-					value={formData.startDate}
-					onChange={handleChange}
-					required
-				/>
+				<input className={styles.input} type='datetime-local' name='startDate' value={formData.startDate} onChange={handleChange} />
 			</label>
 
 			<label className={styles.label}>
 				Ngày kết thúc
-				<input
-					className={styles.input}
-					type='datetime-local'
-					name='endDate'
-					value={formData.endDate}
-					onChange={handleChange}
-					required
-				/>
+				<input className={styles.input} type='datetime-local' name='endDate' value={formData.endDate} onChange={handleChange} />
 			</label>
 
 			<label className={styles.checkboxLabel}>

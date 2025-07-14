@@ -33,6 +33,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 	const [availableVouchers, setAvailableVouchers] = useState([]);
 	const [finalAmount, setFinalAmount] = useState(0);
 
+	// all userAddress
 	const fetchAddresses = async () => {
 		try {
 			const res = await getUserAddresses();
@@ -51,6 +52,7 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		fetchAddresses();
 	}, []);
 
+	// Lấy data từ sessionStorage
 	useEffect(() => {
 		const rawItems = sessionStorage.getItem('checkoutItems');
 		if (rawItems) {
@@ -65,15 +67,18 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		}
 	}, [router]);
 
+	// Tính tổng đơn hàng từ data sessionStorage
 	useEffect(() => {
 		const sum = orderList.reduce((acc, item) => acc + item.price * item.quantity, 0);
 		setTotalAmount(sum);
 	}, [orderList]);
 
+	// Cập nhật số tiền phải thanh toán sau khi áp dụng voucher
 	useEffect(() => {
 		setFinalAmount(totalAmount - (appliedVoucher?.discountAmount || 0));
 	}, [totalAmount, appliedVoucher]);
 
+	// Create Order
 	const handlePlaceOrder = async () => {
 		if (!policyChecked || isPlacingOrder) return;
 		if (!selectedAddress) {
@@ -126,20 +131,19 @@ const MainPageOrder = ({breadcrumbItems = {titles: [], listHref: []}}) => {
 		}
 	};
 
+	// Hiển thị Mã voucher khả dụng cho user
 	useEffect(() => {
 		const fetchAvailableVouchers = async () => {
 			try {
-				const vouchers = await getAvailableVouchersForUser(totalAmount);
+				const vouchers = await getAvailableVouchersForUser();
 				setAvailableVouchers(vouchers);
 			} catch (err) {
 				console.error('Lỗi khi lấy voucher:', err);
 			}
 		};
 
-		if (totalAmount > 0) {
-			fetchAvailableVouchers();
-		}
-	}, [totalAmount]);
+		fetchAvailableVouchers();
+	}, []);
 
 	// Áp dụng voucher
 	const handleApplyVoucher = async () => {

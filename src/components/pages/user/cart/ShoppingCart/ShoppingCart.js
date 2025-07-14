@@ -79,6 +79,7 @@ const ShoppingCart = ({onClose}) => {
 								<div className={styles.details}>
 									<div className={styles.wrapper}>
 										<h4 className={styles.productName}>{item.productId?.name || 'Không có tên'}</h4>
+										{/* <h4 className={styles.productName}>{item.productId?.colors?.[1]?.name || 'Không có tên'}</h4> */}
 										<span className={styles.quantity}>x{item.quantity}</span>
 									</div>
 									<p>

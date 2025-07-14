@@ -4,8 +4,8 @@ import {useSelector} from 'react-redux';
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({children}) => {
-	const {isLogin} = useSelector((state) => state.auth);
-	const {infoUser} = useSelector((state) => state.user);
+	const {isLogin} = useSelector((state) => state.auth); // lấy isLogin từ Redux slice auth
+	const {infoUser} = useSelector((state) => state.user); // lấy infoUser từ Redux slice user
 	const {loading} = useSelector((state) => state.site);
 
 	const value = {

@@ -62,6 +62,17 @@ const MainPageContact = () => {
 		fetchMessages();
 	}, [page, limit, debounceSearch, sortOption, statusFilter]);
 
+	// Update status
+	const handleUpdateStatus = async (id, status, showToast = true) => {
+		try {
+			await updateMessageStatus(id, status);
+			if (showToast) toast.success(`Đã cập nhật trạng thái thành "${status}"`);
+			setMessages(messages.map((msg) => (msg._id === id ? {...msg, status} : msg)));
+		} catch (error) {
+			toast.error(error.message);
+		}
+	};
+
 	const handleViewDetails = (message) => {
 		setSelectedMessage(message);
 		setReplyContent('');
@@ -96,6 +107,7 @@ const MainPageContact = () => {
 		setIsConfirmModalOpen(true);
 	};
 
+	// Delete msg
 	const confirmDelete = async () => {
 		try {
 			await deleteMessage(deleteId);
@@ -109,6 +121,7 @@ const MainPageContact = () => {
 		}
 	};
 
+	// replyToMessage
 	const handleSendReply = async (e) => {
 		e.preventDefault();
 		if (!replyContent.trim()) {
@@ -140,16 +153,6 @@ const MainPageContact = () => {
 		}
 	};
 
-	const handleUpdateStatus = async (id, status, showToast = true) => {
-		try {
-			await updateMessageStatus(id, status);
-			if (showToast) toast.success(`Đã cập nhật trạng thái thành "${status}"`);
-			setMessages(messages.map((msg) => (msg._id === id ? {...msg, status} : msg)));
-		} catch (error) {
-			toast.error(error.message);
-		}
-	};
-
 	const statusStyles = {
 		new: styles.statusNew,
 		read: styles.statusRead,
@@ -174,7 +177,7 @@ const MainPageContact = () => {
 							value: statusFilter,
 							onChange: setStatusFilter,
 							options: [
-								{value: '', label: 'Tất cả trạng thái'},
+								{value: '', label: 'Tất cả tin nhắn liên hệ'},
 								{value: 'new', label: 'Mới'},
 								{value: 'read', label: 'Đã đọc'},
 								{value: 'replied', label: 'Đã trả lời'},

@@ -6,8 +6,8 @@ import siteReducer from '../slices/siteSlice';
 
 const rootReducer = combineReducers({
 	menu: menuReducer,
-	auth: authReducer,
-	user: userReducer,
+	auth: authReducer, // chứa isLogin, token
+	user: userReducer, // chứa infoUser
 	site: siteReducer,
 });
 

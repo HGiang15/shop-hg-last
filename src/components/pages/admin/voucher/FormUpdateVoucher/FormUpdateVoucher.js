@@ -81,19 +81,23 @@ const FormUpdateVoucher = ({voucherId, onCancel, onSuccess}) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		try {
-			await updateVoucher(voucherId, {
-				...formData,
-				discountValue: Number(formData.discountValue),
-				minOrderValue: Number(formData.minOrderValue),
-				maxDiscount: formData.discountType === 'percent' ? Number(formData.maxDiscount) : null,
-				quantity: Number(formData.quantity),
-			});
 
+		const payload = {
+			...formData,
+			code: formData.code.trim(),
+			discountValue: Number(formData.discountValue),
+			minOrderValue: Number(formData.minOrderValue),
+			maxDiscount: formData.discountType === 'percent' ? Number(formData.maxDiscount) : null,
+			quantity: Number(formData.quantity),
+		};
+
+		try {
+			await updateVoucher(voucherId, payload);
 			toast.success('Cập nhật voucher thành công');
 			onSuccess?.();
 		} catch (err) {
-			toast.error(err.message || 'Cập nhật thất bại');
+			const message = err.response?.data?.message || err.message || 'Cập nhật thất bại';
+			toast.error(message);
 		}
 	};
 
@@ -105,7 +109,7 @@ const FormUpdateVoucher = ({voucherId, onCancel, onSuccess}) => {
 
 			<label className={styles.label}>
 				Mã voucher
-				<input className={styles.input} name='code' value={formData.code} onChange={handleChange} required />
+				<input className={styles.input} name='code' value={formData.code} onChange={handleChange} />
 			</label>
 
 			<label className={styles.label}>
@@ -116,7 +120,6 @@ const FormUpdateVoucher = ({voucherId, onCancel, onSuccess}) => {
 					name='discountValue'
 					value={formatPriceDisplay(formData.discountValue)}
 					onChange={handleChange}
-					required
 				/>
 			</label>
 

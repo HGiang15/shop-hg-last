@@ -83,15 +83,15 @@ export function CartProvider({children}) {
 	};
 
 	const value = {
-		cart: state.cart,
+		cart: state.cart, // Dữ liệu giỏ hàng hiện tại
 		isLoading: state.isLoading,
 		addItemToCart,
 		updateCartItem,
 		removeCartItem,
 		removeItemsFromCart,
-		syncCartAfterLogin,
-		fetchCart,
-		clearCart,
+		syncCartAfterLogin, // 	Đồng bộ giỏ hàng sau khi người dùng login (merge giỏ khách + giỏ user).
+		fetchCart, // 	Lấy lại toàn bộ giỏ hàng từ server
+		clearCart, // Xóa sạch giỏ hàng (dùng khi đặt hàng xong)
 	};
 
 	return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

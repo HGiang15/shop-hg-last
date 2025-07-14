@@ -8,7 +8,7 @@ import {useAuth} from '@/redux/context/AuthContext';
 import Button from '@/components/common/Button/Button';
 
 const Contact = () => {
-	const {infoUser: user} = useAuth();
+	const {infoUser} = useAuth();
 
 	const [formData, setFormData] = useState({
 		name: '',
@@ -22,10 +22,15 @@ const Contact = () => {
 	const [previews, setPreviews] = useState([]);
 
 	useEffect(() => {
-		if (user) {
-			setFormData((prev) => ({...prev, name: user.name || '', email: user.email || '', phone: user.phone || ''}));
+		if (infoUser) {
+			setFormData((prev) => ({
+				...prev,
+				name: infoUser.name || '',
+				email: infoUser.email || '',
+				phone: infoUser.phone || '',
+			}));
 		}
-	}, [user]);
+	}, [infoUser]);
 
 	const handleChange = (e) => {
 		const {name, value} = e.target;
@@ -40,7 +45,6 @@ const Contact = () => {
 		}
 
 		setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-
 		const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file));
 		setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
 		e.target.value = null;
@@ -71,9 +75,9 @@ const Contact = () => {
 
 			toast.success(response.message || 'Gửi tin nhắn thành công!');
 			setFormData({
-				name: user ? user.name : '',
-				email: user ? user.email : '',
-				phone: user ? user.phone : '',
+				name: infoUser ? infoUser.name : '',
+				email: infoUser ? infoUser.email : '',
+				phone: infoUser ? infoUser.phone : '',
 				subject: 'Hỗ trợ đơn hàng',
 				message: '',
 			});
@@ -106,30 +110,21 @@ const Contact = () => {
 						<Phone className={styles.icon} size={20} />
 						<div>
 							<strong>Hotline:</strong>
-							<a href='tel:0398162589' className={styles.link}>
-								0398162589
-							</a>
+							<a href='tel:0398162589' className={styles.link}>0398162589</a>
 						</div>
 					</div>
 					<div className={styles.infoItem}>
 						<Mail className={styles.icon} size={20} />
 						<div>
 							<strong>Email:</strong>
-							<a href='mailto:gianghoang150503@gmail.com' className={styles.link}>
-								gianghoang150503@gmail.com
-							</a>
+							<a href='mailto:gianghoang150503@gmail.com' className={styles.link}>gianghoang150503@gmail.com</a>
 						</div>
 					</div>
 					<div className={styles.infoItem}>
 						<Facebook className={styles.icon} size={20} />
 						<div>
 							<strong>Fanpage:</strong>
-							<a
-								href='https://www.facebook.com/profile.php?id=61567661477939&locale=vi_VN'
-								className={styles.link}
-								target='_blank'
-								rel='noopener noreferrer'
-							>
+							<a href='https://www.facebook.com/profile.php?id=61567661477939&locale=vi_VN' className={styles.link} target='_blank' rel='noopener noreferrer'>
 								TCSPorts - Thời trang thể thao
 							</a>
 						</div>
@@ -155,8 +150,8 @@ const Contact = () => {
 								name='name'
 								value={formData.name}
 								onChange={handleChange}
-								readOnly={!!user}
-								className={user ? styles.readOnlyInput : ''}
+								readOnly={!!infoUser}
+								className={infoUser ? styles.readOnlyInput : ''}
 							/>
 						</div>
 						<div className={styles.formGroup}>
@@ -167,8 +162,8 @@ const Contact = () => {
 								name='email'
 								value={formData.email}
 								onChange={handleChange}
-								readOnly={!!user}
-								className={user ? styles.readOnlyInput : ''}
+								readOnly={!!infoUser}
+								className={infoUser ? styles.readOnlyInput : ''}
 							/>
 						</div>
 						<div className={styles.formGroup}>
@@ -179,8 +174,8 @@ const Contact = () => {
 								name='phone'
 								value={formData.phone}
 								onChange={handleChange}
-								readOnly={!!(user && user.phone)}
-								className={user && user.phone ? styles.readOnlyInput : ''}
+								readOnly={!!(infoUser && infoUser.phone)}
+								className={infoUser && infoUser.phone ? styles.readOnlyInput : ''}
 							/>
 						</div>
 						<div className={styles.formGroup}>
@@ -197,7 +192,6 @@ const Contact = () => {
 							<textarea id='message' name='message' rows='6' value={formData.message} onChange={handleChange}></textarea>
 						</div>
 
-						{/* Upload */}
 						<div className={styles.formGroup}>
 							<label>Đính kèm ảnh (tối đa 6 ảnh)</label>
 							<div className={styles.uploadContainer}>
