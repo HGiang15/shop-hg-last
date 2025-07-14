@@ -6,6 +6,7 @@ import {uploadMultiple} from '@/services/uploadService';
 import {toast} from 'react-toastify';
 import {useAuth} from '@/redux/context/AuthContext';
 import Button from '@/components/common/Button/Button';
+import Image from 'next/image';
 
 const Contact = () => {
 	const {infoUser} = useAuth();
@@ -110,21 +111,30 @@ const Contact = () => {
 						<Phone className={styles.icon} size={20} />
 						<div>
 							<strong>Hotline:</strong>
-							<a href='tel:0398162589' className={styles.link}>0398162589</a>
+							<a href='tel:0398162589' className={styles.link}>
+								0398162589
+							</a>
 						</div>
 					</div>
 					<div className={styles.infoItem}>
 						<Mail className={styles.icon} size={20} />
 						<div>
 							<strong>Email:</strong>
-							<a href='mailto:gianghoang150503@gmail.com' className={styles.link}>gianghoang150503@gmail.com</a>
+							<a href='mailto:gianghoang150503@gmail.com' className={styles.link}>
+								gianghoang150503@gmail.com
+							</a>
 						</div>
 					</div>
 					<div className={styles.infoItem}>
 						<Facebook className={styles.icon} size={20} />
 						<div>
 							<strong>Fanpage:</strong>
-							<a href='https://www.facebook.com/profile.php?id=61567661477939&locale=vi_VN' className={styles.link} target='_blank' rel='noopener noreferrer'>
+							<a
+								href='https://www.facebook.com/profile.php?id=61567661477939&locale=vi_VN'
+								className={styles.link}
+								target='_blank'
+								rel='noopener noreferrer'
+							>
 								TCSPorts - Thời trang thể thao
 							</a>
 						</div>
@@ -210,7 +220,7 @@ const Contact = () => {
 							<div className={styles.previewContainer}>
 								{previews.map((preview, index) => (
 									<div key={index} className={styles.previewItem}>
-										<img src={preview} alt={`Preview ${index}`} />
+										<Image src={preview} alt={`Preview ${index}`} />
 										<button type='button' onClick={() => removeFile(index)} className={styles.removeButton}>
 											<X size={14} />
 										</button>

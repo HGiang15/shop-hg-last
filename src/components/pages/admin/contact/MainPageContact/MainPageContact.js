@@ -20,6 +20,7 @@ import Button from '@/components/common/Button/Button';
 import {setActiveMenu} from '@/redux/actions/menuTabActions';
 import {ROUTES} from '@/constants/config';
 import {connect} from 'react-redux';
+import Image from 'next/image';
 
 const MainPageContact = ({setActiveMenu}) => {
 	const [messages, setMessages] = useState([]);
@@ -283,7 +284,7 @@ const MainPageContact = ({setActiveMenu}) => {
 							<div className={styles.previewContainer}>
 								{selectedMessage.attachments.map((url, index) => (
 									<a key={index} href={url} target='_blank' rel='noopener noreferrer' className={styles.previewItem}>
-										<img src={url} alt={`Attachment ${index}`} />
+										<Image src={url} alt={`Attachment ${index}`} />
 									</a>
 								))}
 							</div>
@@ -317,7 +318,7 @@ const MainPageContact = ({setActiveMenu}) => {
 							<div className={styles.previewContainer}>
 								{replyPreviews.map((preview, index) => (
 									<div key={index} className={styles.previewItem}>
-										<img src={preview} alt={`Reply Preview ${index}`} />
+										<Image src={preview} alt={`Reply Preview ${index}`} />
 										<button type='button' onClick={() => removeReplyFile(index)} className={styles.removeButton}>
 											<X size={14} />
 										</button>
