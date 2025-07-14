@@ -20,7 +20,6 @@ import Button from '@/components/common/Button/Button';
 import {setActiveMenu} from '@/redux/actions/menuTabActions';
 import {ROUTES} from '@/constants/config';
 import {connect} from 'react-redux';
-import Image from 'next/image';
 
 const MainPageContact = ({setActiveMenu}) => {
 	const [messages, setMessages] = useState([]);
