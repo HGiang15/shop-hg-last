@@ -19,9 +19,15 @@ export const getAllCart = async () => {
 
 export const removeItemFromCart = async (itemId) => {
 	try {
+		const token = localStorage.getItem('token');
+
 		const response = await axiosClient.delete(`/api/cart/removeItem/${itemId}`, {
 			withCredentials: true,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
 		});
+
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Xoá sản phẩm khỏi giỏ hàng thất bại'};
@@ -46,13 +52,18 @@ export const addToCart = async (productData) => {
 
 export const updateCartItem = async (itemId, quantity) => {
 	try {
+		const token = localStorage.getItem('token');
 		const response = await axiosClient.put(
 			`/api/cart/updateItem`,
 			{itemId, quantity},
 			{
 				withCredentials: true,
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
 			}
 		);
+
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || {message: 'Cập nhật số lượng thất bại'};
