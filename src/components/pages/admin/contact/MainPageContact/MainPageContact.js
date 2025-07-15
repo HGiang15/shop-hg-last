@@ -80,6 +80,7 @@ const MainPageContact = ({setActiveMenu}) => {
 		}
 	};
 
+	// update status new --> read
 	const handleViewDetails = (message) => {
 		setSelectedMessage(message);
 		setReplyContent('');
