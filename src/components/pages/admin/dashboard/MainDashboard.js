@@ -133,7 +133,7 @@ const MainDashboard = () => {
 				</ResponsiveContainer>
 			</div>
 
-			<h2 className={styles.title}>Biểu đồ doanh thu theo năm hiện tại</h2>
+			<h2 className={styles.title}>Biểu đồ doanh thu 5 năm gần nhất</h2>
 			<div className={styles.chartContainer}>
 				<ResponsiveContainer width='100%' height={300}>
 					<BarChart data={revenueByYear}>
